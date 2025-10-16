@@ -1,0 +1,314 @@
+/* Reset & Base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(135deg, #E8EAF6 0%, #E0E7FF 100%);
+    color: #1F2937;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Header */
+.header {
+    background: #FFFFFF;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.back-arrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    background: none;
+    border: none;
+    color: #4B5563;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s;
+    text-decoration: none;
+}
+
+.back-arrow:hover {
+    background: #F3F4F6;
+    color: #EF6C00;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.logo-icon {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 8px rgba(239, 108, 0, 0.3);
+}
+
+.logo-text {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+}
+
+/* Main Container */
+.main-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 30px 16px;
+    flex: 1;
+    gap: 20px;
+}
+
+/* Login Card */
+.login-card {
+    width: 100%;
+    max-width: 420px;
+    background: #FFFFFF;
+    padding: 32px 28px;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.card-header h1 {
+    font-size: 26px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 6px;
+}
+
+.card-header p {
+    font-size: 14px;
+    color: #6B7280;
+}
+
+/* Messages */
+.messages {
+    margin-bottom: 20px;
+}
+
+.message {
+    padding: 10px 14px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.message.success {
+    background: #D1FAE5;
+    color: #065F46;
+    border: 1px solid #10B981;
+}
+
+.message.error {
+    background: #FEE2E2;
+    color: #991B1B;
+    border: 1px solid #EF4444;
+}
+
+.message.warning {
+    background: #FEF3C7;
+    color: #92400E;
+    border: 1px solid #F59E0B;
+}
+
+.message.info {
+    background: #DBEAFE;
+    color: #1E40AF;
+    border: 1px solid #3B82F6;
+}
+
+/* Form */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 11px 14px;
+    font-size: 14px;
+    color: #111827;
+    background: #F9FAFB;
+    border: 1.5px solid #E5E7EB;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.form-group input::placeholder {
+    color: #9CA3AF;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: #FF6B35;
+    background: #FFFFFF;
+    box-shadow: 0 0 0 3px rgba(255, 107, 53, 0.1);
+}
+
+/* Password Wrapper */
+.password-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.password-wrapper input {
+    padding-right: 45px;
+}
+
+.toggle-password {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    color: #6B7280;
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.toggle-password:hover {
+    color: #FF6B35;
+    background: #F3F4F6;
+}
+
+.eye-icon {
+    display: block;
+}
+
+/* Sign In Button */
+.signin-button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    color: #FFFFFF;
+    background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 2px 8px rgba(255, 107, 53, 0.25);
+}
+
+.signin-button:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
+}
+
+.signin-button:active {
+    transform: translateY(0);
+}
+
+/* Sign Up Text */
+.signup-text {
+    text-align: center;
+    margin-top: 8px;
+    font-size: 13px;
+    color: #6B7280;
+}
+
+.signup-link {
+    color: #FF6B35;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.signup-link:hover {
+    color: #F7931E;
+    text-decoration: underline;
+}
+
+/* Footer Info */
+.footer-info {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+    max-width: 420px;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #6B7280;
+}
+
+.info-item svg {
+    stroke: #9CA3AF;
+    flex-shrink: 0;
+}
+
+.paw-icon {
+    font-size: 16px;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+    .header {
+        padding: 10px 16px;
+    }
+
+    .logo-text {
+        font-size: 18px;
+    }
+
+    .main-container {
+        padding: 20px 12px;
+    }
+
+    .login-card {
+        padding: 28px 24px;
+    }
+
+    .card-header h1 {
+        font-size: 24px;
+    }
+
+    .footer-info {
+        padding: 0 12px;
+    }
+}

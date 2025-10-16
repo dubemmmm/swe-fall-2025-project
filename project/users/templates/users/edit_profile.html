@@ -1,0 +1,183 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Edit Profile - Pet Next Door{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'users/css/register.css' %}">
+<style>
+    .location-options {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 14px;
+    }
+
+    .location-option-btn {
+        flex: 1;
+        padding: 10px;
+        background: #f0f0f0;
+        border: 2px solid #ddd;
+        border-radius: 6px;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.3s;
+    }
+
+    .location-option-btn.active {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-color: #667eea;
+    }
+
+    .location-option-btn:hover {
+        border-color: #667eea;
+    }
+
+    .location-input-group {
+        display: none;
+    }
+
+    .location-input-group.active {
+        display: block;
+    }
+
+    .current-location-display {
+        background: #f8f9fa;
+        padding: 12px;
+        border-radius: 6px;
+        margin-bottom: 14px;
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .current-location-display strong {
+        color: #333;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h1>Edit Profile</h1>
+            <p>Update your profile information and location</p>
+        </div>
+
+        <div class="current-location-display">
+            <strong>Current Location:</strong> {{ user.location|default:"Not set" }}<br>
+            {% if user.latitude and user.longitude %}
+                <small>Coordinates: {{ user.latitude }}, {{ user.longitude }}</small>
+            {% endif %}
+        </div>
+
+        <form method="post" class="auth-form" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <div class="input-group">
+                <label for="id_profile_name">Profile Name *</label>
+                <input type="text" name="profile_name" id="id_profile_name" value="{{ user.profile_name }}" required>
+            </div>
+
+            <div class="input-group">
+                <label for="id_phone_number">Phone Number</label>
+                <input type="tel" name="phone_number" id="id_phone_number" value="{{ user.phone_number }}" placeholder="555-123-4567">
+            </div>
+
+            <div class="input-group">
+                <label for="id_bio">Bio</label>
+                <textarea name="bio" id="id_bio" rows="3" placeholder="Tell us about yourself and your pets">{{ user.bio }}</textarea>
+            </div>
+
+            <div class="input-group">
+                <label for="id_profile_photo">Profile Photo</label>
+                <input type="file" name="profile_photo" id="id_profile_photo" accept="image/*">
+                {% if user.profile_photo %}
+                    <small>Current photo: {{ user.profile_photo.name }}</small>
+                {% endif %}
+            </div>
+
+            <div class="input-group">
+                <label>Update Location</label>
+                <div class="location-options">
+                    <div class="location-option-btn active" id="manualAddressBtn">
+                        Manual Address Entry
+                    </div>
+                    <div class="location-option-btn" id="currentLocationBtn">
+                        Use Current Location
+                    </div>
+                </div>
+
+                <input type="hidden" name="use_manual_address" id="id_use_manual_address" value="true">
+
+                <div class="location-input-group active" id="manualAddressGroup">
+                    <label for="id_location">Enter Your Home Address *</label>
+                    <input type="text" name="location" id="id_location" value="{{ user.location }}" placeholder="123 Main St, City, State">
+                    <small>We'll convert this to coordinates automatically</small>
+                </div>
+
+                <div class="location-input-group" id="currentLocationGroup">
+                    <input type="hidden" name="latitude" id="id_latitude">
+                    <input type="hidden" name="longitude" id="id_longitude">
+                    <button type="button" class="location-btn" id="detectLocationBtn">
+                        📍 Detect My Current Location
+                    </button>
+                    <div id="locationStatus" style="margin-top: 8px; font-size: 0.9rem; color: #666;"></div>
+                </div>
+            </div>
+
+            <button type="submit" class="submit-btn">Update Profile</button>
+            <a href="{% url 'profile' %}" style="display: block; text-align: center; margin-top: 12px; color: #667eea; text-decoration: none;">Cancel</a>
+        </form>
+    </div>
+</div>
+
+<script src="{% static 'users/js/geolocation.js' %}"></script>
+<script>
+    // Toggle between manual address and current location
+    const manualBtn = document.getElementById('manualAddressBtn');
+    const currentBtn = document.getElementById('currentLocationBtn');
+    const manualGroup = document.getElementById('manualAddressGroup');
+    const currentGroup = document.getElementById('currentLocationGroup');
+    const useManualInput = document.getElementById('id_use_manual_address');
+
+    manualBtn.addEventListener('click', function() {
+        manualBtn.classList.add('active');
+        currentBtn.classList.remove('active');
+        manualGroup.classList.add('active');
+        currentGroup.classList.remove('active');
+        useManualInput.value = 'true';
+    });
+
+    currentBtn.addEventListener('click', function() {
+        currentBtn.classList.add('active');
+        manualBtn.classList.remove('active');
+        currentGroup.classList.add('active');
+        manualGroup.classList.remove('active');
+        useManualInput.value = 'false';
+    });
+
+    // Handle current location detection
+    const detectBtn = document.getElementById('detectLocationBtn');
+    const locationStatus = document.getElementById('locationStatus');
+
+    detectBtn.addEventListener('click', function() {
+        locationStatus.textContent = 'Detecting your location...';
+        locationStatus.style.color = '#667eea';
+
+        autoFillLocation(
+            'id_latitude',
+            'id_longitude',
+            'id_location',
+            function(position) {
+                locationStatus.textContent = `✓ Location detected: ${position.coords.latitude.toFixed(6)}, ${position.coords.longitude.toFixed(6)}`;
+                locationStatus.style.color = '#27ae60';
+            },
+            function(error) {
+                locationStatus.textContent = `✗ Error: ${error}`;
+                locationStatus.style.color = '#e74c3c';
+            }
+        );
+    });
+</script>
+{% endblock %}
