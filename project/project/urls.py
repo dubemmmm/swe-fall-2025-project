@@ -24,6 +24,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('', user_views.home, name='home'),
     path('users/', include('users.urls')),
+    path('community/', include('community.urls')),
 ]
 
 # Serve media files in development
