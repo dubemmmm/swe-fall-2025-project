@@ -150,5 +150,70 @@ class AdoptionFlowTestCase(TestCase):
         self.assertIn(response.status_code, [302, 403])
         self.assertFalse(AdoptionListing.objects.filter(pet=self.pet, posted_by=self.adopter).exists())
 
+# ---------------------------------------------------------
+# Additional CRUD tests
+# ---------------------------------------------------------
+
+    def test_user_can_update_adoption_post(self):
+        listing = AdoptionListing.objects.create(
+            pet=self.pet,
+            posted_by=self.owner,
+            requirements="Old requirement",
+            additional_info="Old info"
+        )
+        url = reverse("update_adoption_post", args=[listing.id])
+        response = self.client.post(url, {
+            "requirements": "New requirement",
+            "additional_info": "Updated info"
+        })
+        self.assertEqual(response.status_code, 302)
+        listing.refresh_from_db()
+        self.assertEqual(listing.requirements, "New requirement")
+        self.assertEqual(listing.additional_info, "Updated info")
+
+    def test_user_can_delete_adoption_post(self):
+        listing = AdoptionListing.objects.create(
+            pet=self.pet,
+            posted_by=self.owner,
+            requirements="Delete me",
+            additional_info="Delete info"
+        )
+        url = reverse("delete_adoption_post", args=[listing.id])
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 302)
+        self.assertFalse(AdoptionListing.objects.filter(id=listing.id).exists())
+
+    def test_user_can_view_single_adoption_post(self):
+        listing = AdoptionListing.objects.create(
+            pet=self.pet,
+            posted_by=self.owner,
+            requirements="Single view",
+            additional_info="Info"
+        )
+        url = reverse("view_adoption_post", args=[listing.id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Single view")
+
+    def test_user_can_view_all_their_adoption_posts(self):
+        AdoptionListing.objects.create(
+            pet=self.pet,
+            posted_by=self.owner,
+            requirements="User post 1",
+            additional_info="Info 1"
+        )
+        AdoptionListing.objects.create(
+            pet=self.pet,
+            posted_by=self.owner,
+            requirements="User post 2",
+            additional_info="Info 2"
+        )
+        url = reverse("view_user_adoption_posts")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "User post 1")
+        self.assertContains(response, "User post 2")
+
+
 
 # Create your tests here.
