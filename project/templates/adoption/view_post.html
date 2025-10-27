@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>{{ listing.pet.name }} - Adoption Listing</h2>
+<p><strong>Requirements:</strong> {{ listing.requirements }}</p>
+<p><strong>Additional Info:</strong> {{ listing.additional_info }}</p>
+<p><strong>Posted By:</strong> {{ listing.posted_by.username }}</p>
+
+<a href="{% url 'view_adoption_listings' %}">Back to all listings</a>
+{% endblock %}
