@@ -1,0 +1,9 @@
+<h1>My Adoption Posts</h1>
+<ul>
+{% for post in object_list %}
+  <li>{{ post.pet.name }} - {{ post.requirements }}</li>
+{% empty %}
+  <li>No adoption posts yet.</li>
+{% endfor %}
+</ul>
+<a href="{% url 'adoption:create' %}">Create New Adoption Post</a>
