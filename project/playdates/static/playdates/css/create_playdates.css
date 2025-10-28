@@ -1,0 +1,482 @@
+.confirmation {
+    text-align: center;
+    padding: 40px 32px;
+}
+.confirmation h2 {
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    font-size: 22px;
+    font-weight: 600;
+}
+.confirmation p {
+    color: var(--text-secondary);
+    margin-bottom: 32px;
+    font-size: 15px;
+}
+.summary-card {
+    background: var(--bg-light);
+    border-radius: var(--radius-md);
+    padding: 24px;
+    margin-bottom: 32px;
+    text-align: left;
+}
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    font-size: 15px;
+}
+.summary-item:last-child {
+    margin-bottom: 0;
+    font-weight: 600;
+    border-top: 1px solid var(--border-color);
+    padding-top: 16px;
+}
+.summary-label {
+    color: var(--text-secondary);
+}
+.summary-value {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+.post-btn {
+    width: 100%;
+    padding: 16px;
+    font-size: 17px;
+    border-radius: var(--radius-md);
+} */
+
+
+
+
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(135deg, #FFF8F3 0%, #FFE8D9 100%);
+    color: #1F2937;
+    min-height: 100vh;
+    padding: 24px 16px;
+}
+
+.container {
+    max-width: 720px;
+    margin: 0 auto;
+    background: #FFFFFF;
+    border-radius: 16px;
+    box-shadow: 0 10px 40px rgba(247, 147, 30, 0.15);
+    overflow: hidden;
+}
+
+.header {
+    background: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+    padding: 32px 28px;
+    text-align: center;
+    color: white;
+}
+
+.header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.header p {
+    font-size: 15px;
+    opacity: 0.95;
+}
+
+.form-content {
+    padding: 32px 28px;
+}
+
+.error-messages {
+    background: #FEF2F2;
+    border: 1px solid #FCA5A5;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    color: #991B1B;
+}
+
+.error-messages strong {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+.error-messages ul {
+    margin: 0;
+    padding-left: 20px;
+    font-size: 13px;
+}
+
+.error-messages li {
+    margin: 4px 0;
+}
+
+/* Progress Steps */
+.steps {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 32px;
+    position: relative;
+    padding: 0 40px;
+}
+
+.steps::before {
+    content: '';
+    position: absolute;
+    top: 16px;
+    left: 80px;
+    right: 80px;
+    height: 2px;
+    background: #E5E7EB;
+    z-index: 0;
+}
+
+.step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    z-index: 1;
+}
+
+.dot {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #FFFFFF;
+    border: 2px solid #E5E7EB;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 14px;
+    color: #9CA3AF;
+    transition: all 0.3s ease;
+}
+
+.step.active .dot {
+    background: #F7931E;
+    border-color: #F7931E;
+    color: white;
+    box-shadow: 0 2px 8px rgba(247, 147, 30, 0.3);
+}
+
+.step span {
+    font-size: 12px;
+    font-weight: 500;
+    color: #6B7280;
+    text-align: center;
+}
+
+.step.active span {
+    color: #F7931E;
+    font-weight: 600;
+}
+
+/* Form Sections */
+.form-section {
+    display: none;
+}
+
+.form-section.active {
+    display: block;
+}
+
+.section-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+    margin-bottom: 6px;
+}
+
+.section-subtitle {
+    font-size: 14px;
+    color: #6B7280;
+    margin-bottom: 24px;
+}
+
+/* Input Groups */
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-label {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.input-field, select.input-field, textarea.input-field {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid #D1D5DB;
+    border-radius: 10px;
+    font-size: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    transition: all 0.2s ease;
+    background: #FFFFFF;
+}
+
+.input-field:focus, select.input-field:focus, textarea.input-field:focus {
+    outline: none;
+    border-color: #F7931E;
+    box-shadow: 0 0 0 3px rgba(247, 147, 30, 0.1);
+}
+
+textarea.input-field {
+    resize: vertical;
+    min-height: 100px;
+}
+
+/* Pet Cards */
+.pets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.pet-card {
+    background: #F9FAFB;
+    border: 2px solid #E5E7EB;
+    border-radius: 12px;
+    padding: 16px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-align: center;
+}
+
+.pet-card:hover {
+    border-color: #F7931E;
+    box-shadow: 0 4px 12px rgba(247, 147, 30, 0.15);
+}
+
+.pet-card.selected {
+    background: #FFF8F3;
+    border-color: #F7931E;
+    box-shadow: 0 4px 12px rgba(247, 147, 30, 0.2);
+}
+
+.pet-card img {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 12px;
+    border: 2px solid #E5E7EB;
+}
+
+.pet-card.selected img {
+    border-color: #F7931E;
+}
+
+.pet-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: #111827;
+    margin-bottom: 4px;
+}
+
+.pet-breed {
+    font-size: 12px;
+    color: #6B7280;
+    margin-bottom: 8px;
+}
+
+.pet-type-size {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.pet-type-size span {
+    background: #E5E7EB;
+    padding: 3px 10px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #4B5563;
+}
+
+.pet-card.selected .pet-type-size span {
+    background: #F7931E;
+    color: white;
+}
+
+/* Checkbox */
+.checkbox-group {
+    margin-bottom: 20px;
+}
+
+.checkbox-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    padding: 14px 16px;
+    background: #F9FAFB;
+    border-radius: 10px;
+    border: 1px solid #E5E7EB;
+    transition: all 0.2s ease;
+}
+
+.checkbox-option:hover {
+    background: #F3F4F6;
+    border-color: #F7931E;
+}
+
+.checkbox-option input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: #F7931E;
+    margin-top: 2px;
+}
+
+.checkbox-option span {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 500;
+    color: #374151;
+    line-height: 1.5;
+}
+
+/* Info Box */
+.info-box {
+    background: #EFF6FF;
+    border-left: 3px solid #3B82F6;
+    padding: 14px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #1E40AF;
+    margin-top: 16px;
+    line-height: 1.5;
+}
+
+.info-box strong {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+}
+
+.info-box ul {
+    margin-top: 6px;
+    padding-left: 18px;
+}
+
+.info-box li {
+    margin: 4px 0;
+}
+
+/* Buttons */
+.btn-group {
+    display: flex;
+    gap: 12px;
+    justify-content: space-between;
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #E5E7EB;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.btn-primary {
+    background: #F7931E;
+    color: white;
+    box-shadow: 0 2px 8px rgba(247, 147, 30, 0.3);
+}
+
+.btn-primary:hover {
+    background: #EF6C00;
+    box-shadow: 0 4px 12px rgba(247, 147, 30, 0.4);
+}
+
+.btn-secondary {
+    background: #FFFFFF;
+    color: #F7931E;
+    border: 1px solid #F7931E;
+}
+
+.btn-secondary:hover {
+    background: #FFF8F3;
+}
+
+.help-text {
+    display: block;
+    font-size: 12px;
+    color: #6B7280;
+    margin-top: 6px;
+    font-style: italic;
+}
+
+/* Hide select when pets grid is shown */
+.pets-grid ~ .input-group select {
+    display: none;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    body {
+        padding: 16px 12px;
+    }
+
+    .container {
+        border-radius: 12px;
+    }
+
+    .form-content {
+        padding: 24px 20px;
+    }
+
+    .header {
+        padding: 24px 20px;
+    }
+
+    .header h1 {
+        font-size: 24px;
+    }
+
+    .pets-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .steps {
+        padding: 0 20px;
+    }
+
+    .steps::before {
+        left: 50px;
+        right: 50px;
+    }
+
+    .btn-group {
+        flex-direction: column-reverse;
+    }
+
+    .btn {
+        width: 100%;
+    }
+}

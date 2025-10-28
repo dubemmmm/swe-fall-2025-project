@@ -7,7 +7,7 @@ class PetProfile(models.Model):
     SPECIES_CHOICES = [('DOG', 'Dog'), ('CAT', 'Cat'), ('OTHER', 'Other')]
     SIZE_CHOICES = [('SMALL', 'Small'), ('MEDIUM', 'Medium'), ('LARGE', 'Large')]
     ENERGY_CHOICES = [('LOW', 'Low'), ('MEDIUM', 'Medium'), ('HIGH', 'High')]
-    
+
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     species = models.CharField(max_length=20, choices=SPECIES_CHOICES)
@@ -22,6 +22,9 @@ class PetProfile(models.Model):
     is_adoptable = models.BooleanField(default=False)
     privacy_settings = models.CharField(max_length=20, default='PUBLIC')
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} ({self.get_species_display()})"
     
 class PetPhoto(models.Model):
     pet = models.ForeignKey(PetProfile, on_delete=models.CASCADE, related_name='photos')

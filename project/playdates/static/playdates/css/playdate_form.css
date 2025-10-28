@@ -1,0 +1,58 @@
+/* Playdate Form (Edit) Styles */
+:root { --text-primary:#111827; --text-secondary:#6B7280; --bg-light:#F9FAFB; --border-color:#E5E7EB; --radius-md:12px; }
+body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif; background:linear-gradient(135deg,#FFF8F3 0%,#FFE8D9 100%); color:#1F2937; min-height:100vh; padding:24px 16px; }
+.container { max-width: 980px; margin:0 auto; background:#fff; border-radius:16px; box-shadow:0 10px 40px rgba(247,147,30,.15); overflow:hidden; }
+.header { background:linear-gradient(135deg,#FF6B35 0%,#F7931E 100%); color:#fff; padding:32px 28px; }
+.header .topbar { display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
+.header h1 { font-size:28px; font-weight:700; margin-top:6px; }
+.actions { display:flex; gap:10px; flex-wrap:wrap; }
+
+.content { padding:28px; display:grid; gap:16px; grid-template-columns: 1.2fr .8fr; }
+@media (max-width: 900px){ .content{ grid-template-columns: 1fr; } }
+
+.panel { background:#fff; border:1px solid #E5E7EB; border-radius:14px; overflow:hidden; }
+.panel-head { padding:12px 16px; border-bottom:1px solid #E5E7EB; background:#F9FAFB; font-weight:700; color:#111827; }
+.panel-body { padding:16px; }
+
+.btn { padding:10px 16px; border:none; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; transition:all .2s ease; font-family:inherit; text-decoration:none; display:inline-block; }
+.btn-primary { background:#F7931E; color:#fff; box-shadow:0 2px 8px rgba(247,147,30,.3);} .btn-primary:hover{ background:#EF6C00; }
+.btn-light { background:#fff; color:#F7931E; border:1px solid #F7931E; } .btn-light:hover{ background:#FFF8F3; }
+.btn-danger { background:#DC2626; color:#fff; } .btn-danger:hover{ background:#B91C1C; }
+.btn-secondary { background:#FFFFFF; color:#F7931E; border:1px solid #F7931E; }
+
+.messages { margin: 16px 28px 0; }
+.alert { padding:12px 14px; border-radius:10px; font-size:14px; margin-bottom:10px; }
+.alert-success{ background:#ECFDF5; color:#065F46; border:1px solid #A7F3D0; }
+.alert-error,.alert-danger{ background:#FEF2F2; color:#991B1B; border:1px solid #FCA5A5; }
+.alert-warning{ background:#FFFBEB; color:#92400E; border:1px solid #FDE68A; }
+.alert-info{ background:#EFF6FF; color:#1E40AF; border:1px solid #BFDBFE; }
+
+/* Steps reused from create page */
+.steps { display:flex; justify-content:space-between; margin-bottom:24px; position:relative; padding:0 40px; }
+.steps::before { content:''; position:absolute; top:16px; left:80px; right:80px; height:2px; background:#E5E7EB; z-index:0; }
+.step { display:flex; flex-direction:column; align-items:center; gap:8px; position:relative; z-index:1; }
+.dot { width:32px; height:32px; border-radius:50%; background:#FFFFFF; border:2px solid #E5E7EB; display:flex; align-items:center; justify-content:center; font-weight:600; font-size:14px; color:#9CA3AF; transition:all .3s ease; }
+.step.active .dot { background:#F7931E; border-color:#F7931E; color:#fff; box-shadow:0 2px 8px rgba(247,147,30,.3); }
+.step span { font-size:12px; font-weight:500; color:#6B7280; text-align:center; }
+.step.active span { color:#F7931E; font-weight:600; }
+
+/* Summary side */
+.summary { display:grid; gap:12px; }
+.summary .hero { display:flex; gap:12px; align-items:center; background:#FFF8F3; border:1px solid #FFE1C8; border-radius:12px; padding:12px; }
+.pet-avatar { width:56px; height:56px; border-radius:50%; object-fit:cover; border:2px solid #FFD3AC; background:#fff; }
+.kv { display:flex; justify-content:space-between; gap:12px; padding:10px 12px; border:1px solid #E5E7EB; border-radius:10px; }
+.kv .k { color:#6B7280; font-size:12px; }
+.kv .v { color:#111827; font-weight:600; }
+
+.danger { border:1px solid #FCA5A5; background:#FEF2F2; color:#991B1B; border-radius:12px; padding:14px; }
+
+.btn-group { display:flex; gap:12px; justify-content:space-between; margin-top:20px; padding-top:16px; border-top:1px solid #E5E7EB; }
+.btn-full { width:100%; text-align:center; }
+
+.help-text { display:block; font-size:12px; color:#6B7280; margin-top:6px; font-style:italic; }
+
+/* Form sections display */
+.form-section { display:none; }
+.form-section.active { display:block; }
+
+@media (max-width: 768px){ .steps{ padding:0 20px; } .steps::before{ left:50px; right:50px; } }

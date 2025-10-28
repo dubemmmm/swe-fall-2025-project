@@ -1,0 +1,252 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Edit Playdate</title>
+  <link rel="stylesheet" href="{% static "playdates/css/create_playdates.css" %}">
+  <link rel="stylesheet" href="{% static "playdates/css/playdate_form.css" %}">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="topbar">
+        <div class="actions">
+          <a class="btn btn-light" href="{% url 'playdate-detail' playdate.id %}">← Back to Details</a>
+          <a class="btn btn-primary" href="{% url 'my-playdates' %}">My Playdates</a>
+        </div>
+      </div>
+      <h1>Edit Playdate</h1>
+      <p style="opacity:.95">Update timing, location, visibility, and more. Changes will be visible to participants.</p>
+    </div>
+
+    {% if messages %}
+      <div class="messages">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="content">
+      <!-- Main form column -->
+      <div class="panel">
+        <div class="panel-head">Edit Details</div>
+        <div class="panel-body">
+          <form method="post" id="playdateUpdateForm">
+            {% csrf_token %}
+
+            {% if form.errors %}
+              <div class="error-messages">
+                <strong>Please correct the following errors:</strong>
+                <ul>
+                  {% for field in form %}
+                    {% for error in field.errors %}
+                      <li><strong>{{ field.label }}:</strong> {{ error }}</li>
+                    {% endfor %}
+                  {% endfor %}
+                  {% for error in form.non_field_errors %}
+                    <li>{{ error }}</li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+
+            <div class="steps">
+              <div class="step active" id="step1"><div class="dot">1</div><span>Pet</span></div>
+              <div class="step" id="step2"><div class="dot">2</div><span>Date & Location</span></div>
+              <div class="step" id="step3"><div class="dot">3</div><span>Details</span></div>
+            </div>
+
+            <!-- Step 1 -->
+            <div class="form-section active" id="section1">
+              <div class="section-title">Organizer's Pet</div>
+              <div class="section-subtitle">Update which pet is hosting this playdate</div>
+
+              {% if user_pets %}
+              <div class="pets-grid">
+                {% for pet in user_pets %}
+                <div class="pet-card {% if form.organizer_pet.value == pet.id|stringformat:'s' %}selected{% endif %}" data-pet-id="{{ pet.id }}" onclick="selectPet({{ pet.id }})">
+                  {% if pet.photos.all %}
+                    <img src="{{ pet.photos.first.photo.url }}" alt="{{ pet.name }}">
+                  {% else %}
+                    <img src="https://ui-avatars.com/api/?name={{ pet.name }}&size=64&background=F7931E&color=fff&bold=true" alt="{{ pet.name }}">
+                  {% endif %}
+                  <div class="pet-name">{{ pet.name }}</div>
+                  <div class="pet-breed">{{ pet.breed|default:"Mixed Breed" }}</div>
+                  <div class="pet-type-size">
+                    <span>{{ pet.get_species_display }}</span>
+                    <span>{{ pet.get_general_size_display }}</span>
+                  </div>
+                </div>
+                {% endfor %}
+              </div>
+              {% endif %}
+
+              <div class="input-group" style="margin-top: 20px;">
+                <label class="input-label" for="{{ form.organizer_pet.id_for_label }}">Your Pet *</label>
+                {{ form.organizer_pet }}
+                {% if form.organizer_pet.help_text %}
+                  <small class="help-text">{{ form.organizer_pet.help_text }}</small>
+                {% endif %}
+              </div>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="form-section" id="section2">
+              <div class="section-title">Date & Location</div>
+              <div class="section-subtitle">When and where will the playdate happen?</div>
+
+              <div class="input-group">
+                <label class="input-label" for="{{ form.scheduled_time.id_for_label }}">Date & Time *</label>
+                {{ form.scheduled_time }}
+                {% if form.scheduled_time.help_text %}
+                  <small class="help-text">{{ form.scheduled_time.help_text }}</small>
+                {% endif %}
+              </div>
+
+              <div class="input-group">
+                <label class="input-label" for="{{ form.location.id_for_label }}">Location *</label>
+                {{ form.location }}
+                {% if form.location.help_text %}
+                  <small class="help-text">{{ form.location.help_text }}</small>
+                {% else %}
+                  <small class="help-text">e.g., Central Park, Dog Beach, Riverside Trail</small>
+                {% endif %}
+              </div>
+
+              <div class="info-box">
+                <strong>Note:</strong> The exact meeting spot will be visible to all confirmed participants.
+              </div>
+            </div>
+
+            <!-- Step 3 -->
+            <div class="form-section" id="section3">
+              <div class="section-title">Playdate Details</div>
+              <div class="section-subtitle">Add additional information and visibility settings</div>
+
+              <div class="input-group">
+                <label class="input-label" for="{{ form.description.id_for_label }}">Description (Optional)</label>
+                {{ form.description }}
+                {% if form.description.help_text %}
+                  <small class="help-text">{{ form.description.help_text }}</small>
+                {% else %}
+                  <small class="help-text">Activities planned or any special requirements</small>
+                {% endif %}
+              </div>
+
+              <div class="input-group">
+                <label class="input-label" for="{{ form.max_participants.id_for_label }}">Maximum Participants *</label>
+                {{ form.max_participants }}
+                {% if form.max_participants.help_text %}
+                  <small class="help-text">{{ form.max_participants.help_text }}</small>
+                {% else %}
+                  <small class="help-text">Total number of pets (including yours)</small>
+                {% endif %}
+              </div>
+
+              <div class="checkbox-group">
+                <label class="checkbox-option">
+                  {{ form.is_public }}
+                  <span>Make this playdate public (others can discover and request to join)</span>
+                </label>
+              </div>
+
+              <div class="input-group">
+                <label class="input-label" for="{{ form.status.id_for_label }}">Status</label>
+                {{ form.status }}
+              </div>
+
+              <div class="info-box">
+                <strong>How it works:</strong>
+                <ul>
+                  <li>Public playdates appear in the browse page for others to request to join</li>
+                  <li>You can send direct invitations to specific pet owners</li>
+                  <li>You'll approve all join requests before they're confirmed</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="btn-group">
+              <button type="button" class="btn btn-secondary" id="prevBtn" onclick="previousStep()">Previous</button>
+              <div style="display:flex; gap:8px;">
+                <button type="button" class="btn btn-light" onclick="window.location.href='{% url 'playdate-detail' playdate.id %}'">Cancel</button>
+                <button type="button" class="btn btn-primary" id="nextBtn" onclick="nextStep()">Next Step</button>
+                <button type="submit" class="btn btn-primary" id="submitBtn" style="display:none;">Update Playdate</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Summary / Sidebar column -->
+      <aside class="panel">
+        <div class="panel-head">Live Summary</div>
+        <div class="panel-body summary">
+          <div class="hero">
+            {% if playdate.organizer_pet.photos.all %}
+              <img class="pet-avatar" src="{{ playdate.organizer_pet.photos.first.photo.url }}" alt="{{ playdate.organizer_pet.name }}" />
+            {% else %}
+              <img class="pet-avatar" src="https://ui-avatars.com/api/?name={{ playdate.organizer_pet.name }}&size=64&background=F7931E&color=fff&bold=true" alt="{{ playdate.organizer_pet.name }}" />
+            {% endif %}
+            <div>
+              <div style="font-weight:800; color:#111827;" id="sumTitle">{{ playdate.organizer_pet.name }} • {{ playdate.location }}</div>
+              <div style="font-size:13px; color:#6B7280;">Organizer: {{ playdate.organizer.profile_name }}</div>
+            </div>
+          </div>
+
+          <div class="kv"><span class="k">Date & Time</span><span class="v" id="sumTime">{{ playdate.scheduled_time }}</span></div>
+          <div class="kv"><span class="k">Location</span><span class="v" id="sumLocation">{{ playdate.location }}</span></div>
+          <div class="kv"><span class="k">Max Pets</span><span class="v" id="sumMax">{{ playdate.max_participants }}</span></div>
+          <div class="kv"><span class="k">Visibility</span><span class="v" id="sumPublic">{% if playdate.is_public %}Public{% else %}Private{% endif %}</span></div>
+          <div class="kv"><span class="k">Status</span><span class="v" id="sumStatus">{{ playdate.get_status_display|default:playdate.status }}</span></div>
+
+          <div class="danger" style="margin-top:8px;">
+            <div style="font-weight:700; margin-bottom:6px;">Danger Zone</div>
+            <p style="font-size:13px; margin-bottom:10px;">Cancel this playdate. This action cannot be undone.</p>
+            <a class="btn btn-danger btn-full" href="{% url 'playdate-delete' playdate.id %}">Cancel Playdate</a>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    // Template-specific configuration
+    const formOrganizerPetId = '{{ form.organizer_pet.id_for_label }}';
+    const formScheduledTimeId = '{{ form.scheduled_time.id_for_label }}';
+    const formLocationId = '{{ form.location.id_for_label }}';
+    const formMaxParticipantsId = '{{ form.max_participants.id_for_label }}';
+    const formIsPublicId = '{{ form.is_public.id_for_label }}';
+    const formStatusId = '{{ form.status.id_for_label }}';
+    const initialScheduledTime = '{{ playdate.scheduled_time }}';
+    const initialLocation = '{{ playdate.location }}';
+    const initialMaxParticipants = '{{ playdate.max_participants }}';
+    const initialStatus = '{{ playdate.get_status_display|default:playdate.status }}';
+  </script>
+  <script src="{% static "playdates/js/playdate_form.js"%}"></script>
+  <script>
+    function selectPet(petId){
+      const selectElement = document.getElementById(formOrganizerPetId);
+      if (selectElement) { selectElement.value = petId; }
+      document.querySelectorAll('.pet-card').forEach(card => card.classList.remove('selected'));
+      document.querySelector(`.pet-card[data-pet-id="${petId}"]`)?.classList.add('selected');
+      updateSummary();
+    }
+
+    document.addEventListener('DOMContentLoaded', function(){
+      {% if form.errors %}
+        let errorStep = 1;
+        {% if form.scheduled_time.errors or form.location.errors %}
+          errorStep = 2;
+        {% elif form.description.errors or form.max_participants.errors or form.is_public.errors or form.status.errors %}
+          errorStep = 3;
+        {% endif %}
+        currentStep = errorStep;
+        showStep(currentStep);
+      {% endif %}
+    });
+  </script>
+</body>
+</html>
