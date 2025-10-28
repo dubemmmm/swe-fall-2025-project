@@ -1,0 +1,48 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cancel Playdate</title>
+    <link rel="stylesheet" href="{% static "playdates/css/playdate_confirm_delete.css" %}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Cancel Playdate</h1>
+        </div>
+
+        <div class="content">
+            <div class="confirmation">
+        <p>Are you sure you want to cancel the following playdate?</p>
+
+        <div class="playdate-info">
+            <p><strong>Pet:</strong> {{ object.organizer_pet.name }}</p>
+            <p><strong>Location:</strong> {{ object.location }}</p>
+            <p><strong>Scheduled Time:</strong> {{ object.scheduled_time }}</p>
+            <p><strong>Status:</strong> {{ object.status }}</p>
+        </div>
+
+        {% if object.participants.all %}
+            <div class="warning">
+                <p><strong>Warning:</strong> The following participants have been invited:</p>
+                <ul>
+                    {% for participant in object.participants.all %}
+                        <li>{{ participant.pet.name }} - Status: {{ participant.status }}</li>
+                    {% endfor %}
+                </ul>
+                <p>Canceling this playdate will notify all participants.</p>
+            </div>
+        {% endif %}
+
+        <form method="post">
+            {% csrf_token %}
+            <button type="submit" class="btn-danger">Yes, Cancel Playdate</button>
+            <a href="{% url 'playdate-detail' object.id %}">No, Go Back</a>
+        </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

@@ -6,7 +6,7 @@ from decimal import Decimal
 
 from users.models import User
 from pets.models import PetProfile
-from playdates.models import Playdate
+from playdates.models import Playdate, PlaydateParticipant
 
 
 class PlaydateModelTestCase(TestCase):
@@ -14,7 +14,6 @@ class PlaydateModelTestCase(TestCase):
 
     def setUp(self):
         """Set up test data for Playdate model tests"""
-        # Create test users
         self.user1 = User.objects.create_user(
             username='petowner1',
             email='owner1@example.com',
@@ -35,7 +34,6 @@ class PlaydateModelTestCase(TestCase):
             longitude=Decimal('-73.949997')
         )
 
-        # Create test pets
         self.pet1 = PetProfile.objects.create(
             owner=self.user1,
             name='Buddy',
@@ -62,128 +60,112 @@ class PlaydateModelTestCase(TestCase):
             privacy_settings='PUBLIC'
         )
 
-        # Create a test playdate
         self.playdate = Playdate.objects.create(
-            pet=self.pet1,
             organizer=self.user1,
+            organizer_pet=self.pet1,
             scheduled_time=timezone.now() + timedelta(days=1),
             location='Central Park, New York',
-            status='PENDING'
+            description='Fun playdate in the park!',
+            max_participants=5,
+            is_public=True,
+            status='OPEN'
         )
 
     def test_playdate_creation(self):
         """Test that a playdate can be created successfully"""
         self.assertIsInstance(self.playdate, Playdate)
-        self.assertEqual(self.playdate.pet, self.pet1)
+        self.assertEqual(self.playdate.organizer_pet, self.pet1)
         self.assertEqual(self.playdate.organizer, self.user1)
         self.assertEqual(self.playdate.location, 'Central Park, New York')
-        self.assertEqual(self.playdate.status, 'PENDING')
+        self.assertEqual(self.playdate.status, 'OPEN')
+        self.assertTrue(self.playdate.is_public)
 
-    def test_playdate_default_status(self):
-        """Test that default status is PENDING"""
+    def test_playdate_default_values(self):
+        """Test default values for new fields"""
         new_playdate = Playdate.objects.create(
-            pet=self.pet2,
             organizer=self.user2,
+            organizer_pet=self.pet2,
             scheduled_time=timezone.now() + timedelta(days=2),
             location='Prospect Park, Brooklyn'
         )
-        self.assertEqual(new_playdate.status, 'PENDING')
+        self.assertEqual(new_playdate.status, 'OPEN')
+        self.assertTrue(new_playdate.is_public)
+        self.assertEqual(new_playdate.max_participants, 5)
 
-    def test_playdate_foreign_key_relationships(self):
-        """Test foreign key relationships work correctly"""
-        # Test pet relationship
-        self.assertEqual(self.playdate.pet.name, 'Buddy')
-        self.assertEqual(self.playdate.pet.owner, self.user1)
-
-        # Test organizer relationship
-        self.assertEqual(self.playdate.organizer.username, 'petowner1')
-
-    def test_playdate_cascade_delete_pet(self):
-        """Test that deleting a pet deletes associated playdates"""
-        playdate_id = self.playdate.id
-        self.pet1.delete()
-
-        with self.assertRaises(Playdate.DoesNotExist):
-            Playdate.objects.get(id=playdate_id)
-
-    def test_playdate_cascade_delete_user(self):
-        """Test that deleting a user deletes their organized playdates"""
-        playdate_id = self.playdate.id
-        self.user1.delete()
-
-        with self.assertRaises(Playdate.DoesNotExist):
-            Playdate.objects.get(id=playdate_id)
-
-    def test_playdate_created_at_auto_set(self):
-        """Test that created_at is automatically set"""
-        self.assertIsNotNone(self.playdate.created_at)
-        self.assertLessEqual(
-            self.playdate.created_at,
-            timezone.now()
-        )
-
-    def test_multiple_playdates_for_same_pet(self):
-        """Test that a pet can have multiple playdates"""
-        playdate2 = Playdate.objects.create(
-            pet=self.pet1,
-            organizer=self.user1,
-            scheduled_time=timezone.now() + timedelta(days=3),
-            location='Washington Square Park'
-        )
-
-        pet_playdates = Playdate.objects.filter(pet=self.pet1)
-        self.assertEqual(pet_playdates.count(), 2)
-
-    def test_playdate_status_update(self):
-        """Test that playdate status can be updated"""
-        self.playdate.status = 'CONFIRMED'
-        self.playdate.save()
-
-        updated_playdate = Playdate.objects.get(id=self.playdate.id)
-        self.assertEqual(updated_playdate.status, 'CONFIRMED')
-
-    def test_playdate_scheduled_time_in_future(self):
-        """Test that scheduled time can be set in the future"""
-        future_time = timezone.now() + timedelta(days=7)
-        playdate = Playdate.objects.create(
+    def test_playdate_get_accepted_count(self):
+        """Test getting accepted participant count"""
+        # Add participants
+        PlaydateParticipant.objects.create(
+            playdate=self.playdate,
+            user=self.user2,
             pet=self.pet2,
-            organizer=self.user2,
-            scheduled_time=future_time,
-            location='Dog Beach'
+            status='ACCEPTED'
         )
-        self.assertEqual(playdate.scheduled_time, future_time)
+        self.assertEqual(self.playdate.get_accepted_count(), 1)
+
+    def test_playdate_get_available_spots(self):
+        """Test getting available spots"""
+        # Max 5, organizer takes 1, so 4 available
+        self.assertEqual(self.playdate.get_available_spots(), 4)
+
+        # Add 2 accepted participants
+        user3 = User.objects.create_user(username='user3', password='pass')
+        pet3 = PetProfile.objects.create(
+            owner=user3, name='Pet3', species='DOG', age='2',
+            general_size='MEDIUM', energy_level='HIGH', is_playdate_available=True
+        )
+        PlaydateParticipant.objects.create(
+            playdate=self.playdate, user=self.user2, pet=self.pet2, status='ACCEPTED'
+        )
+        PlaydateParticipant.objects.create(
+            playdate=self.playdate, user=user3, pet=pet3, status='ACCEPTED'
+        )
+
+        self.assertEqual(self.playdate.get_available_spots(), 2)
+
+    def test_playdate_is_full(self):
+        """Test checking if playdate is full"""
+        self.assertFalse(self.playdate.is_full())
+
+        # Fill up the playdate (max 5, organizer + 4 participants)
+        for i in range(4):
+            user = User.objects.create_user(username=f'user{i}', password='pass')
+            pet = PetProfile.objects.create(
+                owner=user, name=f'Pet{i}', species='DOG', age='2',
+                general_size='MEDIUM', energy_level='HIGH', is_playdate_available=True
+            )
+            PlaydateParticipant.objects.create(
+                playdate=self.playdate, user=user, pet=pet, status='ACCEPTED'
+            )
+
+        self.assertTrue(self.playdate.is_full())
 
 
-class PlaydateViewTestCase(TestCase):
-    """Test cases for Playdate views - These will fail until views are implemented"""
+class PlaydateParticipantModelTestCase(TestCase):
+    """Test cases for the PlaydateParticipant model with new statuses"""
 
     def setUp(self):
-        """Set up test data for view tests"""
-        self.client = Client()
-
-        # Create test users
+        """Set up test data"""
         self.user1 = User.objects.create_user(
-            username='petowner1',
-            email='owner1@example.com',
+            username='organizer',
+            email='organizer@example.com',
             password='testpass123',
-            profile_name='Pet Owner One',
+            profile_name='Organizer',
             location='New York, NY'
         )
 
         self.user2 = User.objects.create_user(
-            username='petowner2',
-            email='owner2@example.com',
+            username='invitee',
+            email='invitee@example.com',
             password='testpass123',
-            profile_name='Pet Owner Two',
+            profile_name='Invitee',
             location='Brooklyn, NY'
         )
 
-        # Create test pets
         self.pet1 = PetProfile.objects.create(
             owner=self.user1,
             name='Buddy',
             species='DOG',
-            breed='Golden Retriever',
             age='3 years',
             general_size='LARGE',
             energy_level='HIGH',
@@ -194,226 +176,584 @@ class PlaydateViewTestCase(TestCase):
             owner=self.user2,
             name='Max',
             species='DOG',
-            breed='Labrador',
             age='2 years',
             general_size='LARGE',
             energy_level='HIGH',
             is_playdate_available=True
         )
 
-        # Create test playdate
         self.playdate = Playdate.objects.create(
-            pet=self.pet1,
             organizer=self.user1,
+            organizer_pet=self.pet1,
             scheduled_time=timezone.now() + timedelta(days=1),
-            location='Central Park, New York',
-            status='PENDING'
+            location='Central Park',
+            is_public=True
         )
 
-    # def test_create_playdate_view(self):
-    #     """Test creating a playdate through the view (will fail until implemented)"""
-    #     self.client.login(username='petowner1', password='testpass123')
+    def test_participant_invited_status(self):
+        """Test creating participant with INVITED status"""
+        participant = PlaydateParticipant.objects.create(
+            playdate=self.playdate,
+            user=self.user2,
+            pet=self.pet2,
+            status='INVITED'
+        )
+        self.assertEqual(participant.status, 'INVITED')
 
-    #     playdate_data = {
-    #         'pet': self.pet1.id,
-    #         'organizer': self.user1.id,
-    #         'scheduled_time': (timezone.now() + timedelta(days=2)).isoformat(),
-    #         'location': 'Brooklyn Bridge Park',
-    #         'status': 'PENDING'
-    #     }
+    def test_participant_requested_status(self):
+        """Test creating participant with REQUESTED status"""
+        participant = PlaydateParticipant.objects.create(
+            playdate=self.playdate,
+            user=self.user2,
+            pet=self.pet2,
+            status='REQUESTED'
+        )
+        self.assertEqual(participant.status, 'REQUESTED')
 
-    #     # This will fail until the view is implemented
-    #     try:
-    #         response = self.client.post(
-    #             reverse('playdate-create'),  # URL name will need to be defined
-    #             data=playdate_data
-    #         )
-    #         self.assertEqual(response.status_code, 201)
-    #     except Exception as e:
-    #         # Expected to fail - views not implemented yet
-    #         self.assertTrue(True, f"Expected failure: {e}")
+    def test_participant_status_transitions(self):
+        """Test status transitions"""
+        participant = PlaydateParticipant.objects.create(
+            playdate=self.playdate,
+            user=self.user2,
+            pet=self.pet2,
+            status='INVITED'
+        )
 
-#     def test_list_playdates_view(self):
-#         """Test listing all playdates (will fail until implemented)"""
-#         self.client.login(username='petowner1', password='testpass123')
+        # Accept invitation
+        participant.status = 'ACCEPTED'
+        participant.responded_at = timezone.now()
+        participant.save()
 
-#         # This will fail until the view is implemented
-#         try:
-#             response = self.client.get(reverse('playdate-list'))
-#             self.assertEqual(response.status_code, 200)
-#             self.assertIn('playdates', response.context)
-#         except Exception as e:
-#             # Expected to fail - views not implemented yet
-#             self.assertTrue(True, f"Expected failure: {e}")
-
-#     def test_playdate_detail_view(self):
-#         """Test viewing playdate details (will fail until implemented)"""
-#         self.client.login(username='petowner1', password='testpass123')
-
-#         # This will fail until the view is implemented
-#         try:
-#             response = self.client.get(
-#                 reverse('playdate-detail', kwargs={'pk': self.playdate.id})
-#             )
-#             self.assertEqual(response.status_code, 200)
-#             self.assertEqual(response.context['playdate'], self.playdate)
-#         except Exception as e:
-#             # Expected to fail - views not implemented yet
-#             self.assertTrue(True, f"Expected failure: {e}")
-
-#     def test_update_playdate_status_view(self):
-#         """Test updating playdate status (will fail until implemented)"""
-#         self.client.login(username='petowner1', password='testpass123')
-
-#         # This will fail until the view is implemented
-#         try:
-#             response = self.client.patch(
-#                 reverse('playdate-update', kwargs={'pk': self.playdate.id}),
-#                 data={'status': 'CONFIRMED'},
-#                 content_type='application/json'
-#             )
-#             self.assertEqual(response.status_code, 200)
-
-#             updated_playdate = Playdate.objects.get(id=self.playdate.id)
-#             self.assertEqual(updated_playdate.status, 'CONFIRMED')
-#         except Exception as e:
-#             # Expected to fail - views not implemented yet
-#             self.assertTrue(True, f"Expected failure: {e}")
-
-#     def test_delete_playdate_view(self):
-#         """Test deleting a playdate (will fail until implemented)"""
-#         self.client.login(username='petowner1', password='testpass123')
-#         playdate_id = self.playdate.id
-
-#         # This will fail until the view is implemented
-#         try:
-#             response = self.client.delete(
-#                 reverse('playdate-delete', kwargs={'pk': playdate_id})
-#             )
-#             self.assertEqual(response.status_code, 204)
-
-#             with self.assertRaises(Playdate.DoesNotExist):
-#                 Playdate.objects.get(id=playdate_id)
-#         except Exception as e:
-#             # Expected to fail - views not implemented yet
-#             self.assertTrue(True, f"Expected failure: {e}")
-
-#     def test_user_can_only_modify_own_playdates(self):
-#         """Test that users can only modify their own playdates (will fail until implemented)"""
-#         self.client.login(username='petowner2', password='testpass123')
-
-#         # This will fail until the view is implemented
-#         try:
-#             response = self.client.patch(
-#                 reverse('playdate-update', kwargs={'pk': self.playdate.id}),
-#                 data={'status': 'CANCELLED'},
-#                 content_type='application/json'
-#             )
-#             # Should be forbidden (403) since user2 didn't create this playdate
-#             self.assertEqual(response.status_code, 403)
-#         except Exception as e:
-#             # Expected to fail - views not implemented yet
-#             self.assertTrue(True, f"Expected failure: {e}")
-
-#     def test_filter_playdates_by_status(self):
-#         """Test filtering playdates by status (will fail until implemented)"""
-#         # Create playdates with different statuses
-#         Playdate.objects.create(
-#             pet=self.pet2,
-#             organizer=self.user2,
-#             scheduled_time=timezone.now() + timedelta(days=3),
-#             location='Dog Park',
-#             status='CONFIRMED'
-#         )
-
-#         self.client.login(username='petowner1', password='testpass123')
-
-#         # This will fail until the view is implemented
-#         try:
-#             response = self.client.get(
-#                 reverse('playdate-list'),
-#                 {'status': 'PENDING'}
-#             )
-#             self.assertEqual(response.status_code, 200)
-#             # Should only return pending playdates
-#         except Exception as e:
-#             # Expected to fail - views not implemented yet
-#             self.assertTrue(True, f"Expected failure: {e}")
-
-#     def test_filter_playdates_by_pet(self):
-#         """Test filtering playdates by pet (will fail until implemented)"""
-#         self.client.login(username='petowner1', password='testpass123')
-
-#         # This will fail until the view is implemented
-#         try:
-#             response = self.client.get(
-#                 reverse('playdate-list'),
-#                 {'pet': self.pet1.id}
-#             )
-#             self.assertEqual(response.status_code, 200)
-#             # Should only return playdates for pet1
-#         except Exception as e:
-#             # Expected to fail - views not implemented yet
-#             self.assertTrue(True, f"Expected failure: {e}")
+        self.assertEqual(participant.status, 'ACCEPTED')
+        self.assertIsNotNone(participant.responded_at)
 
 
-# class PlaydateBusinessLogicTestCase(TestCase):
-#     """Test cases for playdate business logic (will fail until implemented)"""
+class BrowsePlaydatesViewTestCase(TestCase):
+    """Test cases for browsing public playdates"""
 
-#     def setUp(self):
-#         """Set up test data"""
-#         self.user = User.objects.create_user(
-#             username='petowner',
-#             email='owner@example.com',
-#             password='testpass123',
-#             profile_name='Pet Owner',
-#             location='New York, NY'
-#         )
+    def setUp(self):
+        """Set up test data"""
+        self.client = Client()
 
-#         self.pet_available = PetProfile.objects.create(
-#             owner=self.user,
-#             name='Available Pet',
-#             species='DOG',
-#             breed='Beagle',
-#             age='4 years',
-#             general_size='MEDIUM',
-#             energy_level='MEDIUM',
-#             is_playdate_available=True
-#         )
+        self.user1 = User.objects.create_user(
+            username='user1', password='testpass123', profile_name='User One'
+        )
+        self.user2 = User.objects.create_user(
+            username='user2', password='testpass123', profile_name='User Two'
+        )
 
-#         self.pet_unavailable = PetProfile.objects.create(
-#             owner=self.user,
-#             name='Unavailable Pet',
-#             species='CAT',
-#             breed='Persian',
-#             age='5 years',
-#             general_size='SMALL',
-#             energy_level='LOW',
-#             is_playdate_available=False
-#         )
+        self.pet1 = PetProfile.objects.create(
+            owner=self.user1, name='Buddy', species='DOG', age='3 years',
+            general_size='LARGE', energy_level='HIGH', is_playdate_available=True
+        )
+        self.pet2 = PetProfile.objects.create(
+            owner=self.user2, name='Max', species='CAT', age='2 years',
+            general_size='MEDIUM', energy_level='MEDIUM', is_playdate_available=True
+        )
 
-#     def test_cannot_create_playdate_for_unavailable_pet(self):
-#         """Test that playdates can't be created for pets not available (will fail until implemented)"""
-#         # This logic should be in the view/serializer validation
-#         # For now, we can create the playdate at model level, but view should prevent it
-#         playdate = Playdate.objects.create(
-#             pet=self.pet_unavailable,
-#             organizer=self.user,
-#             scheduled_time=timezone.now() + timedelta(days=1),
-#             location='Some Park'
-#         )
-#         # Model allows this, but view validation should prevent it
-#         self.assertIsInstance(playdate, Playdate)
+        # Create public playdate
+        self.public_playdate = Playdate.objects.create(
+            organizer=self.user1,
+            organizer_pet=self.pet1,
+            scheduled_time=timezone.now() + timedelta(days=1),
+            location='Central Park',
+            is_public=True,
+            status='OPEN'
+        )
 
-#     def test_cannot_schedule_playdate_in_past(self):
-#         """Test validation for scheduling playdates in the past (will fail until implemented)"""
-#         # This logic should be in the view/serializer validation
-#         past_time = timezone.now() - timedelta(days=1)
-#         playdate = Playdate.objects.create(
-#             pet=self.pet_available,
-#             organizer=self.user,
-#             scheduled_time=past_time,
-#             location='Some Park'
-#         )
-#         # Model allows this, but view validation should prevent it
-#         self.assertIsInstance(playdate, Playdate)
+        # Create private playdate
+        self.private_playdate = Playdate.objects.create(
+            organizer=self.user1,
+            organizer_pet=self.pet1,
+            scheduled_time=timezone.now() + timedelta(days=2),
+            location='Dog Park',
+            is_public=False,
+            status='OPEN'
+        )
+
+    def test_browse_view_requires_login(self):
+        """Test that browse view requires authentication"""
+        response = self.client.get(reverse('browse-playdates'))
+        self.assertEqual(response.status_code, 302)  # Redirect to login
+
+    def test_browse_view_shows_public_playdates(self):
+        """Test that browse view shows only public playdates"""
+        self.client.login(username='user2', password='testpass123')
+        response = self.client.get(reverse('browse-playdates'))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('playdates', response.context)
+        # Should show public playdate but not private or own playdates
+        self.assertEqual(response.context['playdates'].count(), 1)
+
+    def test_browse_view_excludes_own_playdates(self):
+        """Test that users don't see their own playdates in browse"""
+        self.client.login(username='user1', password='testpass123')
+        response = self.client.get(reverse('browse-playdates'))
+
+        self.assertEqual(response.context['playdates'].count(), 0)
+
+    def test_browse_view_filter_by_species(self):
+        """Test filtering by pet species"""
+        self.client.login(username='user2', password='testpass123')
+        response = self.client.get(reverse('browse-playdates'), {'species': 'DOG'})
+
+        self.assertEqual(response.context['playdates'].count(), 1)
+
+
+class RequestToJoinViewTestCase(TestCase):
+    """Test cases for requesting to join playdates"""
+
+    def setUp(self):
+        """Set up test data"""
+        self.client = Client()
+
+        self.organizer = User.objects.create_user(
+            username='organizer', password='testpass123', profile_name='Organizer'
+        )
+        self.requester = User.objects.create_user(
+            username='requester', password='testpass123', profile_name='Requester'
+        )
+
+        self.organizer_pet = PetProfile.objects.create(
+            owner=self.organizer, name='Buddy', species='DOG', age='3 years',
+            general_size='LARGE', energy_level='HIGH', is_playdate_available=True
+        )
+        self.requester_pet = PetProfile.objects.create(
+            owner=self.requester, name='Max', species='DOG', age='2 years',
+            general_size='LARGE', energy_level='HIGH', is_playdate_available=True
+        )
+
+        self.playdate = Playdate.objects.create(
+            organizer=self.organizer,
+            organizer_pet=self.organizer_pet,
+            scheduled_time=timezone.now() + timedelta(days=1),
+            location='Central Park',
+            is_public=True,
+            max_participants=5
+        )
+
+    def test_request_to_join_success(self):
+        """Test successfully requesting to join a playdate"""
+        self.client.login(username='requester', password='testpass123')
+
+        response = self.client.post(
+            reverse('request-join', kwargs={'pk': self.playdate.id}),
+            {'pet_id': self.requester_pet.id}
+        )
+
+        self.assertEqual(response.status_code, 302)
+
+        # Check participant was created with REQUESTED status
+        participant = PlaydateParticipant.objects.filter(
+            playdate=self.playdate,
+            pet=self.requester_pet
+        ).first()
+        self.assertIsNotNone(participant)
+        self.assertEqual(participant.status, 'REQUESTED')
+
+    def test_request_to_join_full_playdate(self):
+        """Test cannot request to join full playdate"""
+        # Fill the playdate
+        for i in range(4):
+            user = User.objects.create_user(username=f'user{i}', password='pass')
+            pet = PetProfile.objects.create(
+                owner=user, name=f'Pet{i}', species='DOG', age='2',
+                general_size='MEDIUM', energy_level='HIGH', is_playdate_available=True
+            )
+            PlaydateParticipant.objects.create(
+                playdate=self.playdate, user=user, pet=pet, status='ACCEPTED'
+            )
+
+        self.client.login(username='requester', password='testpass123')
+        response = self.client.post(
+            reverse('request-join', kwargs={'pk': self.playdate.id}),
+            {'pet_id': self.requester_pet.id}
+        )
+
+        # Should not create participant
+        self.assertFalse(
+            PlaydateParticipant.objects.filter(
+                playdate=self.playdate,
+                pet=self.requester_pet
+            ).exists()
+        )
+
+    def test_cannot_request_twice(self):
+        """Test cannot request to join twice"""
+        PlaydateParticipant.objects.create(
+            playdate=self.playdate,
+            user=self.requester,
+            pet=self.requester_pet,
+            status='REQUESTED'
+        )
+
+        self.client.login(username='requester', password='testpass123')
+        response = self.client.post(
+            reverse('request-join', kwargs={'pk': self.playdate.id}),
+            {'pet_id': self.requester_pet.id}
+        )
+
+        # Should still be only one participant
+        self.assertEqual(
+            PlaydateParticipant.objects.filter(
+                playdate=self.playdate,
+                pet=self.requester_pet
+            ).count(),
+            1
+        )
+
+
+class ApproveRequestViewTestCase(TestCase):
+    """Test cases for approving/denying join requests"""
+
+    def setUp(self):
+        """Set up test data"""
+        self.client = Client()
+
+        self.organizer = User.objects.create_user(
+            username='organizer', password='testpass123'
+        )
+        self.requester = User.objects.create_user(
+            username='requester', password='testpass123'
+        )
+
+        self.organizer_pet = PetProfile.objects.create(
+            owner=self.organizer, name='Buddy', species='DOG', age='3',
+            general_size='LARGE', energy_level='HIGH', is_playdate_available=True
+        )
+        self.requester_pet = PetProfile.objects.create(
+            owner=self.requester, name='Max', species='DOG', age='2',
+            general_size='LARGE', energy_level='HIGH', is_playdate_available=True
+        )
+
+        self.playdate = Playdate.objects.create(
+            organizer=self.organizer,
+            organizer_pet=self.organizer_pet,
+            scheduled_time=timezone.now() + timedelta(days=1),
+            location='Central Park',
+            is_public=True
+        )
+
+        self.participant = PlaydateParticipant.objects.create(
+            playdate=self.playdate,
+            user=self.requester,
+            pet=self.requester_pet,
+            status='REQUESTED'
+        )
+
+    def test_approve_request_success(self):
+        """Test successfully approving a request"""
+        self.client.login(username='organizer', password='testpass123')
+
+        response = self.client.post(
+            reverse('approve-request', kwargs={
+                'pk': self.playdate.id,
+                'participant_id': self.participant.id
+            }),
+            {'action': 'approve'}
+        )
+
+        self.assertEqual(response.status_code, 302)
+
+        self.participant.refresh_from_db()
+        self.assertEqual(self.participant.status, 'ACCEPTED')
+        self.assertIsNotNone(self.participant.responded_at)
+
+    def test_deny_request_success(self):
+        """Test successfully denying a request"""
+        self.client.login(username='organizer', password='testpass123')
+
+        response = self.client.post(
+            reverse('approve-request', kwargs={
+                'pk': self.playdate.id,
+                'participant_id': self.participant.id
+            }),
+            {'action': 'deny'}
+        )
+
+        self.participant.refresh_from_db()
+        self.assertEqual(self.participant.status, 'DECLINED')
+
+    def test_only_organizer_can_approve(self):
+        """Test that only organizer can approve requests"""
+        self.client.login(username='requester', password='testpass123')
+
+        response = self.client.post(
+            reverse('approve-request', kwargs={
+                'pk': self.playdate.id,
+                'participant_id': self.participant.id
+            }),
+            {'action': 'approve'}
+        )
+
+        # Should be forbidden or redirect
+        self.assertIn(response.status_code, [302, 403])
+
+
+class PlaydateInviteViewTestCase(TestCase):
+    """Test cases for inviting pets (organizer sends direct invite)"""
+
+    def setUp(self):
+        """Set up test data"""
+        self.client = Client()
+
+        self.organizer = User.objects.create_user(
+            username='organizer', password='testpass123'
+        )
+        self.invitee = User.objects.create_user(
+            username='invitee', password='testpass123'
+        )
+
+        self.organizer_pet = PetProfile.objects.create(
+            owner=self.organizer, name='Buddy', species='DOG', age='3',
+            general_size='LARGE', energy_level='HIGH', is_playdate_available=True
+        )
+        self.invitee_pet = PetProfile.objects.create(
+            owner=self.invitee, name='Max', species='DOG', age='2',
+            general_size='LARGE', energy_level='HIGH', is_playdate_available=True
+        )
+
+        self.playdate = Playdate.objects.create(
+            organizer=self.organizer,
+            organizer_pet=self.organizer_pet,
+            scheduled_time=timezone.now() + timedelta(days=1),
+            location='Central Park',
+            is_public=True
+        )
+
+    def test_invite_pet_success(self):
+        """Test successfully inviting a pet"""
+        self.client.login(username='organizer', password='testpass123')
+
+        response = self.client.post(
+            reverse('playdate-invite', kwargs={'pk': self.playdate.id}),
+            {'pet_id': self.invitee_pet.id}
+        )
+
+        self.assertEqual(response.status_code, 302)
+
+        # Check participant was created with INVITED status
+        participant = PlaydateParticipant.objects.filter(
+            playdate=self.playdate,
+            pet=self.invitee_pet,
+            status='INVITED'
+        ).first()
+        self.assertIsNotNone(participant)
+
+
+class PlaydateRespondViewTestCase(TestCase):
+    """Test cases for responding to invitations"""
+
+    def setUp(self):
+        """Set up test data"""
+        self.client = Client()
+
+        self.organizer = User.objects.create_user(
+            username='organizer', password='testpass123'
+        )
+        self.invitee = User.objects.create_user(
+            username='invitee', password='testpass123'
+        )
+
+        self.organizer_pet = PetProfile.objects.create(
+            owner=self.organizer, name='Buddy', species='DOG', age='3',
+            general_size='LARGE', energy_level='HIGH', is_playdate_available=True
+        )
+        self.invitee_pet = PetProfile.objects.create(
+            owner=self.invitee, name='Max', species='DOG', age='2',
+            general_size='LARGE', energy_level='HIGH', is_playdate_available=True
+        )
+
+        self.playdate = Playdate.objects.create(
+            organizer=self.organizer,
+            organizer_pet=self.organizer_pet,
+            scheduled_time=timezone.now() + timedelta(days=1),
+            location='Central Park',
+            is_public=True
+        )
+
+        self.participant = PlaydateParticipant.objects.create(
+            playdate=self.playdate,
+            user=self.invitee,
+            pet=self.invitee_pet,
+            status='INVITED'
+        )
+
+    def test_accept_invitation(self):
+        """Test accepting an invitation"""
+        self.client.login(username='invitee', password='testpass123')
+
+        response = self.client.post(
+            reverse('playdate-respond', kwargs={'pk': self.playdate.id}),
+            {'response': 'accept'}
+        )
+
+        self.assertEqual(response.status_code, 302)
+
+        self.participant.refresh_from_db()
+        self.assertEqual(self.participant.status, 'ACCEPTED')
+        self.assertIsNotNone(self.participant.responded_at)
+
+        self.playdate.refresh_from_db()
+        self.assertEqual(self.playdate.status, 'CONFIRMED')
+
+    def test_decline_invitation(self):
+        """Test declining an invitation"""
+        self.client.login(username='invitee', password='testpass123')
+
+        response = self.client.post(
+            reverse('playdate-respond', kwargs={'pk': self.playdate.id}),
+            {'response': 'decline'}
+        )
+
+        self.participant.refresh_from_db()
+        self.assertEqual(self.participant.status, 'DECLINED')
+
+
+class CompleteWorkflowTestCase(TestCase):
+    """Test complete workflows for both invitation and request systems"""
+
+    def setUp(self):
+        """Set up test data"""
+        self.client = Client()
+
+        self.user1 = User.objects.create_user(
+            username='user1', password='testpass123', profile_name='User One'
+        )
+        self.user2 = User.objects.create_user(
+            username='user2', password='testpass123', profile_name='User Two'
+        )
+        self.user3 = User.objects.create_user(
+            username='user3', password='testpass123', profile_name='User Three'
+        )
+
+        self.pet1 = PetProfile.objects.create(
+            owner=self.user1, name='Buddy', species='DOG', age='3',
+            general_size='LARGE', energy_level='HIGH', is_playdate_available=True
+        )
+        self.pet2 = PetProfile.objects.create(
+            owner=self.user2, name='Max', species='DOG', age='2',
+            general_size='LARGE', energy_level='HIGH', is_playdate_available=True
+        )
+        self.pet3 = PetProfile.objects.create(
+            owner=self.user3, name='Charlie', species='DOG', age='4',
+            general_size='LARGE', energy_level='HIGH', is_playdate_available=True
+        )
+
+    def test_public_playdate_with_requests(self):
+        """Test workflow: User1 creates public playdate, User2 requests to join"""
+        # User1 creates public playdate
+        self.client.login(username='user1', password='testpass123')
+
+        playdate_data = {
+            'organizer_pet': self.pet1.id,
+            'scheduled_time': (timezone.now() + timedelta(days=2)).strftime('%Y-%m-%d %H:%M:%S'),
+            'location': 'Central Park',
+            'description': 'Fun playdate!',
+            'max_participants': 5,
+            'is_public': True
+        }
+
+        response = self.client.post(reverse('playdate-create'), data=playdate_data)
+        self.assertEqual(response.status_code, 302)
+
+        playdate = Playdate.objects.get(organizer_pet=self.pet1)
+        self.assertTrue(playdate.is_public)
+        self.assertEqual(playdate.status, 'OPEN')
+
+        # User2 requests to join
+        self.client.logout()
+        self.client.login(username='user2', password='testpass123')
+
+        response = self.client.post(
+            reverse('request-join', kwargs={'pk': playdate.id}),
+            {'pet_id': self.pet2.id}
+        )
+
+        participant = PlaydateParticipant.objects.get(playdate=playdate, pet=self.pet2)
+        self.assertEqual(participant.status, 'REQUESTED')
+
+        # User1 approves request
+        self.client.logout()
+        self.client.login(username='user1', password='testpass123')
+
+        response = self.client.post(
+            reverse('approve-request', kwargs={
+                'pk': playdate.id,
+                'participant_id': participant.id
+            }),
+            {'action': 'approve'}
+        )
+
+        participant.refresh_from_db()
+        self.assertEqual(participant.status, 'ACCEPTED')
+
+    def test_invitation_and_request_mixed(self):
+        """Test workflow: User1 creates playdate, invites User2, User3 requests"""
+        # User1 creates playdate and invites User2
+        self.client.login(username='user1', password='testpass123')
+
+        playdate = Playdate.objects.create(
+            organizer=self.user1,
+            organizer_pet=self.pet1,
+            scheduled_time=timezone.now() + timedelta(days=1),
+            location='Dog Park',
+            is_public=True
+        )
+
+        # Send invitation to User2
+        PlaydateParticipant.objects.create(
+            playdate=playdate,
+            user=self.user2,
+            pet=self.pet2,
+            status='INVITED'
+        )
+
+        # User3 requests to join
+        self.client.logout()
+        self.client.login(username='user3', password='testpass123')
+
+        response = self.client.post(
+            reverse('request-join', kwargs={'pk': playdate.id}),
+            {'pet_id': self.pet3.id}
+        )
+
+        # Check both participants exist with different statuses
+        invited = PlaydateParticipant.objects.get(playdate=playdate, pet=self.pet2)
+        requested = PlaydateParticipant.objects.get(playdate=playdate, pet=self.pet3)
+
+        self.assertEqual(invited.status, 'INVITED')
+        self.assertEqual(requested.status, 'REQUESTED')
+
+        # User2 accepts invitation
+        self.client.logout()
+        self.client.login(username='user2', password='testpass123')
+
+        response = self.client.post(
+            reverse('playdate-respond', kwargs={'pk': playdate.id}),
+            {'response': 'accept'}
+        )
+
+        invited.refresh_from_db()
+        self.assertEqual(invited.status, 'ACCEPTED')
+
+        # User1 approves User3's request
+        self.client.logout()
+        self.client.login(username='user1', password='testpass123')
+
+        response = self.client.post(
+            reverse('approve-request', kwargs={
+                'pk': playdate.id,
+                'participant_id': requested.id
+            }),
+            {'action': 'approve'}
+        )
+
+        requested.refresh_from_db()
+        self.assertEqual(requested.status, 'ACCEPTED')
+
+        # Verify playdate is CONFIRMED with 2 accepted participants
+        playdate.refresh_from_db()
+        self.assertEqual(playdate.status, 'CONFIRMED')
+        self.assertEqual(playdate.get_accepted_count(), 2)
