@@ -1,9 +1,14 @@
 from django.db import models
+from users.models import User
 from pets.models import PetProfile
-# Create your models here.
+
 class AdoptionPost(models.Model):
-    pet = models.OneToOneField(PetProfile, on_delete=models.CASCADE)
-    additional_info = models.TextField()
-    adoption_requirements = models.TextField(blank=True)
-    posted_at = models.DateTimeField(auto_now_add=True)
-    is_active = models.BooleanField(default=True)
+    pet = models.ForeignKey(PetProfile, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    requirements = models.TextField()
+    additional_info = models.TextField(blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_active = models.BooleanField(default=True)  # NEW FIELD
+
+    def __str__(self):
+        return f"{self.pet.name} adoption by {self.owner.username}"

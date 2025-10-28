@@ -1,0 +1,6 @@
+<h1>Delete Adoption Post</h1>
+<p>Are you sure you want to delete {{ object.pet.name }}?</p>
+<form method="post">
+  {% csrf_token %}
+  <button type="submit">Confirm</button>
+</form>
