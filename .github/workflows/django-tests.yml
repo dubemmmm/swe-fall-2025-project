@@ -23,9 +23,10 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r requirements.txt
 
-    - name: Run migrations
+    - name: Generate and run migrations
       run: |
         cd project
+        python manage.py makemigrations
         python manage.py migrate --noinput
 
     - name: Run community and messaging tests
