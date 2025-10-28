@@ -1,0 +1,242 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Playdates</title>
+  <link rel="stylesheet" href="{% static "playdates/css/my_playdates.css" %}">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="topbar">
+        <div class="actions">
+          <a class="btn btn-light" href="{% url 'playdate-create' %}">+ Create New Playdate</a>
+          <a class="btn btn-primary" href="{% url 'playdate-list' %}">View All Playdates</a>
+        </div>
+      </div>
+      <h1>My Playdates</h1>
+      <p style="opacity:.95">Everything you're organizing and invited to, in one place.</p>
+    </div>
+
+    <div class="content">
+      {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <!-- Organized Playdates -->
+      <section class="section organized-playdates">
+        <h2>Playdates I've Organized</h2>
+
+        <!-- Upcoming -->
+        <div class="grouphead"><h3>Upcoming</h3></div>
+        {% if organized_upcoming %}
+          <div class="grid">
+            {% for playdate in organized_upcoming %}
+            <div class="card">
+              <div class="card-head">
+                {% if playdate.organizer_pet.photos.all %}
+                  <img class="pet-avatar" src="{{ playdate.organizer_pet.photos.first.photo.url }}" alt="{{ playdate.organizer_pet.name }}" />
+                {% else %}
+                  <img class="pet-avatar" src="https://ui-avatars.com/api/?name={{ playdate.organizer_pet.name }}&size=64&background=F7931E&color=fff&bold=true" alt="{{ playdate.organizer_pet.name }}" />
+                {% endif %}
+                <div class="title-line">
+                  <div class="title">{{ playdate.organizer_pet.name }} • {{ playdate.location }}</div>
+                  <div class="meta">
+                    <span>Organizer: {{ playdate.organizer.profile_name }}</span>
+                    {% with s=playdate.status|lower %}
+                      <span class="badge badge-{{ s }}" style="margin-left:8px;">{{ playdate.get_status_display|default:playdate.status }}</span>
+                    {% endwith %}
+                  </div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="row"><span class="label">Scheduled</span><span>{{ playdate.scheduled_time }}</span></div>
+                <div class="row"><span class="label">Participants</span>
+                  <div class="participants">
+                    {% if playdate.participants.all %}
+                      {% for participant in playdate.participants.all %}
+                        <span class="pill">{{ participant.pet.name }} • {{ participant.status }}</span>
+                      {% endfor %}
+                    {% else %}
+                      <span class="pill">No participants yet</span>
+                    {% endif %}
+                  </div>
+                </div>
+                {% if playdate.description %}
+                  <div class="row"><span class="label">About</span><span>{{ playdate.description|truncatechars:120 }}</span></div>
+                {% endif %}
+              </div>
+              <div class="card-foot">
+                <div style="display:flex; gap:8px;">
+                  <a class="btn btn-light" href="{% url 'playdate-update' playdate.id %}">Edit</a>
+                  <a class="btn btn-primary" href="{% url 'playdate-detail' playdate.id %}">View Details</a>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty">
+            <p>No upcoming playdates organized.</p>
+            <a class="btn btn-primary" href="{% url 'playdate-create' %}">Create Playdate</a>
+          </div>
+        {% endif %}
+
+        <!-- Past -->
+        <div class="grouphead"><h3>Past</h3></div>
+        {% if organized_past %}
+          <div class="grid">
+            {% for playdate in organized_past %}
+            <div class="card">
+              <div class="card-head">
+                {% if playdate.organizer_pet.photos.all %}
+                  <img class="pet-avatar" src="{{ playdate.organizer_pet.photos.first.photo.url }}" alt="{{ playdate.organizer_pet.name }}" />
+                {% else %}
+                  <img class="pet-avatar" src="https://ui-avatars.com/api/?name={{ playdate.organizer_pet.name }}&size=64&background=F7931E&color=fff&bold=true" alt="{{ playdate.organizer_pet.name }}" />
+                {% endif %}
+                <div class="title-line">
+                  <div class="title">{{ playdate.organizer_pet.name }} • {{ playdate.location }}</div>
+                  {% with s=playdate.status|lower %}
+                    <span class="badge badge-{{ s }}">{{ playdate.get_status_display|default:playdate.status }}</span>
+                  {% endwith %}
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="row"><span class="label">Scheduled</span><span>{{ playdate.scheduled_time }}</span></div>
+                {% if playdate.description %}
+                  <div class="row"><span class="label">About</span><span>{{ playdate.description|truncatechars:120 }}</span></div>
+                {% endif %}
+              </div>
+              <div class="card-foot">
+                <a class="link" href="{% url 'playdate-detail' playdate.id %}">View Details →</a>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty"><p>No past playdates.</p></div>
+        {% endif %}
+      </section>
+
+      <!-- Requested Playdates -->
+      <section class="section requested-playdates">
+        <h2>Playdates I've Requested to Join</h2>
+
+        <!-- Pending Requests -->
+        <div class="grouphead"><h3>Pending Requests</h3></div>
+        {% if requested_pending %}
+          <div class="grid">
+            {% for participant in requested_pending %}
+            <div class="card" style="border:2px solid #FDE68A;">
+              <div class="card-head" style="background:#FEF3C7;">
+                {% if participant.playdate.organizer_pet.photos.all %}
+                  <img class="pet-avatar" src="{{ participant.playdate.organizer_pet.photos.first.photo.url }}" alt="{{ participant.playdate.organizer_pet.name }}" />
+                {% else %}
+                  <img class="pet-avatar" src="https://ui-avatars.com/api/?name={{ participant.playdate.organizer_pet.name }}&size=64&background=F7931E&color=fff&bold=true" alt="{{ participant.playdate.organizer_pet.name }}" />
+                {% endif %}
+                <div class="title-line">
+                  <div class="title">{{ participant.playdate.organizer_pet.name }} • {{ participant.playdate.location }}</div>
+                  <div class="meta">Organizer: {{ participant.playdate.organizer.profile_name }}</div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="row"><span class="label">Scheduled</span><span>{{ participant.playdate.scheduled_time }}</span></div>
+                <div class="row"><span class="label">Your Pet</span><span>{{ participant.pet.name }}</span></div>
+                <div class="row"><span class="label">Status</span>
+                  <span class="badge badge-requested">Pending Approval</span>
+                </div>
+              </div>
+              <div class="card-foot">
+                <a class="link" href="{% url 'playdate-detail' participant.playdate.id %}">View Details →</a>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty"><p>No pending requests.</p></div>
+        {% endif %}
+      </section>
+
+      <!-- Invited Playdates -->
+      <section class="section invited-playdates">
+        <h2>Playdates I've Been Invited To</h2>
+
+        <!-- Pending -->
+        <div class="grouphead"><h3>Pending Invitations</h3></div>
+        {% if invited_pending %}
+          <div class="grid">
+            {% for participant in invited_pending %}
+            <div class="card">
+              <div class="card-head">
+                {% if participant.playdate.organizer_pet.photos.all %}
+                  <img class="pet-avatar" src="{{ participant.playdate.organizer_pet.photos.first.photo.url }}" alt="{{ participant.playdate.organizer_pet.name }}" />
+                {% else %}
+                  <img class="pet-avatar" src="https://ui-avatars.com/api/?name={{ participant.playdate.organizer_pet.name }}&size=64&background=F7931E&color=fff&bold=true" alt="{{ participant.playdate.organizer_pet.name }}" />
+                {% endif %}
+                <div class="title-line">
+                  <div class="title">{{ participant.playdate.organizer_pet.name }} • {{ participant.playdate.location }}</div>
+                  <div class="meta">Organizer: {{ participant.playdate.organizer.profile_name }}</div>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="row"><span class="label">Scheduled</span><span>{{ participant.playdate.scheduled_time }}</span></div>
+                <div class="row"><span class="label">Your Pet</span><span>{{ participant.pet.name }}</span></div>
+                <div class="row"><span class="label">Your Status</span>
+                  {% with s=participant.status|lower %}
+                    <span class="badge badge-{{ s }}">{{ participant.get_status_display|default:participant.status }}</span>
+                  {% endwith %}
+                </div>
+              </div>
+              <div class="card-foot">
+                <a class="btn btn-primary" href="{% url 'playdate-detail' participant.playdate.id %}">View Details & Respond</a>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty"><p>No pending invitations.</p></div>
+        {% endif %}
+
+        <!-- Accepted Invitations -->
+        <div class="grouphead"><h3>Accepted Invitations</h3></div>
+        {% if accepted_upcoming %}
+          <div class="grid">
+            {% for participant in accepted_upcoming %}
+            <div class="card">
+              <div class="card-head">
+                {% if participant.playdate.organizer_pet.photos.all %}
+                  <img class="pet-avatar" src="{{ participant.playdate.organizer_pet.photos.first.photo.url }}" alt="{{ participant.playdate.organizer_pet.name }}" />
+                {% else %}
+                  <img class="pet-avatar" src="https://ui-avatars.com/api/?name={{ participant.playdate.organizer_pet.name }}&size=64&background=F7931E&color=fff&bold=true" alt="{{ participant.playdate.organizer_pet.name }}" />
+                {% endif %}
+                <div class="title-line">
+                  <div class="title">{{ participant.playdate.organizer_pet.name }} • {{ participant.playdate.location }}</div>
+                  {% with s=participant.playdate.status|lower %}
+                    <span class="badge badge-{{ s }}">{{ participant.playdate.get_status_display|default:participant.playdate.status }}</span>
+                  {% endwith %}
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="row"><span class="label">Scheduled</span><span>{{ participant.playdate.scheduled_time }}</span></div>
+                <div class="row"><span class="label">Your Pet</span><span>{{ participant.pet.name }}</span></div>
+              </div>
+              <div class="card-foot">
+                <a class="link" href="{% url 'playdate-detail' participant.playdate.id %}">View Details →</a>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        {% else %}
+          <div class="empty"><p>No accepted invitations.</p></div>
+        {% endif %}
+      </section>
+    </div>
+  </div>
+</body>
+</html>

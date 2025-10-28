@@ -1,0 +1,64 @@
+/* My Playdates Styles */
+:root { --text-primary:#111827; --text-secondary:#6B7280; --bg-light:#F9FAFB; --border-color:#E5E7EB; --radius-md:12px; }
+body { font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif; background:linear-gradient(135deg,#FFF8F3 0%,#FFE8D9 100%); color:#1F2937; min-height:100vh; padding:24px 16px; }
+.container { max-width: 1100px; margin:0 auto; background:#fff; border-radius:16px; box-shadow:0 10px 40px rgba(247,147,30,.15); overflow:hidden; }
+.header { background:linear-gradient(135deg,#FF6B35 0%,#F7931E 100%); color:#fff; padding:32px 28px; }
+.header .topbar { display:flex; gap:12px; flex-wrap:wrap; align-items:center; justify-content:space-between; }
+.header h1 { font-size:28px; font-weight:700; margin-top:6px; }
+.actions { display:flex; gap:10px; flex-wrap:wrap; }
+.btn { padding:10px 16px; border:none; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer; transition:all .2s ease; font-family:inherit; text-decoration:none; display:inline-block; }
+.btn-primary { background:#F7931E; color:#fff; box-shadow:0 2px 8px rgba(247,147,30,.3);} .btn-primary:hover{ background:#EF6C00; }
+.btn-light { background:#fff; color:#F7931E; border:1px solid #F7931E; } .btn-light:hover{ background:#FFF8F3; }
+.content { padding:28px; }
+.messages { margin-bottom:16px; }
+.alert { padding:12px 14px; border-radius:10px; font-size:14px; }
+.alert-success{ background:#ECFDF5; color:#065F46; border:1px solid #A7F3D0; }
+.alert-error,.alert-danger{ background:#FEF2F2; color:#991B1B; border:1px solid #FCA5A5; }
+.alert-warning{ background:#FFFBEB; color:#92400E; border:1px solid #FDE68A; }
+.alert-info{ background:#EFF6FF; color:#1E40AF; border:1px solid #BFDBFE; }
+
+.section { margin-bottom:28px; }
+.section h2 { font-size:20px; color:#111827; margin-bottom:12px; }
+.subhead { display:flex; align-items:center; gap:10px; margin:4px 0 16px; color:#6B7280; font-size:14px; }
+
+.grid { display:grid; grid-template-columns: repeat(auto-fill,minmax(300px,1fr)); gap:16px; }
+.card { background:#fff; border:1px solid #E5E7EB; border-radius:14px; overflow:hidden; display:flex; flex-direction:column; }
+.card:hover { box-shadow:0 8px 24px rgba(17,24,39,.08); }
+
+.card-head { display:flex; gap:12px; align-items:center; padding:14px 16px; background:#FFF8F3; border-bottom:1px solid #FFE1C8; }
+.pet-avatar { width:56px; height:56px; border-radius:50%; object-fit:cover; border:2px solid #FFD3AC; background:#fff; }
+.title-line { display:flex; flex-direction:column; gap:4px; }
+.title { font-size:16px; color:#111827; font-weight:700; }
+.meta { font-size:12px; color:#6B7280; }
+
+.badge { padding:4px 10px; border-radius:999px; font-size:12px; font-weight:600; border:1px solid transparent; white-space:nowrap; }
+.badge-pending{ background:#FFFBEB; color:#92400E; border-color:#FDE68A; }
+.badge-invited{ background:#EFF6FF; color:#1E40AF; border-color:#BFDBFE; }
+.badge-requested{ background:#FFFBEB; color:#92400E; border-color:#FDE68A; }
+.badge-accepted{ background:#ECFDF5; color:#065F46; border-color:#A7F3D0; }
+.badge-confirmed{ background:#ECFDF5; color:#065F46; border-color:#A7F3D0; }
+.badge-declined{ background:#FEF2F2; color:#991B1B; border-color:#FCA5A5; }
+.badge-cancelled{ background:#F3F4F6; color:#374151; border-color:#E5E7EB; }
+.badge-completed{ background:#EFF6FF; color:#1E40AF; border-color:#BFDBFE; }
+.badge-open{ background:#ECFDF5; color:#065F46; border-color:#A7F3D0; }
+
+.card-body { padding:14px 16px; display:grid; gap:8px; font-size:14px; color:#374151; }
+.row { display:flex; gap:8px; align-items:center; }
+.label { color:#6B7280; min-width:96px; font-size:12px; text-transform:uppercase; letter-spacing:.02em; }
+
+.participants { display:flex; flex-wrap:wrap; gap:6px; }
+.pill { background:#F3F4F6; color:#374151; border:1px solid #E5E7EB; border-radius:999px; padding:4px 10px; font-size:12px; }
+
+.card-foot { padding:14px 16px; display:flex; gap:8px; justify-content:space-between; align-items:center; border-top:1px solid #E5E7EB; }
+.link { text-decoration:none; font-weight:600; color:#F7931E; } .link:hover{ text-decoration:underline; }
+
+.empty { border:2px dashed #FDE1C8; border-radius:16px; background:#FFF8F3; padding:24px; text-align:center; color:#6B7280; }
+
+.grouphead { display:flex; align-items:center; justify-content:space-between; gap:12px; margin:16px 0; }
+.grouphead h3 { font-size:16px; color:#111827; }
+
+@media (max-width: 768px) {
+  .header { padding:24px; }
+  .content { padding:20px; }
+  .grid { grid-template-columns: 1fr; }
+}

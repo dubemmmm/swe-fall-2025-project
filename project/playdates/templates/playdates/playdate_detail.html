@@ -1,0 +1,220 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Playdate Details</title>
+  <link rel="stylesheet" href="{% static "playdates/css/playdate_detail.css" %}">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="topbar">
+        <div class="actions">
+          <a class="btn btn-light" href="{% url 'playdate-list' %}">← Back to List</a>
+          <a class="btn btn-primary" href="{% url 'my-playdates' %}">My Playdates</a>
+        </div>
+      </div>
+      <h1>Playdate Details</h1>
+      <p style="opacity:.95">See all details, participants, and respond to invitations.</p>
+    </div>
+
+    <div class="content">
+      {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <!-- Hero summary -->
+      <div class="hero">
+        {% if playdate.organizer_pet.photos.all %}
+          <img class="pet-avatar" src="{{ playdate.organizer_pet.photos.first.photo.url }}" alt="{{ playdate.organizer_pet.name }}" />
+        {% else %}
+          <img class="pet-avatar" src="https://ui-avatars.com/api/?name={{ playdate.organizer_pet.name }}&size=64&background=F7931E&color=fff&bold=true" alt="{{ playdate.organizer_pet.name }}" />
+        {% endif %}
+        <div class="hero-title" style="flex:1;">
+          <div class="title">{{ playdate.organizer_pet.name }} • {{ playdate.location }}</div>
+          <div class="meta">Organizer: {{ playdate.organizer.profile_name }} ({{ playdate.organizer.username }})</div>
+        </div>
+        {% with s=playdate.status|lower %}
+          <span class="badge badge-{{ s }}">{{ playdate.get_status_display|default:playdate.status }}</span>
+        {% endwith %}
+      </div>
+
+      <div class="details">
+        <!-- Left column: Info & Participants -->
+        <div class="main">
+          <div class="card">
+            <div class="card-head">Information</div>
+            <div class="card-body">
+              <div class="row"><span class="label">Organizer</span><span>{{ playdate.organizer.profile_name }} ({{ playdate.organizer.username }})</span></div>
+              <div class="row"><span class="label">Organizer's Pet</span><span>{{ playdate.organizer_pet.name }} ({{ playdate.organizer_pet.species }})</span></div>
+              <div class="row"><span class="label">Scheduled Time</span><span>{{ playdate.scheduled_time }}</span></div>
+              <div class="row"><span class="label">Location</span><span>{{ playdate.location }}</span></div>
+              <div class="row"><span class="label">Status</span><span>{% with s=playdate.status|lower %}<span class="badge badge-{{ s }}">{{ playdate.get_status_display|default:playdate.status }}</span>{% endwith %}</span></div>
+              <div class="row"><span class="label">Created</span><span>{{ playdate.created_at }}</span></div>
+            </div>
+          </div>
+
+          {% if playdate.organizer == user and requested_participants %}
+          <div class="card" style="margin-top:16px; border:2px solid #FDE68A; background:#FFFBEB;">
+            <div class="card-head" style="background:#FEF3C7;">Pending Join Requests</div>
+            <div class="card-body participants">
+              {% for participant in requested_participants %}
+                <div class="participant-item" style="background:#FFFBEB; border:1px solid #FDE68A;">
+                  <span class="pill">{{ participant.pet.name }} ({{ participant.pet.species }})</span>
+                  <span class="pill">Owner: {{ participant.user.profile_name }}</span>
+                  <span class="badge badge-requested">Requested</span>
+                  <div style="display:flex; gap:6px; margin-left:auto;">
+                    <form method="post" action="{% url 'approve-request' playdate.id participant.id %}" style="display:inline;">
+                      {% csrf_token %}
+                      <input type="hidden" name="action" value="approve">
+                      <button class="btn btn-primary" type="submit" style="padding:6px 12px; font-size:12px;">Approve</button>
+                    </form>
+                    <form method="post" action="{% url 'approve-request' playdate.id participant.id %}" style="display:inline;">
+                      {% csrf_token %}
+                      <input type="hidden" name="action" value="deny">
+                      <button class="btn btn-light" type="submit" style="padding:6px 12px; font-size:12px;">Deny</button>
+                    </form>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endif %}
+
+          <div class="card" style="margin-top:16px;">
+            <div class="card-head">Participants</div>
+            <div class="card-body participants">
+              {% if invited_participants or accepted_participants %}
+                {% for participant in invited_participants %}
+                  <div class="participant-item">
+                    <span class="pill">{{ participant.pet.name }} ({{ participant.pet.species }})</span>
+                    <span class="pill">Owner: {{ participant.user.profile_name }}</span>
+                    {% with ps=participant.status|lower %}
+                      <span class="badge badge-{{ ps }}">{{ participant.get_status_display|default:participant.status }}</span>
+                    {% endwith %}
+                  </div>
+                {% endfor %}
+                {% for participant in accepted_participants %}
+                  <div class="participant-item">
+                    <span class="pill">{{ participant.pet.name }} ({{ participant.pet.species }})</span>
+                    <span class="pill">Owner: {{ participant.user.profile_name }}</span>
+                    {% with ps=participant.status|lower %}
+                      <span class="badge badge-{{ ps }}">{{ participant.get_status_display|default:participant.status }}</span>
+                    {% endwith %}
+                    {% if participant.responded_at %}
+                      <span class="pill">Joined: {{ participant.responded_at|date:"M d, Y" }}</span>
+                    {% endif %}
+                  </div>
+                {% endfor %}
+              {% else %}
+                <div class="participant-item"><span>No participants yet.</span></div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Right column: Sidebar -->
+        <div class="sidebar">
+          {% if user_invitation %}
+            <div class="card">
+              <div class="card-head">Your Invitation</div>
+              <div class="card-body group">
+                <div class="row"><span class="label">Your Pet</span><span>{{ user_invitation.pet.name }}</span></div>
+                <div class="row"><span class="label">Your Status</span>{% with us=user_invitation.status|lower %}<span class="badge badge-{{ us }}">{{ user_invitation.get_status_display|default:user_invitation.status }}</span>{% endwith %}</div>
+                <div class="respond">
+                  <form method="post" action="{% url 'playdate-respond' playdate.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="response" value="accept">
+                    <button class="btn btn-primary" type="submit">Accept Invitation</button>
+                  </form>
+                  <form method="post" action="{% url 'playdate-respond' playdate.id %}">
+                    {% csrf_token %}
+                    <input type="hidden" name="response" value="decline">
+                    <button class="btn btn-light" type="submit">Decline Invitation</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+
+          {% if can_request_join %}
+            <div class="card" style="margin-top:16px;">
+              <div class="card-head">Request to Join</div>
+              <div class="card-body group">
+                <p style="font-size:13px; color:#6B7280; margin-bottom:10px;">Select one of your pets to request joining this playdate:</p>
+                <form method="post" action="{% url 'request-join' playdate.id %}">
+                  {% csrf_token %}
+                  <select name="pet_id" required style="width:100%; padding:10px 12px; border:1px solid #D1D5DB; border-radius:10px; font-size:14px; margin-bottom:8px;">
+                    <option value="">-- Select your pet --</option>
+                    {% for pet in my_available_pets %}
+                      <option value="{{ pet.id }}">{{ pet.name }} ({{ pet.species }})</option>
+                    {% endfor %}
+                  </select>
+                  <button class="btn btn-primary" type="submit" style="width:100%;">Send Request</button>
+                </form>
+              </div>
+            </div>
+          {% endif %}
+
+          {% if user_request %}
+            <div class="card" style="margin-top:16px;">
+              <div class="card-head">Your Request</div>
+              <div class="card-body group">
+                <div class="row"><span class="label">Your Pet</span><span>{{ user_request.pet.name }}</span></div>
+                <div class="row"><span class="label">Status</span>
+                  {% with rs=user_request.status|lower %}
+                    <span class="badge badge-{{ rs }}">{{ user_request.get_status_display|default:user_request.status }}</span>
+                  {% endwith %}
+                </div>
+                {% if user_request.status == 'REQUESTED' %}
+                  <p style="font-size:13px; color:#6B7280; margin-top:8px;">Your request is pending organizer approval.</p>
+                {% elif user_request.status == 'ACCEPTED' %}
+                  <p style="font-size:13px; color:#065F46; margin-top:8px;">You're confirmed to join this playdate!</p>
+                {% endif %}
+              </div>
+            </div>
+          {% endif %}
+
+          {% if playdate.organizer == user %}
+            <div class="card organizer-actions" style="margin-top:16px;">
+              <div class="card-head">Organizer Actions</div>
+              <div class="card-body group">
+                {% if available_pets %}
+                <div>
+                  <div style="font-weight:600; color:#111827; margin-bottom:6px;">Invite Additional Pets</div>
+                  <form method="post" action="{% url 'playdate-invite' playdate.id %}">
+                    {% csrf_token %}
+                    <select name="pet_id" required style="width:100%; padding:10px 12px; border:1px solid #D1D5DB; border-radius:10px; font-size:14px; margin-bottom:8px;">
+                      <option value="">-- Select a pet to invite --</option>
+                      {% for pet in available_pets %}
+                        <option value="{{ pet.id }}">{{ pet.name }} ({{ pet.species }}) - Owner: {{ pet.owner.profile_name }}</option>
+                      {% endfor %}
+                    </select>
+                    <button class="btn btn-primary" type="submit">Send Invitation</button>
+                  </form>
+                </div>
+                {% endif %}
+                <div class="rowbtns">
+                  <a class="btn btn-light" href="{% url 'playdate-update' playdate.id %}">Edit Playdate</a>
+                  <a class="btn btn-danger" href="{% url 'playdate-delete' playdate.id %}">Cancel Playdate</a>
+                </div>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="nav">
+        <a class="btn btn-light" href="{% url 'playdate-list' %}">Back to List</a>
+        <a class="btn btn-primary" href="{% url 'my-playdates' %}">My Playdates</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

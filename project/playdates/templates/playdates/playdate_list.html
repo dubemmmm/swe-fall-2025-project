@@ -1,0 +1,110 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Playdates</title>
+  <link rel="stylesheet" href="{% static "playdates/css/playdate_list.css" %}">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="topbar">
+        <div>
+          <a class="btn btn-light" href="{% url 'playdate-create' %}">+ Create New Playdate</a>
+          <a class="btn btn-primary" href="{% url 'my-playdates' %}">My Playdates</a>
+        </div>
+      </div>
+      <h1>Discover Playdates</h1>
+      <p style="opacity:.95">Browse upcoming playdates or filter by status to find the perfect meetup for your pet.</p>
+    </div>
+
+    <div class="content">
+      {% if messages %}
+        <div class="messages">
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+
+      <form method="get" class="filters">
+        <h3>Filters</h3>
+        <label for="status" class="label">Status</label>
+        <select name="status" id="status">
+          <option value="">All</option>
+          <option value="PENDING" {% if current_status == 'PENDING' %}selected{% endif %}>Pending</option>
+          <option value="CONFIRMED" {% if current_status == 'CONFIRMED' %}selected{% endif %}>Confirmed</option>
+          <option value="DECLINED" {% if current_status == 'DECLINED' %}selected{% endif %}>Declined</option>
+          <option value="CANCELLED" {% if current_status == 'CANCELLED' %}selected{% endif %}>Cancelled</option>
+          <option value="COMPLETED" {% if current_status == 'COMPLETED' %}selected{% endif %}>Completed</option>
+        </select>
+        <button type="submit" class="btn btn-primary">Apply</button>
+      </form>
+
+      {% if playdates %}
+        <div class="grid">
+          {% for playdate in playdates %}
+          <div class="card">
+            <div class="card-head">
+              {% if playdate.organizer_pet.photos.all %}
+                <img class="pet-avatar" src="{{ playdate.organizer_pet.photos.first.photo.url }}" alt="{{ playdate.organizer_pet.name }}" />
+              {% else %}
+                <img class="pet-avatar" src="https://ui-avatars.com/api/?name={{ playdate.organizer_pet.name }}&size=64&background=F7931E&color=fff&bold=true" alt="{{ playdate.organizer_pet.name }}" />
+              {% endif %}
+              <div class="title-line">
+                <h3>{{ playdate.organizer_pet.name }} • {{ playdate.location }}</h3>
+                {% with status=playdate.status|lower %}
+                  <span class="badge badge-{{ status }}">{{ playdate.get_status_display|default:playdate.status }}</span>
+                {% endwith %}
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="row"><span class="label">Organizer</span><span>{{ playdate.organizer.profile_name }}</span></div>
+              <div class="row"><span class="label">Scheduled</span><span>{{ playdate.scheduled_time }}</span></div>
+              {% if playdate.description %}
+                <div class="row"><span class="label">About</span><span>{{ playdate.description|truncatechars:120 }}</span></div>
+              {% endif %}
+              <div class="row"><span class="label">Max Pets</span><span>{{ playdate.max_participants }}</span></div>
+            </div>
+            <div class="card-foot">
+              <a class="link" href="{% url 'playdate-detail' playdate.id %}">View Details →</a>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                {% if user == playdate.organizer %}
+                  <a class="btn btn-light" href="{% url 'playdate-update' playdate.id %}">Edit</a>
+                {% else %}
+                  {% if playdate.is_public and playdate.status == 'OPEN' %}
+                    <span class="pill" style="background: #ECFDF5; color: #065F46; border-color: #A7F3D0;">Open</span>
+                  {% endif %}
+                {% endif %}
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        {% if is_paginated %}
+          <div class="pagination">
+            {% if page_obj.has_previous %}
+              <a href="?page=1{% if current_status %}&status={{ current_status }}{% endif %}">First</a>
+              <a href="?page={{ page_obj.previous_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}">Previous</a>
+            {% endif %}
+            <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+            {% if page_obj.has_next %}
+              <a href="?page={{ page_obj.next_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}">Next</a>
+              <a href="?page={{ page_obj.paginator.num_pages }}{% if current_status %}&status={{ current_status }}{% endif %}">Last</a>
+            {% endif %}
+          </div>
+        {% endif %}
+      {% else %}
+        <div class="empty">
+          <h3 style="margin-bottom:6px; color:#111827;">No playdates found</h3>
+          <p style="margin-bottom:14px;">Try a different filter or create the first playdate for others to join.</p>
+          <a class="btn btn-primary" href="{% url 'playdate-create' %}">Create a Playdate</a>
+        </div>
+      {% endif %}
+    </div>
+  </div>
+</body>
+</html>
