@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>{{ pet.name }}'s Profile</h1>
+<p>Species: {{ pet.get_species_display }}</p>
+<p>Age: {{ pet.age }}</p>
+<p>Bio: {{ pet.bio }}</p>
+<a href="{% url 'pet_update' pet.pk %}">Edit</a> | <a href="{% url 'pet_delete' pet.pk %}">Delete</a>
+{% endblock %}
