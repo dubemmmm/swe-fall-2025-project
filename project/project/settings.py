@@ -149,3 +149,6 @@ AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY', default=None)
 
 # Custom User Model
 AUTH_USER_MODEL = 'users.User'
+
+# URL to redirect to when a user is not logged in
+LOGIN_URL = '/users/login/'

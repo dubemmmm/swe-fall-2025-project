@@ -38,3 +38,7 @@ other_test_cases.txt
 # Migrations (optional - uncomment if you don't want to track migrations)
 # */migrations/*.py
 # !*/migrations/__init__.py
+project/adoption/migrations/0001_initial.py
+project/pets/migrations/0001_initial.py
+project/pets/migrations/0002_remove_petprofile_description.py
+project/playdates/migrations/0001_initial.py
