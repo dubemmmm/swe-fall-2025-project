@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Delete Pet Profile</h1>
+<p>Are you sure you want to delete {{ pet.name }}?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="submit-btn" style="background-color: #e74c3c;">Yes, delete</button>
+    <a href="{% url 'pet_detail' pet.pk %}">Cancel</a>
+</form>
+{% endblock %}
