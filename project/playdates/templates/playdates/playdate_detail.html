@@ -65,12 +65,27 @@
             <div class="card-head" style="background:#FEF3C7;">Pending Join Requests</div>
             <div class="card-body participants">
               {% for participant in requested_participants %}
-                <div class="participant-item" style="background:#FFFBEB; border:1px solid #FDE68A;">
-                  <span class="pill">{{ participant.pet.name }} ({{ participant.pet.species }})</span>
-                  <span class="pill">Owner: {{ participant.user.profile_name }}</span>
-                  <span class="badge badge-requested">Requested</span>
-                  <div style="display:flex; gap:6px; margin-left:auto;">
-                    <form method="post" action="{% url 'approve-request' playdate.id participant.id %}" style="display:inline;">
+                <div class="participant-item" style="background:#FFFBEB; border:1px solid #FDE68A; flex-direction:column; align-items:flex-start; gap:12px;">
+                  <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; width:100%;">
+                    <span class="pill">{{ participant.pet.name }} ({{ participant.pet.species }})</span>
+                    <span class="pill">Owner: {{ participant.user.profile_name }}</span>
+                    <span class="badge badge-requested">Requested</span>
+                  </div>
+                  <div style="display:flex; gap:6px; flex-wrap:wrap; width:100%;">
+                    <a href="{% url 'public_profile' participant.user.id %}" class="btn btn-light" style="padding:6px 12px; font-size:12px;">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px;">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                      </svg>
+                      View Profile
+                    </a>
+                    <a href="{% url 'pet_compatibility' playdate.organizer_pet.id participant.pet.id %}" class="btn btn-light" style="padding:6px 12px; font-size:12px;">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px;">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                      </svg>
+                      Check Compatibility
+                    </a>
+                    <form method="post" action="{% url 'approve-request' playdate.id participant.id %}" style="display:inline; margin-left:auto;">
                       {% csrf_token %}
                       <input type="hidden" name="action" value="approve">
                       <button class="btn btn-primary" type="submit" style="padding:6px 12px; font-size:12px;">Approve</button>

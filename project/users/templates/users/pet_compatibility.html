@@ -1,0 +1,99 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Compatibility Score - {{ pet1.name }} & {{ pet2.name }}</title>
+  <link rel="stylesheet" href="{% static 'users/css/profile.css' %}">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="topbar">
+        <a class="btn btn-light" href="javascript:history.back()">← Back</a>
+      </div>
+      <h1>Pet Compatibility Score</h1>
+      <p style="opacity:.95">See how well these pets match for playdates</p>
+    </div>
+
+    <div class="content">
+      <div class="compatibility-overview">
+        <div class="compatibility-score-circle {{ compatibility.rating_class }}">
+          <div class="score-number">{{ compatibility.percentage }}%</div>
+          <div class="score-label">{{ compatibility.rating }}</div>
+        </div>
+      </div>
+
+      <div class="pets-comparison">
+        <div class="comparison-pet">
+          {% if pet1.photos.all %}
+            <img src="{{ pet1.photos.first.photo.url }}" alt="{{ pet1.name }}" class="comparison-pet-photo" />
+          {% else %}
+            <div class="comparison-pet-photo-placeholder">🐾</div>
+          {% endif %}
+          <h3>{{ pet1.name }}</h3>
+          <p>{{ pet1.get_species_display }} • {{ pet1.get_general_size_display }}</p>
+          <p style="font-size: 14px; color: #6B7280;">Owner: {{ pet1.owner.profile_name }}</p>
+        </div>
+
+        <div class="comparison-vs">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="8" x2="12" y2="16"></line>
+            <line x1="8" y1="12" x2="16" y2="12"></line>
+          </svg>
+        </div>
+
+        <div class="comparison-pet">
+          {% if pet2.photos.all %}
+            <img src="{{ pet2.photos.first.photo.url }}" alt="{{ pet2.name }}" class="comparison-pet-photo" />
+          {% else %}
+            <div class="comparison-pet-photo-placeholder">🐾</div>
+          {% endif %}
+          <h3>{{ pet2.name }}</h3>
+          <p>{{ pet2.get_species_display }} • {{ pet2.get_general_size_display }}</p>
+          <p style="font-size: 14px; color: #6B7280;">Owner: {{ pet2.owner.profile_name }}</p>
+        </div>
+      </div>
+
+      <div class="compatibility-factors">
+        <h2>Compatibility Breakdown</h2>
+        {% for factor in compatibility.factors %}
+        <div class="factor-card {{ factor.status }}">
+          <div class="factor-header">
+            <h4>{{ factor.name }}</h4>
+            <div class="factor-score">
+              <span class="score-value">{{ factor.score }}/{{ factor.max }}</span>
+            </div>
+          </div>
+          <div class="factor-progress">
+            <div class="progress-bar">
+              <div class="progress-fill {{ factor.status }}" style="width: {{ factor.score|floatformat:0|add:'0' }}%; max-width: calc({{ factor.score }} / {{ factor.max }} * 100%);"></div>
+            </div>
+          </div>
+          <p class="factor-detail">{{ factor.detail }}</p>
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="compatibility-summary">
+        <h3>Summary</h3>
+        <div class="summary-box {{ compatibility.rating_class }}">
+          <p>
+            {% if compatibility.percentage >= 80 %}
+              These pets are an excellent match! They share many compatible traits and characteristics. This playdate has a high chance of success.
+            {% elif compatibility.percentage >= 60 %}
+              These pets are a good match! They have several compatible characteristics. With proper supervision, this should be a great playdate.
+            {% elif compatibility.percentage >= 40 %}
+              These pets have fair compatibility. While they have some differences, they can still enjoy a playdate together with careful supervision.
+            {% else %}
+              These pets have some significant differences. Extra supervision and a controlled environment are recommended for this playdate.
+            {% endif %}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

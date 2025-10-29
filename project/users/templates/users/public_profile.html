@@ -1,0 +1,137 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ profile_user.profile_name }} - Public Profile</title>
+  <link rel="stylesheet" href="{% static 'users/css/profile.css' %}">
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="topbar">
+        <a class="btn btn-light" href="javascript:history.back()">← Back</a>
+      </div>
+      <h1>{{ profile_user.profile_name }}'s Profile</h1>
+      <p style="opacity:.95">View pet owner information and their pets</p>
+    </div>
+
+    <div class="content">
+      <div class="profile-card">
+        <div class="profile-header">
+          <div class="profile-avatar-section">
+            {% if profile_user.profile_photo %}
+              <img src="{{ profile_user.profile_photo.url }}" alt="Profile Photo" class="profile-avatar" />
+            {% else %}
+              <div class="profile-avatar-placeholder">
+                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
+            {% endif %}
+          </div>
+
+          <div class="profile-header-info">
+            <h2>{{ profile_user.profile_name }}</h2>
+            <p class="username">@{{ profile_user.username }}</p>
+          </div>
+        </div>
+
+        <div class="profile-body">
+          <div class="info-section">
+            <h3>Contact Information</h3>
+            <div class="info-grid">
+              <div class="info-item">
+                <span class="info-label">Email</span>
+                <span class="info-value">{{ profile_user.email }}</span>
+              </div>
+
+              {% if profile_user.phone_number %}
+              <div class="info-item">
+                <span class="info-label">Phone</span>
+                <span class="info-value">{{ profile_user.phone_number }}</span>
+              </div>
+              {% endif %}
+
+              {% if profile_user.location %}
+              <div class="info-item">
+                <span class="info-label">Location</span>
+                <span class="info-value">{{ profile_user.location }}</span>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+
+          {% if profile_user.bio %}
+          <div class="info-section">
+            <h3>About</h3>
+            <p class="bio-text">{{ profile_user.bio }}</p>
+          </div>
+          {% endif %}
+
+          {% if pets %}
+          <div class="info-section">
+            <h3>Their Pets</h3>
+            <div class="pets-grid">
+              {% for pet in pets %}
+              <div class="pet-card">
+                <div class="pet-card-header">
+                  {% if pet.photos.all %}
+                    <img src="{{ pet.photos.first.photo.url }}" alt="{{ pet.name }}" class="pet-photo" />
+                  {% else %}
+                    <div class="pet-photo-placeholder">
+                      <span style="font-size: 32px;">🐾</span>
+                    </div>
+                  {% endif %}
+                </div>
+                <div class="pet-card-body">
+                  <h4>{{ pet.name }}</h4>
+                  <div class="pet-info-row">
+                    <span class="pet-label">Species:</span>
+                    <span>{{ pet.get_species_display }}</span>
+                  </div>
+                  {% if pet.breed %}
+                  <div class="pet-info-row">
+                    <span class="pet-label">Breed:</span>
+                    <span>{{ pet.breed }}</span>
+                  </div>
+                  {% endif %}
+                  <div class="pet-info-row">
+                    <span class="pet-label">Age:</span>
+                    <span>{{ pet.age }}</span>
+                  </div>
+                  <div class="pet-info-row">
+                    <span class="pet-label">Size:</span>
+                    <span>{{ pet.get_general_size_display }}</span>
+                  </div>
+                  <div class="pet-info-row">
+                    <span class="pet-label">Energy:</span>
+                    <span>{{ pet.get_energy_level_display }}</span>
+                  </div>
+                  {% if pet.traits.all %}
+                  <div class="pet-traits">
+                    {% for trait in pet.traits.all %}
+                      <span class="trait-badge">{{ trait.trait }}</span>
+                    {% endfor %}
+                  </div>
+                  {% endif %}
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% else %}
+          <div class="info-section">
+            <div class="empty-state">
+              <p>This user has no pets available for playdates.</p>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
