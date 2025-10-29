@@ -29,7 +29,7 @@ class PetProfileAdmin(admin.ModelAdmin):
             'fields': ('general_size', 'weight', 'color_markings')
         }),
         ('Behavior & Availability', {
-            'fields': ('energy_level', 'description', 'is_playdate_available', 'is_adoptable')
+            'fields': ('energy_level', 'bio', 'is_playdate_available', 'is_adoptable')
         }),
         ('Settings', {
             'fields': ('privacy_settings',)

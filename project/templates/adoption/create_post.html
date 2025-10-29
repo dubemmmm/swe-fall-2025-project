@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>List {{ pet.name }} for Adoption</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Create Listing</button>
+</form>
+
+<a href="{% url 'view_adoption_listings' %}">Back to all adoption listings</a>
+{% endblock %}
