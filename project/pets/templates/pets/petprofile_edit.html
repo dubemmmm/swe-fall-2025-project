@@ -4,21 +4,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% if pet %}Edit Pet Profile{% else %}Add New Pet{% endif %}</title>
+    <title>Edit {{ pet.name }}'s Profile</title>
     <link rel="stylesheet" href="{% static 'pets/css/petprofile_form.css'%}">
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>{% if pet %}Edit {{ pet.name }}'s Profile{% else %}Add New Pet{% endif %}</h1>
+            <h1>Edit {{ pet.name }}'s Profile</h1>
             <a href="{% url 'pet_list' %}" class="cancel-btn">Cancel</a>
         </div>
 
         <form method="post" enctype="multipart/form-data" id="petProfileForm">
             {% csrf_token %}
+
+            <!-- Current Profile Picture Preview -->
+            {% if pet.profile_picture %}
+            <div class="form-section">
+                <div class="section-title">Current Profile Picture</div>
+                <div class="current-photo-preview">
+                    <img src="{{ pet.profile_picture.url }}" alt="{{ pet.name }}" style="max-width: 200px; border-radius: 8px;">
+                </div>
+            </div>
+            {% endif %}
+
             <!-- Profile Picture Section -->
             <div class="form-section">
-                <div class="section-title">Profile Picture</div>
+                <div class="section-title">{% if pet.profile_picture %}Change Profile Picture{% else %}Upload Profile Picture{% endif %}</div>
                 <label for="{{ form.profile_picture.id_for_label }}" class="photo-upload-area">
                     <div class="photo-icon">
                         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -26,7 +37,7 @@
                             <circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </div>
-                    <div class="upload-text">Upload profile picture of your pet</div>
+                    <div class="upload-text">{% if pet.profile_picture %}Choose a new photo{% else %}Upload profile picture of your pet{% endif %}</div>
                     <span class="choose-photos-btn">Choose Photo</span>
                     {{ form.profile_picture }}
                 </label>
@@ -161,8 +172,11 @@
                 </div>
             </div>
 
-            <!-- Submit Button -->
-            <button type="submit" class="submit-btn">{% if pet %}Update Pet Profile{% else %}Add Pet Profile{% endif %}</button>
+            <!-- Action Buttons -->
+            <div class="form-actions">
+                <button type="submit" class="submit-btn">Update Pet Profile</button>
+                <a href="{% url 'pet_delete' pet.pk %}" class="delete-btn" onclick="return confirm('Are you sure you want to delete {{ pet.name }}\'s profile?');">Delete Profile</a>
+            </div>
         </form>
     </div>
 

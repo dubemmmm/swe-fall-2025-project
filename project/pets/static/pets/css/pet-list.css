@@ -1,0 +1,291 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f5f5f5;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    background-color: white;
+    padding: 24px 32px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header h1 {
+    font-size: 28px;
+    font-weight: 600;
+    color: #333;
+}
+
+.add-pet-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background-color: #ff5722;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.add-pet-btn:hover {
+    background-color: #e64a19;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(255, 87, 34, 0.3);
+}
+
+.add-pet-btn:active {
+    transform: translateY(0);
+}
+
+.pets-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 24px;
+}
+
+.pet-card {
+    background-color: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.pet-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.pet-image {
+    position: relative;
+    width: 100%;
+    height: 240px;
+    overflow: hidden;
+}
+
+.pet-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.pet-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 6px 14px;
+    background-color: #ff5722;
+    color: white;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.pet-badge.cat {
+    background-color: #9c27b0;
+}
+
+.pet-badge.other {
+    background-color: #4caf50;
+}
+
+.pet-info {
+    padding: 20px;
+}
+
+.pet-name {
+    font-size: 22px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.pet-breed {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 12px;
+}
+
+.pet-details {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    color: #666;
+}
+
+.detail-item svg {
+    color: #999;
+}
+
+.pet-traits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-bottom: 12px;
+}
+
+.trait-tag {
+    display: inline-block;
+    padding: 4px 12px;
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 16px;
+    font-size: 12px;
+    color: #666;
+    font-weight: 500;
+}
+
+.pet-description {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.pet-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+    text-decoration: none;
+    text-align: center;
+    display: inline-block;
+}
+
+.edit-btn {
+    background-color: #f5f5f5;
+    color: #333;
+    border: 1px solid #ddd;
+}
+
+.edit-btn:hover {
+    background-color: #e8e8e8;
+    border-color: #999;
+}
+
+.view-btn {
+    background-color: #ff5722;
+    color: white;
+}
+
+.view-btn:hover {
+    background-color: #e64a19;
+}
+
+/* Empty State */
+.empty-state {
+    background-color: white;
+    border-radius: 12px;
+    padding: 80px 40px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.empty-icon {
+    margin-bottom: 24px;
+}
+
+.empty-state h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.empty-state p {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 24px;
+}
+
+.empty-state .add-pet-btn {
+    display: inline-flex;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 0;
+    }
+
+    .header {
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+        padding: 20px;
+    }
+
+    .header h1 {
+        font-size: 24px;
+    }
+
+    .add-pet-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .pets-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .pet-card {
+        border-radius: 0;
+    }
+
+    .header {
+        border-radius: 0;
+    }
+
+    body {
+        padding: 0;
+    }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    .pets-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

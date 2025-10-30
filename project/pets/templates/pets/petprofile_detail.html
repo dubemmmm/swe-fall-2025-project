@@ -1,9 +1,210 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ pet.name }} - Pet Profile</title>
+    <link rel="stylesheet" href="{% static 'pets/css/pet-detail.css' %}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <a href="{% url 'pet_list' %}" class="back-btn">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Back
+            </a>
+            {% if user == pet.owner %}
+            <div class="header-actions">
+                <a href="{% url 'pet_update' pet.pk %}" class="action-btn-header edit">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8.25 3H3C2.60218 3 2.22064 3.15804 1.93934 3.43934C1.65804 3.72064 1.5 4.10218 1.5 4.5V15C1.5 15.3978 1.65804 15.7794 1.93934 16.0607C2.22064 16.342 2.60218 16.5 3 16.5H13.5C13.8978 16.5 14.2794 16.342 14.5607 16.0607C14.842 15.7794 15 15.3978 15 15V9.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M13.875 1.87502C14.1734 1.57665 14.5778 1.40918 15 1.40918C15.4222 1.40918 15.8266 1.57665 16.125 1.87502C16.4234 2.17339 16.5908 2.57781 16.5908 3.00002C16.5908 3.42223 16.4234 3.82665 16.125 4.12502L9 11.25L6 12L6.75 9L13.875 1.87502Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Edit
+                </a>
+                <a href="{% url 'pet_delete' pet.pk %}" class="action-btn-header delete" onclick="return confirm('Are you sure you want to delete {{ pet.name }}\'s profile?');">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2.25 4.5H3.75H15.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M6 4.5V3C6 2.60218 6.15804 2.22064 6.43934 1.93934C6.72064 1.65804 7.10218 1.5 7.5 1.5H10.5C10.8978 1.5 11.2794 1.65804 11.5607 1.93934C11.842 2.22064 12 2.60218 12 3V4.5M14.25 4.5V15C14.25 15.3978 14.092 15.7794 13.8107 16.0607C13.5294 16.342 13.1478 16.5 12.75 16.5H5.25C4.85218 16.5 4.47064 16.342 4.18934 16.0607C3.90804 15.7794 3.75 15.3978 3.75 15V4.5H14.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Delete
+                </a>
+            </div>
+            {% endif %}
+        </div>
 
-{% block content %}
-<h1>{{ pet.name }}'s Profile</h1>
-<p>Species: {{ pet.get_species_display }}</p>
-<p>Age: {{ pet.age }}</p>
-<p>Bio: {{ pet.bio }}</p>
-<a href="{% url 'pet_update' pet.pk %}">Edit</a> | <a href="{% url 'pet_delete' pet.pk %}">Delete</a>
-{% endblock %}
+        <!-- Main Content -->
+        <div class="content">
+            <!-- Left Column -->
+            <div class="left-column">
+                <!-- Photo Gallery -->
+                <div class="photo-section">
+                    <div class="main-photo">
+                        {% if pet.profile_picture %}
+                            <img src="{{ pet.profile_picture.url }}" alt="{{ pet.name }}">
+                        {% else %}
+                            <img src="https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=600&h=600&fit=crop" alt="{{ pet.name }}">
+                        {% endif %}
+                        <div class="photo-badge">{{ pet.get_species_display }}</div>
+                    </div>
+                    {% if pet.photos.exists %}
+                    <div class="photo-thumbnails">
+                        {% for photo in pet.photos.all %}
+                        <div class="thumbnail {% if forloop.first %}active{% endif %}">
+                            <img src="{{ photo.photo.url }}" alt="{{ pet.name }} {{ forloop.counter }}">
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="card quick-stats">
+                    <h3>Quick Stats</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M12 6V12L16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-label">Age</span>
+                                <span class="stat-value">{{ pet.age }}</span>
+                            </div>
+                        </div>
+                        {% if pet.weight %}
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M12 2L14.5 9H22L16 13.5L18.5 21L12 16.5L5.5 21L8 13.5L2 9H9.5L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-label">Weight</span>
+                                <span class="stat-value">{{ pet.weight }} lbs</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        {% if pet.breed %}
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-label">Breed</span>
+                                <span class="stat-value">{{ pet.breed }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M9 12L11 14L15 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-label">Size</span>
+                                <span class="stat-value">{{ pet.get_general_size_display }}</span>
+                            </div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-label">Energy Level</span>
+                                <span class="stat-value">{{ pet.get_energy_level_display }}</span>
+                            </div>
+                        </div>
+                        {% if pet.color_markings %}
+                        <div class="stat-item">
+                            <div class="stat-icon">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                                    <circle cx="12" cy="12" r="3" fill="currentColor"/>
+                                </svg>
+                            </div>
+                            <div class="stat-info">
+                                <span class="stat-label">Color</span>
+                                <span class="stat-value">{{ pet.color_markings }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="right-column">
+                <!-- Pet Name and Basic Info -->
+                <div class="card pet-header">
+                    <h1>{{ pet.name }}</h1>
+                    <p class="pet-subtitle">
+                        {{ pet.breed|default:pet.get_species_display }} • {{ pet.age }}
+                        {% if pet.is_playdate_available %}
+                            <span class="availability-badge">Available for Playdates</span>
+                        {% endif %}
+                    </p>
+                </div>
+
+                <!-- Description -->
+                {% if pet.bio %}
+                <div class="card">
+                    <h3>About {{ pet.name }}</h3>
+                    <p class="description-text">{{ pet.bio }}</p>
+                </div>
+                {% endif %}
+
+                <!-- Personality Traits -->
+                {% if pet.traits.exists %}
+                <div class="card">
+                    <h3>Personality Traits</h3>
+                    <div class="traits-container">
+                        {% for trait in pet.traits.all %}
+                        <span class="trait-badge">{{ trait.trait }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Privacy Settings -->
+                <div class="card">
+                    <h3>Profile Information</h3>
+                    <div class="info-items">
+                        <div class="info-item">
+                            <span class="info-label">Owner:</span>
+                            <span class="info-value">{{ pet.owner.get_full_name|default:pet.owner.username }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Privacy:</span>
+                            <span class="info-value">{{ pet.get_privacy_settings_display }}</span>
+                        </div>
+                        {% if pet.is_adoptable %}
+                        <div class="info-item">
+                            <span class="info-label">Status:</span>
+                            <span class="info-value adoptable-badge">Available for Adoption</span>
+                        </div>
+                        {% endif %}
+                        <div class="info-item">
+                            <span class="info-label">Profile Created:</span>
+                            <span class="info-value">{{ pet.created_at|date:"F j, Y" }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

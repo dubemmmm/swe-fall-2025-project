@@ -1,9 +1,9 @@
-from django.shortcuts import render
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.generic import CreateView, DetailView, UpdateView, DeleteView, ListView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from .models import PetProfile # Assuming PetProfile model exists in pets/models.py
+from .models import PetProfile
+from .forms import PetProfileForm
 
 
 class PetProfileListView(LoginRequiredMixin, ListView):
@@ -24,10 +24,7 @@ class PetProfileCreateView(LoginRequiredMixin, CreateView):
     The owner field is automatically set to the current user.
     """
     model = PetProfile
-    fields = [
-        'name', 'species', 'breed', 'age', 'general_size', 'energy_level',
-        'weight', 'bio', 'profile_picture', 'is_playdate_available', 'privacy_settings'
-    ]
+    form_class = PetProfileForm
     template_name = 'pets/petprofile_form.html'
 
     def form_valid(self, form):
@@ -52,11 +49,8 @@ class PetProfileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     Allows the owner of a pet profile to update its details.
     """
     model = PetProfile
-    fields = [
-        'name', 'species', 'breed', 'age', 'general_size', 'energy_level',
-        'weight', 'bio', 'is_playdate_available', 'privacy_settings'
-    ]
-    template_name = 'pets/petprofile_form.html'
+    form_class = PetProfileForm
+    template_name = 'pets/petprofile_edit.html'
     context_object_name = 'pet'
 
     def test_func(self):
