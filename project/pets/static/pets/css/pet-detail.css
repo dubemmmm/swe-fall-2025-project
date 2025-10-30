@@ -1,0 +1,520 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background-color: #f5f5f5;
+    padding: 20px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Header */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    background-color: white;
+    padding: 16px 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.back-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: none;
+    border: none;
+    font-size: 15px;
+    color: #666;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+    background-color: #f5f5f5;
+    color: #333;
+}
+
+.header-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.action-btn-header {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: 1px solid #ddd;
+    background-color: white;
+}
+
+.action-btn-header.edit {
+    color: #ff5722;
+    border-color: #ff5722;
+}
+
+.action-btn-header.edit:hover {
+    background-color: #ff5722;
+    color: white;
+}
+
+.action-btn-header.delete {
+    color: #f44336;
+    border-color: #f44336;
+}
+
+.action-btn-header.delete:hover {
+    background-color: #f44336;
+    color: white;
+}
+
+/* Main Content */
+.content {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 24px;
+}
+
+/* Card Styling */
+.card {
+    background-color: white;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+}
+
+.card:last-child {
+    margin-bottom: 0;
+}
+
+.card h3 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 16px;
+}
+
+/* Photo Section */
+.photo-section {
+    background-color: white;
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 24px;
+}
+
+.main-photo {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.main-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photo-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 8px 16px;
+    background-color: #ff5722;
+    color: white;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.photo-thumbnails {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+}
+
+.thumbnail {
+    width: 100%;
+    height: 80px;
+    border-radius: 6px;
+    overflow: hidden;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.thumbnail:hover {
+    border-color: #ff5722;
+    transform: scale(1.05);
+}
+
+.thumbnail.active {
+    border-color: #ff5722;
+}
+
+.thumbnail img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Quick Stats */
+.quick-stats {
+    margin-bottom: 0;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.stat-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.stat-icon {
+    width: 40px;
+    height: 40px;
+    background-color: #fff3f0;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ff5722;
+    flex-shrink: 0;
+}
+
+.stat-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-label {
+    font-size: 12px;
+    color: #999;
+    margin-bottom: 2px;
+}
+
+.stat-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* Pet Header */
+.pet-header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 8px;
+}
+
+.pet-subtitle {
+    font-size: 16px;
+    color: #666;
+}
+
+/* Description */
+.description-text {
+    font-size: 15px;
+    color: #666;
+    line-height: 1.7;
+}
+
+/* Personality Traits */
+.traits-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.trait-badge {
+    display: inline-block;
+    padding: 8px 16px;
+    background-color: #fff3f0;
+    color: #ff5722;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+/* Health Information */
+.health-items {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.health-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 15px;
+    color: #333;
+}
+
+.check-icon {
+    flex-shrink: 0;
+}
+
+/* Favorites */
+.favorites-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.favorite-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.favorite-icon {
+    width: 40px;
+    height: 40px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ff5722;
+    flex-shrink: 0;
+}
+
+.favorite-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.favorite-label {
+    font-size: 13px;
+    color: #999;
+    font-weight: 500;
+}
+
+.favorite-value {
+    font-size: 15px;
+    color: #333;
+}
+
+/* Timeline */
+.timeline {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.timeline-item {
+    display: flex;
+    gap: 16px;
+    position: relative;
+}
+
+.timeline-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 9px;
+    top: 28px;
+    bottom: -20px;
+    width: 2px;
+    background-color: #e0e0e0;
+}
+
+.timeline-dot {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: #ff5722;
+    border: 3px solid #fff3f0;
+    flex-shrink: 0;
+    margin-top: 4px;
+}
+
+.timeline-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.timeline-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #333;
+}
+
+.timeline-date {
+    font-size: 13px;
+    color: #999;
+}
+
+.timeline-description {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.5;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .content {
+        grid-template-columns: 1fr;
+    }
+
+    .left-column {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 24px;
+    }
+
+    .photo-section {
+        margin-bottom: 0;
+    }
+
+    .quick-stats {
+        margin-bottom: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 0;
+    }
+
+    .container {
+        padding: 0;
+    }
+
+    .header {
+        border-radius: 0;
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+    }
+
+    .back-btn {
+        padding: 8px 0;
+    }
+
+    .header-actions {
+        width: 100%;
+    }
+
+    .action-btn-header {
+        flex: 1;
+        justify-content: center;
+    }
+
+    .content {
+        padding: 0;
+    }
+
+    .left-column {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        border-radius: 0;
+        margin-bottom: 16px;
+    }
+
+    .photo-section {
+        border-radius: 0;
+        padding: 0;
+    }
+
+    .main-photo {
+        border-radius: 0;
+        height: 300px;
+    }
+
+    .photo-thumbnails {
+        padding: 16px;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .pet-header h1 {
+        font-size: 28px;
+    }
+}
+/* Additional styles for dynamic data */
+.back-btn {
+    text-decoration: none;
+}
+
+.action-btn-header {
+    text-decoration: none;
+    display: inline-flex;
+}
+
+.availability-badge {
+    display: inline-block;
+    background-color: #4CAF50;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-left: 8px;
+}
+
+.adoptable-badge {
+    color: #ff5722;
+    font-weight: 600;
+}
+
+.info-items {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background-color: #f9f9f9;
+    border-radius: 6px;
+}
+
+.info-label {
+    font-weight: 600;
+    color: #666;
+    font-size: 14px;
+}
+
+.info-value {
+    color: #333;
+    font-size: 14px;
+}

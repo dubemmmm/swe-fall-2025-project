@@ -1,16 +1,93 @@
-{% extends 'base.html' %}
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Pets</title>
+    <link rel="stylesheet" href="{% static 'pets/css/pet-list.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>My Pets</h1>
+            <a href="{% url 'pet_create' %}" class="add-pet-btn">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M10 4V16M4 10H16" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Add New Pet
+            </a>
+        </div>
 
-{% block title %}My Pets - Pet Next Door{% endblock %}
-
-{% block content %}
-    <h1>My Pet Profiles</h1>
-    <a href="{% url 'pet_create' %}">Add a new pet</a>
-
-    <ul>
-        {% for pet in object_list %}
-            <li><a href="{% url 'pet_detail' pet.pk %}">{{ pet.name }}</a> ({{ pet.get_species_display }})</li>
-        {% empty %}
-            <li>You haven't added any pets yet.</li>
-        {% endfor %}
-    </ul>
-{% endblock %}
+        {% if petprofile_list %}
+        <div class="pets-grid">
+            {% for pet in petprofile_list %}
+            <!-- Pet Card for {{ pet.name }} -->
+            <div class="pet-card">
+                <div class="pet-image">
+                    {% if pet.profile_picture %}
+                        <img src="{{ pet.profile_picture.url }}" alt="{{ pet.name }}">
+                    {% else %}
+                        <img src="https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=400&h=400&fit=crop" alt="{{ pet.name }}">
+                    {% endif %}
+                    <div class="pet-badge {% if pet.species == 'CAT' %}cat{% elif pet.species == 'OTHER' %}other{% endif %}">{{ pet.get_species_display }}</div>
+                </div>
+                <div class="pet-info">
+                    <h2 class="pet-name">{{ pet.name }}</h2>
+                    <p class="pet-breed">{% if pet.breed %}{{ pet.breed }}{% else %}{{ pet.get_species_display }}{% endif %}</p>
+                    <div class="pet-details">
+                        <span class="detail-item">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8 14C11.3137 14 14 11.3137 14 8C14 4.68629 11.3137 2 8 2C4.68629 2 2 4.68629 2 8C2 11.3137 4.68629 14 8 14Z" stroke="currentColor" stroke-width="1.5"/>
+                                <path d="M8 4V8L10.5 9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                            </svg>
+                            {{ pet.age }}
+                        </span>
+                        {% if pet.weight %}
+                        <span class="detail-item">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8 2L9.5 6H13.5L10.5 8.5L11.5 12.5L8 10L4.5 12.5L5.5 8.5L2.5 6H6.5L8 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            {{ pet.weight }} lbs
+                        </span>
+                        {% endif %}
+                    </div>
+                    {% if pet.traits.exists %}
+                    <div class="pet-traits">
+                        {% for trait in pet.traits.all|slice:":3" %}
+                        <span class="trait-tag">{{ trait.trait }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <p class="pet-description">
+                        {% if pet.bio %}
+                            {{ pet.bio|truncatewords:20 }}
+                        {% else %}
+                            No description available yet.
+                        {% endif %}
+                    </p>
+                    <div class="pet-actions">
+                        <a href="{% url 'pet_update' pet.pk %}" class="action-btn edit-btn">Edit</a>
+                        <a href="{% url 'pet_detail' pet.pk %}" class="action-btn view-btn">View Profile</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <!-- Empty State -->
+        <div class="empty-state">
+            <div class="empty-icon">
+                <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M40 73.3333C58.4095 73.3333 73.3333 58.4095 73.3333 40C73.3333 21.5905 58.4095 6.66667 40 6.66667C21.5905 6.66667 6.66666 21.5905 6.66666 40C6.66666 58.4095 21.5905 73.3333 40 73.3333Z" stroke="#DDD" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M40 26.6667V40L50 45" stroke="#DDD" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <h2>No pets yet</h2>
+            <p>Start by adding your first pet profile</p>
+            <a href="{% url 'pet_create' %}" class="add-pet-btn">Add Your First Pet</a>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

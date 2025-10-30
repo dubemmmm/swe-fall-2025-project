@@ -1,0 +1,302 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.container {
+    max-width: 600px;
+    width: 100%;
+}
+
+.delete-card {
+    background-color: white;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    padding: 48px 40px;
+    text-align: center;
+    animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Warning Icon */
+.warning-icon {
+    margin-bottom: 24px;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* Header */
+.delete-header {
+    margin-bottom: 32px;
+}
+
+.delete-header h1 {
+    font-size: 32px;
+    font-weight: 700;
+    color: #dc3545;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    font-size: 16px;
+    color: #666;
+    font-weight: 500;
+}
+
+/* Pet Info Card */
+.pet-info-card {
+    background-color: #f8f9fa;
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    text-align: left;
+    border: 2px solid #e9ecef;
+}
+
+.pet-image {
+    flex-shrink: 0;
+}
+
+.pet-image img {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.pet-details h2 {
+    font-size: 22px;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.pet-details p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.traits {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.trait-tag {
+    display: inline-block;
+    padding: 4px 10px;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    font-size: 11px;
+    color: #666;
+    font-weight: 500;
+}
+
+/* Warning Message */
+.warning-message {
+    background-color: #fff3cd;
+    border: 2px solid #ffc107;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 32px;
+    display: flex;
+    gap: 16px;
+    text-align: left;
+}
+
+.warning-message svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.warning-text {
+    flex: 1;
+}
+
+.warning-text strong {
+    color: #ff9800;
+    font-size: 15px;
+}
+
+.warning-text p {
+    color: #856404;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-top: 4px;
+}
+
+.warning-text ul {
+    margin-top: 12px;
+    margin-left: 20px;
+    color: #856404;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+.warning-text li {
+    margin-bottom: 4px;
+}
+
+/* Form Actions */
+.delete-form {
+    margin-top: 32px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 16px;
+}
+
+.cancel-btn,
+.delete-btn {
+    flex: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 24px;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    border: none;
+}
+
+.cancel-btn {
+    background-color: #f8f9fa;
+    color: #333;
+    border: 2px solid #dee2e6;
+}
+
+.cancel-btn:hover {
+    background-color: #e9ecef;
+    border-color: #adb5bd;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.delete-btn {
+    background-color: #dc3545;
+    color: white;
+    border: 2px solid #dc3545;
+}
+
+.delete-btn:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(220, 53, 69, 0.4);
+}
+
+.cancel-btn:active,
+.delete-btn:active {
+    transform: translateY(0);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    body {
+        padding: 20px;
+        background: white;
+    }
+
+    .delete-card {
+        padding: 32px 24px;
+        box-shadow: none;
+        border-radius: 0;
+    }
+
+    .delete-header h1 {
+        font-size: 26px;
+    }
+
+    .pet-info-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .pet-details {
+        text-align: center;
+    }
+
+    .traits {
+        justify-content: center;
+    }
+
+    .warning-message {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    .warning-text ul {
+        text-align: left;
+    }
+
+    .form-actions {
+        flex-direction: column-reverse;
+    }
+
+    .cancel-btn,
+    .delete-btn {
+        width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .delete-header h1 {
+        font-size: 22px;
+    }
+
+    .pet-image img {
+        width: 60px;
+        height: 60px;
+    }
+
+    .pet-details h2 {
+        font-size: 18px;
+    }
+
+    .warning-icon svg {
+        width: 60px;
+        height: 60px;
+    }
+}
