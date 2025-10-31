@@ -117,7 +117,7 @@ def login_view(request):
         if user is not None:
             login(request, user)
             messages.success(request, f'Welcome back, {user.profile_name}!')
-            return redirect('home')
+            return redirect('users:home')
         else:
             messages.error(request, 'Invalid username or password.')
 
@@ -128,7 +128,7 @@ def logout_view(request):
     """User logout view"""
     logout(request)
     messages.success(request, 'You have been logged out.')
-    return redirect('home')
+    return redirect('users:home')
 
 
 @login_required
@@ -216,7 +216,7 @@ def edit_profile(request):
 
 def home(request):
     """Homepage view"""
-    return render(request, 'home.html')
+    return render(request, 'users/home.html')
 
 
 @login_required

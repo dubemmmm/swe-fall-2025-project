@@ -12,8 +12,8 @@
     <div class="header">
       <div class="topbar">
         <div>
-          <a class="btn btn-light" href="{% url 'playdate-create' %}">+ Create New Playdate</a>
-          <a class="btn btn-primary" href="{% url 'my-playdates' %}">My Playdates</a>
+          <a class="btn btn-light" href="{% url 'playdates:playdate-create' %}">+ Create New Playdate</a>
+          <a class="btn btn-primary" href="{% url 'playdates:my-playdates' %}">My Playdates</a>
         </div>
       </div>
       <h1>Discover Playdates</h1>
@@ -69,10 +69,10 @@
               <div class="row"><span class="label">Max Pets</span><span>{{ playdate.max_participants }}</span></div>
             </div>
             <div class="card-foot">
-              <a class="link" href="{% url 'playdate-detail' playdate.id %}">View Details →</a>
+              <a class="link" href="{% url 'playdates:playdate-detail' playdate.id %}">View Details →</a>
               <div style="display: flex; gap: 8px; align-items: center;">
                 {% if user == playdate.organizer %}
-                  <a class="btn btn-light" href="{% url 'playdate-update' playdate.id %}">Edit</a>
+                  <a class="btn btn-light" href="{% url 'playdates:playdate-update' playdate.id %}">Edit</a>
                 {% else %}
                   {% if playdate.is_public and playdate.status == 'OPEN' %}
                     <span class="pill" style="background: #ECFDF5; color: #065F46; border-color: #A7F3D0;">Open</span>
@@ -101,7 +101,7 @@
         <div class="empty">
           <h3 style="margin-bottom:6px; color:#111827;">No playdates found</h3>
           <p style="margin-bottom:14px;">Try a different filter or create the first playdate for others to join.</p>
-          <a class="btn btn-primary" href="{% url 'playdate-create' %}">Create a Playdate</a>
+          <a class="btn btn-primary" href="{% url 'playdates:playdate-create' %}">Create a Playdate</a>
         </div>
       {% endif %}
     </div>

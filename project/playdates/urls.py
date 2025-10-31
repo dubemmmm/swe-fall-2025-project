@@ -1,6 +1,8 @@
 from django.urls import path
 from playdates import views
 
+app_name = 'playdates'
+
 urlpatterns = [
     # Create playdate
     path('create/', views.PlaydateCreateView.as_view(), name='playdate-create'),

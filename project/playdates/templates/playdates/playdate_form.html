@@ -13,8 +13,8 @@
     <div class="header">
       <div class="topbar">
         <div class="actions">
-          <a class="btn btn-light" href="{% url 'playdate-detail' playdate.id %}">← Back to Details</a>
-          <a class="btn btn-primary" href="{% url 'my-playdates' %}">My Playdates</a>
+          <a class="btn btn-light" href="{% url 'playdates:playdate-detail' playdate.id %}">← Back to Details</a>
+          <a class="btn btn-primary" href="{% url 'playdates:my-playdates' %}">My Playdates</a>
         </div>
       </div>
       <h1>Edit Playdate</h1>
@@ -171,7 +171,7 @@
             <div class="btn-group">
               <button type="button" class="btn btn-secondary" id="prevBtn" onclick="previousStep()">Previous</button>
               <div style="display:flex; gap:8px;">
-                <button type="button" class="btn btn-light" onclick="window.location.href='{% url 'playdate-detail' playdate.id %}'">Cancel</button>
+                <button type="button" class="btn btn-light" onclick="window.location.href='{% url 'playdates:playdate-detail' playdate.id %}'">Cancel</button>
                 <button type="button" class="btn btn-primary" id="nextBtn" onclick="nextStep()">Next Step</button>
                 <button type="submit" class="btn btn-primary" id="submitBtn" style="display:none;">Update Playdate</button>
               </div>
@@ -205,7 +205,7 @@
           <div class="danger" style="margin-top:8px;">
             <div style="font-weight:700; margin-bottom:6px;">Danger Zone</div>
             <p style="font-size:13px; margin-bottom:10px;">Cancel this playdate. This action cannot be undone.</p>
-            <a class="btn btn-danger btn-full" href="{% url 'playdate-delete' playdate.id %}">Cancel Playdate</a>
+            <a class="btn btn-danger btn-full" href="{% url 'playdates:playdate-delete' playdate.id %}">Cancel Playdate</a>
           </div>
         </div>
       </aside>

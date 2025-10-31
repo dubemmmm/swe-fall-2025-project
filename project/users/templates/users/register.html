@@ -10,7 +10,7 @@
 </head>
 <body>
     <header class="header">
-        <a href="{% url 'home' %}" class="back-button">
+        <a href="{% url 'users:home' %}" class="back-button">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                 <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
@@ -143,7 +143,7 @@
                     </form>
 
                     <p class="signin-text">
-                        Already have an account? <a href="{% url 'login' %}" class="signin-link">Sign in here</a>
+                        Already have an account? <a href="{% url 'users:login' %}" class="signin-link">Sign in here</a>
                     </p>
                 </div>
             </div>

@@ -19,19 +19,16 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from users import views as user_views
+from . import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path('', user_views.home, name='home'),
-    path('users/', include('users.urls')),
-    path('community/', include('community.urls')),
-    path('playdates/', include('playdates.urls')),
+    path("", views.LandingView.as_view(), name='landing'),
+    path('users/', include('users.urls', namespace='users')),
+    path('community/', include('community.urls', namespace='community')),
+    path('playdates/', include('playdates.urls', namespace='playdates')),
     path('adoption/', include('adoption.urls', namespace='adoption')),
-
-    path("", user_views.home, name="home"),
-    path("users/", include("users.urls")),
-    path("pets/", include("pets.urls")),
-    path("playdates/", include("playdates.urls")),
+    path("pets/", include("pets.urls", namespace='pets')),
 ]
 
 # Serve media files in development

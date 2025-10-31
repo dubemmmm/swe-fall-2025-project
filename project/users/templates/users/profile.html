@@ -11,8 +11,8 @@
   <div class="container">
     <div class="header">
       <div class="topbar">
-        <a class="btn btn-light" href="{% url 'home' %}">← Back to Home</a>
-        <a class="btn btn-primary" href="{% url 'edit_profile' %}">Edit Profile</a>
+        <a class="btn btn-light" href="{% url 'users:home' %}">← Back to Home</a>
+        <a class="btn btn-primary" href="{% url 'users:edit_profile' %}">Edit Profile</a>
       </div>
       <h1>My Profile</h1>
       <p style="opacity:.95">Manage your personal information and account settings</p>
@@ -113,7 +113,7 @@
         </div>
 
         <div class="profile-footer">
-          <a class="btn btn-primary btn-large" href="{% url 'edit_profile' %}">
+          <a class="btn btn-primary btn-large" href="{% url 'users:edit_profile' %}">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: middle; margin-right: 6px;">
               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
               <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>

@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'users/base.html' %}
 
 {% block title %}Home - Pet Next Door{% endblock %}
 
@@ -16,10 +16,10 @@
         </div>
     {% else %}
         <div style="margin-top: 2rem;">
-            <a href="{% url 'register' %}" style="display: inline-block; margin: 0.5rem; padding: 1rem 2rem; background: #2c3e50; color: white; text-decoration: none; border-radius: 4px; font-size: 1.1rem;">
+            <a href="{% url 'users:register' %}" style="display: inline-block; margin: 0.5rem; padding: 1rem 2rem; background: #2c3e50; color: white; text-decoration: none; border-radius: 4px; font-size: 1.1rem;">
                 Get Started
             </a>
-            <a href="{% url 'login' %}" style="display: inline-block; margin: 0.5rem; padding: 1rem 2rem; background: #3498db; color: white; text-decoration: none; border-radius: 4px; font-size: 1.1rem;">
+            <a href="{% url 'users:login' %}" style="display: inline-block; margin: 0.5rem; padding: 1rem 2rem; background: #3498db; color: white; text-decoration: none; border-radius: 4px; font-size: 1.1rem;">
                 Login
             </a>
         </div>

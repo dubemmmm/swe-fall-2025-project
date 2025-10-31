@@ -46,7 +46,7 @@ class PlaydateCreateView(LoginRequiredMixin, CreateView):
     model = Playdate
     form_class = PlaydateForm
     template_name = 'playdates/create_playdates.html'
-    success_url = reverse_lazy('playdate-list')
+    success_url = reverse_lazy('playdates:playdate-list')
 
     def get_form(self, form_class=None):
         """Customize the form to only show the current user's pets"""
@@ -208,7 +208,7 @@ class RequestToJoinView(LoginRequiredMixin, View):
         )
 
         messages.success(request, f'Request sent! The organizer will review your request for {pet.name}.')
-        return redirect('playdate-detail', pk=pk)
+        return redirect('playdates:playdate-detail', pk=pk)
 
 
 class ApproveRequestView(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -253,7 +253,7 @@ class ApproveRequestView(LoginRequiredMixin, UserPassesTestMixin, View):
             participant.save()
             messages.info(request, f'Declined request from {participant.pet.name}.')
 
-        return redirect('playdate-detail', pk=pk)
+        return redirect('playdates:playdate-detail', pk=pk)
 
 
 class PlaydateInviteView(LoginRequiredMixin, UserPassesTestMixin, View):
@@ -295,7 +295,7 @@ class PlaydateInviteView(LoginRequiredMixin, UserPassesTestMixin, View):
         except PetProfile.DoesNotExist:
             messages.error(request, 'Pet not found or not available for playdates.')
 
-        return redirect('playdate-detail', pk=pk)
+        return redirect('playdates:playdate-detail', pk=pk)
 
 
 class PlaydateRespondView(LoginRequiredMixin, View):
@@ -338,7 +338,7 @@ class PlaydateRespondView(LoginRequiredMixin, View):
             participant.save()
             messages.info(request, 'You declined the playdate invitation.')
 
-        return redirect('playdate-detail', pk=pk)
+        return redirect('playdates:playdate-detail', pk=pk)
 
 
 class PlaydateListView(LoginRequiredMixin, ListView):
@@ -457,7 +457,7 @@ class PlaydateUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Playdate
     fields = ['scheduled_time', 'location', 'description', 'max_participants', 'is_public', 'status']
     template_name = 'playdates/playdate_form.html'
-    success_url = reverse_lazy('playdate-list')
+    success_url = reverse_lazy('playdates:playdate-list')
 
     def test_func(self):
         """Only allow the organizer to update the playdate"""
@@ -476,14 +476,14 @@ class PlaydateUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     def handle_no_permission(self):
         """Handle case where user doesn't have permission"""
         messages.error(self.request, 'You can only update your own playdates.')
-        return redirect('playdate-list')
+        return redirect('playdates:playdate-list')
 
 
 class PlaydateDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """View for deleting a playdate"""
     model = Playdate
     template_name = 'playdates/playdate_confirm_delete.html'
-    success_url = reverse_lazy('playdate-list')
+    success_url = reverse_lazy('playdates:playdate-list')
 
     def test_func(self):
         """Only allow the organizer to delete the playdate"""
@@ -498,7 +498,7 @@ class PlaydateDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     def handle_no_permission(self):
         """Handle case where user doesn't have permission"""
         messages.error(self.request, 'You can only delete your own playdates.')
-        return redirect('playdate-list')
+        return redirect('playdates:playdate-list')
 
 
 class MyPlaydatesView(LoginRequiredMixin, ListView):

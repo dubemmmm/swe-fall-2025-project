@@ -11,7 +11,7 @@
     <div class="container">
         <div class="header">
             <h1>Edit {{ pet.name }}'s Profile</h1>
-            <a href="{% url 'pet_list' %}" class="cancel-btn">Cancel</a>
+            <a href="{% url 'pets:pet_list' %}" class="cancel-btn">Cancel</a>
         </div>
 
         <form method="post" enctype="multipart/form-data" id="petProfileForm">
@@ -175,7 +175,7 @@
             <!-- Action Buttons -->
             <div class="form-actions">
                 <button type="submit" class="submit-btn">Update Pet Profile</button>
-                <a href="{% url 'pet_delete' pet.pk %}" class="delete-btn" onclick="return confirm('Are you sure you want to delete {{ pet.name }}\'s profile?');">Delete Profile</a>
+                <a href="{% url 'pets:pet_delete' pet.pk %}" class="delete-btn" onclick="return confirm('Are you sure you want to delete {{ pet.name }}\'s profile?');">Delete Profile</a>
             </div>
         </form>
     </div>
