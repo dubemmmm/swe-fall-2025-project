@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 
+app_name = 'community'
+
 urlpatterns = [
     path('alerts/', views.CommunityAlertListView.as_view(), name='alert-list'),
     path('alerts/create/', views.CommunityAlertCreateView.as_view(), name='post_alert'),

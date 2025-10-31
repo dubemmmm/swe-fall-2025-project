@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PetNextDoor - Connect Your Pets with Your Community</title>
+    <link rel="stylesheet" href="{% static 'css/landing.css'%}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="{% url 'landing' %}" class="logo">
+                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="16" cy="12" r="3" fill="#ff5722"/>
+                    <circle cx="9" cy="8" r="2.5" fill="#ff5722"/>
+                    <circle cx="23" cy="8" r="2.5" fill="#ff5722"/>
+                    <circle cx="7" cy="17" r="2.5" fill="#ff5722"/>
+                    <circle cx="25" cy="17" r="2.5" fill="#ff5722"/>
+                    <path d="M16 18C19 18 22 20 22 23C22 25 20 27 16 27C12 27 10 25 10 23C10 20 13 18 16 18Z" fill="#ff5722"/>
+                </svg>
+                <span>PetNextDoor</span>
+            </a>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#how-it-works">How it Works</a>
+                <a href="#testimonials">Testimonials</a>
+                <a href="#community">Community</a>
+            </div>
+            <div class="nav-actions">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'pets:pet_list' %}" class="btn-secondary">My Pets</a>
+                    <a href="{% url 'users:profile' %}" class="btn-primary">Profile</a>
+                {% else %}
+                    <a href="{% url 'login' %}" class="btn-secondary">Sign In</a>
+                    <a href="{% url 'register' %}" class="btn-primary">Get Started</a>
+                {% endif %}
+            </div>
+            <button class="mobile-menu-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 12H21M3 6H21M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span>🐾 Connect Pets in Your Neighborhood</span>
+                </div>
+                <h1 class="hero-title">
+                    Find Perfect Playmates for
+                    <span class="highlight">Your Furry Friends</span>
+                </h1>
+                <p class="hero-description">
+                    Create detailed pet profiles, discover compatible playmates nearby, schedule playdates,
+                    and connect with a community of pet lovers. Make every day an adventure for your pets!
+                </p>
+                <div class="hero-actions">
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'pets:pet_create' %}" class="btn-primary large">
+                            Add Your Pet
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    {% else %}
+                        <a href="{% url 'register' %}" class="btn-primary large">
+                            Get Started Free
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </a>
+                    {% endif %}
+                    <a href="#how-it-works" class="btn-outline large">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="2"/>
+                            <path d="M10 6V10L13 11.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Learn More
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">100%</span>
+                        <span class="stat-label">Free</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">Smart</span>
+                        <span class="stat-label">Matching</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">Local</span>
+                        <span class="stat-label">Community</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-image">
+                <div class="hero-image-card">
+                    <img src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?w=600&h=700&fit=crop" alt="Happy pets playing together">
+                    <div class="floating-card card-1">
+                        <div class="card-icon">🐕</div>
+                        <div class="card-content">
+                            <span class="card-title">Max</span>
+                            <span class="card-subtitle">Friendly • Energetic</span>
+                        </div>
+                    </div>
+                    <div class="floating-card card-2">
+                        <div class="card-icon">🎯</div>
+                        <div class="card-content">
+                            <span class="card-title">98% Match</span>
+                            <span class="card-subtitle">with Luna</span>
+                        </div>
+                    </div>
+                    <div class="floating-card card-3">
+                        <div class="card-icon">📅</div>
+                        <div class="card-content">
+                            <span class="card-title">Playdate</span>
+                            <span class="card-subtitle">Park • 3 PM</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-badge">Features</span>
+                <h2 class="section-title">Everything Your Pet Needs</h2>
+                <p class="section-description">
+                    Comprehensive tools to help your pets make friends and stay social
+                </p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="4" y="6" width="24" height="20" rx="2" stroke="#ff5722" stroke-width="2"/>
+                            <circle cx="11" cy="13" r="2" fill="#ff5722"/>
+                            <path d="M20 22L16 18L12 22" stroke="#ff5722" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h3>Detailed Pet Profiles</h3>
+                    <p>Create rich profiles with photos, personality traits, energy levels, and preferences to help find perfect matches.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 4L18 12L26 14L18 16L16 24L14 16L6 14L14 12L16 4Z" stroke="#ff5722" stroke-width="2" stroke-linejoin="round"/>
+                            <circle cx="24" cy="8" r="2" stroke="#ff5722" stroke-width="2"/>
+                            <circle cx="8" cy="24" r="2" stroke="#ff5722" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <h3>Smart Compatibility</h3>
+                    <p>Our algorithm matches pets based on personality, size, energy level, and play style for perfect friendships.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="5" y="7" width="22" height="20" rx="2" stroke="#ff5722" stroke-width="2"/>
+                            <path d="M5 13H27M11 7V3M21 7V3" stroke="#ff5722" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <h3>Playdate Scheduling</h3>
+                    <p>Easily schedule and manage playdates with other pets. Set availability and receive notifications.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="16" cy="10" r="4" stroke="#ff5722" stroke-width="2"/>
+                            <path d="M24 28C24 23 20 20 16 20C12 20 8 23 8 28" stroke="#ff5722" stroke-width="2" stroke-linecap="round"/>
+                            <circle cx="24" cy="11" r="3" stroke="#ff5722" stroke-width="2"/>
+                            <circle cx="8" cy="11" r="3" stroke="#ff5722" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <h3>Local Community</h3>
+                    <p>Connect with pet owners in your neighborhood. Share experiences, tips, and build lasting friendships.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M26 12C26 18 16 28 16 28C16 28 6 18 6 12C6 6 10 4 16 4C22 4 26 6 26 12Z" stroke="#ff5722" stroke-width="2"/>
+                            <circle cx="16" cy="12" r="3" stroke="#ff5722" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <h3>Nearby Discovery</h3>
+                    <p>Find compatible pets near you. Filter by distance, size, breed, and personality traits.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="4" y="4" width="24" height="24" rx="2" stroke="#ff5722" stroke-width="2"/>
+                            <path d="M4 12H28M12 4V28" stroke="#ff5722" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <h3>Activity Feed</h3>
+                    <p>Stay updated with community activities, playdate requests, and new pets joining your neighborhood.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-badge">How It Works</span>
+                <h2 class="section-title">Get Started in Minutes</h2>
+                <p class="section-description">
+                    Three simple steps to connect your pet with their new best friends
+                </p>
+            </div>
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Create Your Profile</h3>
+                        <p>Sign up for free and create profiles for each of your pets with photos, personality traits, and preferences.</p>
+                    </div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Discover Compatible Pets</h3>
+                        <p>Browse nearby pets and use our smart matching algorithm to find the perfect playmates based on compatibility.</p>
+                    </div>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Schedule Playdates</h3>
+                        <p>Connect with other pet owners, schedule playdates, and watch your pets make new friends!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials" id="testimonials">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-badge">Testimonials</span>
+                <h2 class="section-title">Loved by Pet Owners</h2>
+                <p class="section-description">
+                    See what our community has to say
+                </p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="testimonial-text">
+                        "PetNextDoor helped my shy rescue dog come out of her shell! She now has regular playdates
+                        with two perfectly matched friends in the neighborhood. It's been life-changing!"
+                    </p>
+                    <div class="testimonial-author">
+                        <img src="https://i.pravatar.cc/150?img=1" alt="Sarah Johnson">
+                        <div>
+                            <span class="author-name">Sarah Johnson</span>
+                            <span class="author-role">Owner of Luna</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="testimonial-text">
+                        "The compatibility matching is spot on! I was worried about finding suitable playmates for my
+                        high-energy husky, but the app found perfect matches. Best decision ever!"
+                    </p>
+                    <div class="testimonial-author">
+                        <img src="https://i.pravatar.cc/150?img=5" alt="Michael Chen">
+                        <div>
+                            <span class="author-name">Michael Chen</span>
+                            <span class="author-role">Owner of Max</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card">
+                    <div class="stars">★★★★★</div>
+                    <p class="testimonial-text">
+                        "I've met so many wonderful pet owners through this platform. Our dogs have playdates every week,
+                        and I've made great friends too. It's like a social network for both pets and owners!"
+                    </p>
+                    <div class="testimonial-author">
+                        <img src="https://i.pravatar.cc/150?img=9" alt="Emily Rodriguez">
+                        <div>
+                            <span class="author-name">Emily Rodriguez</span>
+                            <span class="author-role">Owner of Bella & Charlie</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Community Section -->
+    <section class="community" id="community">
+        <div class="section-container">
+            <div class="section-header">
+                <span class="section-badge">Community</span>
+                <h2 class="section-title">Join a Thriving Pet Community</h2>
+                <p class="section-description">
+                    Share experiences, get advice, and make lasting connections
+                </p>
+            </div>
+            <div class="community-features">
+                <div class="community-card">
+                    <div class="community-icon">💬</div>
+                    <h3>Messaging</h3>
+                    <p>Chat with other pet owners to coordinate playdates and share pet care tips.</p>
+                </div>
+                <div class="community-card">
+                    <div class="community-icon">🏞️</div>
+                    <h3>Local Events</h3>
+                    <p>Discover and join pet-friendly events, meetups, and activities in your area.</p>
+                </div>
+                <div class="community-card">
+                    <div class="community-icon">🐾</div>
+                    <h3>Adoption Support</h3>
+                    <p>Help pets find their forever homes by connecting with adoption opportunities.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="cta-container">
+            <h2>Ready to Give Your Pet New Friends?</h2>
+            <p>Join our community of pet lovers and help your furry friends make meaningful connections</p>
+            <div class="cta-actions">
+                {% if user.is_authenticated %}
+                    <a href="{% url 'pets:pet_create' %}" class="btn-primary large">Add Your Pet Now</a>
+                    <a href="{% url 'pets:pet_list' %}" class="btn-secondary large">View My Pets</a>
+                {% else %}
+                    <a href="{% url 'users:register' %}" class="btn-primary large">Get Started Free</a>
+                    <a href="{% url 'users:login' %}" class="btn-secondary large">Sign In</a>
+                {% endif %}
+            </div>
+            <p class="cta-note">100% Free • No Credit Card Required • Join Today</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-section">
+                <a href="{% url 'landing' %}" class="logo">
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="16" cy="12" r="3" fill="#ff5722"/>
+                        <circle cx="9" cy="8" r="2.5" fill="#ff5722"/>
+                        <circle cx="23" cy="8" r="2.5" fill="#ff5722"/>
+                        <circle cx="7" cy="17" r="2.5" fill="#ff5722"/>
+                        <circle cx="25" cy="17" r="2.5" fill="#ff5722"/>
+                        <path d="M16 18C19 18 22 20 22 23C22 25 20 27 16 27C12 27 10 25 10 23C10 20 13 18 16 18Z" fill="#ff5722"/>
+                    </svg>
+                    <span>PetNextDoor</span>
+                </a>
+                <p>The ultimate platform for connecting pets and building a community of pet lovers in your neighborhood.</p>
+                <div class="social-links">
+                    <a href="#" class="social-icon">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M20 10C20 4.477 15.523 0 10 0S0 4.477 0 10c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V10h2.54V7.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V10h2.773l-.443 2.89h-2.33v6.988C16.343 19.128 20 14.991 20 10z"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="social-icon">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M6.29 18.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0020 3.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.073 4.073 0 01.8 7.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 010 16.407a11.616 11.616 0 006.29 1.84"/>
+                        </svg>
+                    </a>
+                    <a href="#" class="social-icon">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+                            <path d="M10 0C4.477 0 0 4.477 0 10c0 4.237 2.636 7.855 6.356 9.312-.088-.791-.167-2.005.035-2.868.182-.78 1.172-4.97 1.172-4.97s-.299-.6-.299-1.486c0-1.39.806-2.428 1.81-2.428.852 0 1.264.64 1.264 1.408 0 .858-.546 2.14-.828 3.33-.236.995.5 1.807 1.48 1.807 1.778 0 3.144-1.874 3.144-4.58 0-2.393-1.72-4.068-4.176-4.068-2.845 0-4.516 2.135-4.516 4.34 0 .859.331 1.781.745 2.281a.3.3 0 01.069.288l-.278 1.133c-.044.183-.145.223-.335.134-1.249-.581-2.03-2.407-2.03-3.874 0-3.154 2.292-6.052 6.608-6.052 3.469 0 6.165 2.473 6.165 5.776 0 3.447-2.173 6.22-5.19 6.22-1.013 0-1.965-.525-2.291-1.148l-.623 2.378c-.226.869-.835 1.958-1.244 2.621.937.29 1.931.446 2.962.446 5.523 0 10-4.477 10-10S15.523 0 10 0z"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h4>Features</h4>
+                <ul>
+                    <li><a href="#features">Pet Profiles</a></li>
+                    <li><a href="#features">Smart Matching</a></li>
+                    <li><a href="#features">Playdate Scheduling</a></li>
+                    <li><a href="#community">Community</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Account</h4>
+                <ul>
+                    {% if user.is_authenticated %}
+                        <li><a href="{% url 'users:profile' %}">My Profile</a></li>
+                        <li><a href="{% url 'pets:pet_list' %}">My Pets</a></li>
+                        <li><a href="{% url 'pets:pet_create' %}">Add Pet</a></li>
+                        <li><a href="{% url 'users:logout' %}">Sign Out</a></li>
+                    {% else %}
+                        <li><a href="{% url 'users:register' %}">Sign Up</a></li>
+                        <li><a href="{% url 'users:login' %}">Sign In</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Resources</h4>
+                <ul>
+                    <li><a href="#how-it-works">How It Works</a></li>
+                    <li><a href="#testimonials">Testimonials</a></li>
+                    <li><a href="#community">Community</a></li>
+                    <li><a href="#">Pet Care Tips</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Legal</h4>
+                <ul>
+                    <li><a href="#">Privacy Policy</a></li>
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Cookie Policy</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 PetNextDoor. All rights reserved.</p>
+        </div>
+    </footer>
+</body>
+</html>

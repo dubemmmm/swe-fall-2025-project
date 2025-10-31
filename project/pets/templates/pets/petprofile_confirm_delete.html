@@ -69,7 +69,7 @@
             <form method="post" class="delete-form">
                 {% csrf_token %}
                 <div class="form-actions">
-                    <a href="{% url 'pet_detail' pet.pk %}" class="cancel-btn">
+                    <a href="{% url 'pets:pet_detail' pet.pk %}" class="cancel-btn">
                         <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M13.5 4.5L4.5 13.5M4.5 4.5L13.5 13.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                         </svg>

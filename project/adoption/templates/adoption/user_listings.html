@@ -7,8 +7,8 @@
         <h3>{{ listing.pet.name }}</h3>
         <p>{{ listing.requirements }}</p>
         <p>{{ listing.additional_info }}</p>
-        <a href="{% url 'update_adoption_post' listing.id %}">Edit</a> |
-        <form method="post" action="{% url 'delete_adoption_post' listing.id %}" style="display:inline;">
+        <a href="{% url 'adoption:update_adoption_post' listing.id %}">Edit</a> |
+        <form method="post" action="{% url 'adoption:delete_adoption_post' listing.id %}" style="display:inline;">
             {% csrf_token %}
             <button type="submit">Delete</button>
         </form>
@@ -17,5 +17,5 @@
     <p>You have no adoption listings.</p>
 {% endfor %}
 
-<a href="{% url 'view_adoption_listings' %}">Back to all listings</a>
+<a href="{% url 'adoption:view_adoption_listings' %}">Back to all listings</a>
 {% endblock %}

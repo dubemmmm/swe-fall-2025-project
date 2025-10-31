@@ -11,7 +11,7 @@
   <div class="container">
     <div class="header">
       <div class="topbar">
-        <a class="btn btn-light" href="{% url 'profile' %}">← Back to Profile</a>
+        <a class="btn btn-light" href="{% url 'users:profile' %}">← Back to Profile</a>
       </div>
       <h1>Edit Profile</h1>
       <p style="opacity:.95">Update your personal information and account settings</p>
@@ -117,7 +117,7 @@
             </svg>
             Save Changes
           </button>
-          <a href="{% url 'profile' %}" class="btn btn-light btn-large">Cancel</a>
+          <a href="{% url 'users:profile' %}" class="btn btn-light btn-large">Cancel</a>
         </div>
       </form>
     </div>

@@ -39,7 +39,7 @@
         <form method="post">
             {% csrf_token %}
             <button type="submit" class="btn-danger">Yes, Cancel Playdate</button>
-            <a href="{% url 'playdate-detail' object.id %}">No, Go Back</a>
+            <a href="{% url 'playdates:playdate-detail' object.id %}">No, Go Back</a>
         </form>
             </div>
         </div>

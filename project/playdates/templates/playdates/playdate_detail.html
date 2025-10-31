@@ -12,8 +12,8 @@
     <div class="header">
       <div class="topbar">
         <div class="actions">
-          <a class="btn btn-light" href="{% url 'playdate-list' %}">← Back to List</a>
-          <a class="btn btn-primary" href="{% url 'my-playdates' %}">My Playdates</a>
+          <a class="btn btn-light" href="{% url 'playdates:playdate-list' %}">← Back to List</a>
+          <a class="btn btn-primary" href="{% url 'playdates:my-playdates' %}">My Playdates</a>
         </div>
       </div>
       <h1>Playdate Details</h1>
@@ -72,25 +72,25 @@
                     <span class="badge badge-requested">Requested</span>
                   </div>
                   <div style="display:flex; gap:6px; flex-wrap:wrap; width:100%;">
-                    <a href="{% url 'public_profile' participant.user.id %}" class="btn btn-light" style="padding:6px 12px; font-size:12px;">
+                    <a href="{% url 'users:public_profile' participant.user.id %}" class="btn btn-light" style="padding:6px 12px; font-size:12px;">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px;">
                         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                         <circle cx="12" cy="7" r="4"></circle>
                       </svg>
                       View Profile
                     </a>
-                    <a href="{% url 'pet_compatibility' playdate.organizer_pet.id participant.pet.id %}" class="btn btn-light" style="padding:6px 12px; font-size:12px;">
+                    <a href="{% url 'users:pet_compatibility' playdate.organizer_pet.id participant.pet.id %}" class="btn btn-light" style="padding:6px 12px; font-size:12px;">
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align:middle; margin-right:4px;">
                         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                       </svg>
                       Check Compatibility
                     </a>
-                    <form method="post" action="{% url 'approve-request' playdate.id participant.id %}" style="display:inline; margin-left:auto;">
+                    <form method="post" action="{% url 'playdates:approve-request' playdate.id participant.id %}" style="display:inline; margin-left:auto;">
                       {% csrf_token %}
                       <input type="hidden" name="action" value="approve">
                       <button class="btn btn-primary" type="submit" style="padding:6px 12px; font-size:12px;">Approve</button>
                     </form>
-                    <form method="post" action="{% url 'approve-request' playdate.id participant.id %}" style="display:inline;">
+                    <form method="post" action="{% url 'playdates:approve-request' playdate.id participant.id %}" style="display:inline;">
                       {% csrf_token %}
                       <input type="hidden" name="action" value="deny">
                       <button class="btn btn-light" type="submit" style="padding:6px 12px; font-size:12px;">Deny</button>
@@ -143,12 +143,12 @@
                 <div class="row"><span class="label">Your Pet</span><span>{{ user_invitation.pet.name }}</span></div>
                 <div class="row"><span class="label">Your Status</span>{% with us=user_invitation.status|lower %}<span class="badge badge-{{ us }}">{{ user_invitation.get_status_display|default:user_invitation.status }}</span>{% endwith %}</div>
                 <div class="respond">
-                  <form method="post" action="{% url 'playdate-respond' playdate.id %}">
+                  <form method="post" action="{% url 'playdates:playdate-respond' playdate.id %}">
                     {% csrf_token %}
                     <input type="hidden" name="response" value="accept">
                     <button class="btn btn-primary" type="submit">Accept Invitation</button>
                   </form>
-                  <form method="post" action="{% url 'playdate-respond' playdate.id %}">
+                  <form method="post" action="{% url 'playdates:playdate-respond' playdate.id %}">
                     {% csrf_token %}
                     <input type="hidden" name="response" value="decline">
                     <button class="btn btn-light" type="submit">Decline Invitation</button>
@@ -163,7 +163,7 @@
               <div class="card-head">Request to Join</div>
               <div class="card-body group">
                 <p style="font-size:13px; color:#6B7280; margin-bottom:10px;">Select one of your pets to request joining this playdate:</p>
-                <form method="post" action="{% url 'request-join' playdate.id %}">
+                <form method="post" action="{% url 'playdates:request-join' playdate.id %}">
                   {% csrf_token %}
                   <select name="pet_id" required style="width:100%; padding:10px 12px; border:1px solid #D1D5DB; border-radius:10px; font-size:14px; margin-bottom:8px;">
                     <option value="">-- Select your pet --</option>
@@ -203,7 +203,7 @@
                 {% if available_pets %}
                 <div>
                   <div style="font-weight:600; color:#111827; margin-bottom:6px;">Invite Additional Pets</div>
-                  <form method="post" action="{% url 'playdate-invite' playdate.id %}">
+                  <form method="post" action="{% url 'playdates:playdate-invite' playdate.id %}">
                     {% csrf_token %}
                     <select name="pet_id" required style="width:100%; padding:10px 12px; border:1px solid #D1D5DB; border-radius:10px; font-size:14px; margin-bottom:8px;">
                       <option value="">-- Select a pet to invite --</option>
@@ -216,8 +216,8 @@
                 </div>
                 {% endif %}
                 <div class="rowbtns">
-                  <a class="btn btn-light" href="{% url 'playdate-update' playdate.id %}">Edit Playdate</a>
-                  <a class="btn btn-danger" href="{% url 'playdate-delete' playdate.id %}">Cancel Playdate</a>
+                  <a class="btn btn-light" href="{% url 'playdates:playdate-update' playdate.id %}">Edit Playdate</a>
+                  <a class="btn btn-danger" href="{% url 'playdates:playdate-delete' playdate.id %}">Cancel Playdate</a>
                 </div>
               </div>
             </div>
@@ -226,8 +226,8 @@
       </div>
 
       <div class="nav">
-        <a class="btn btn-light" href="{% url 'playdate-list' %}">Back to List</a>
-        <a class="btn btn-primary" href="{% url 'my-playdates' %}">My Playdates</a>
+        <a class="btn btn-light" href="{% url 'playdates:playdate-list' %}">Back to List</a>
+        <a class="btn btn-primary" href="{% url 'playdates:my-playdates' %}">My Playdates</a>
       </div>
     </div>
   </div>
