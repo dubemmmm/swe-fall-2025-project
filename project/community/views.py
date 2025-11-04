@@ -16,7 +16,7 @@ class CommunityAlertCreateView(LoginRequiredMixin, CreateView):
               'color_markings', 'location', 'latitude', 'longitude',
               'contact_info', 'photo']
     template_name = 'community/alert_form.html'
-    success_url = reverse_lazy('alert-list')
+    success_url = reverse_lazy('community:alert-list')
 
     def form_valid(self, form):
         # Validate required fields
@@ -56,7 +56,7 @@ class CommunityAlertUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateVi
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy('alert-detail', kwargs={'pk': self.object.pk})
+        return reverse_lazy('community:alert-detail', kwargs={'pk': self.object.pk})
 
 
 class CommunityAlertListView(ListView):

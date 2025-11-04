@@ -33,8 +33,8 @@
                     <a href="{% url 'pets:pet_list' %}" class="btn-secondary">My Pets</a>
                     <a href="{% url 'users:profile' %}" class="btn-primary">Profile</a>
                 {% else %}
-                    <a href="{% url 'login' %}" class="btn-secondary">Sign In</a>
-                    <a href="{% url 'register' %}" class="btn-primary">Get Started</a>
+                    <a href="{% url 'users:login' %}" class="btn-secondary">Sign In</a>
+                    <a href="{% url 'users:register' %}" class="btn-primary">Get Started</a>
                 {% endif %}
             </div>
             <button class="mobile-menu-btn">
@@ -69,7 +69,7 @@
                             </svg>
                         </a>
                     {% else %}
-                        <a href="{% url 'register' %}" class="btn-primary large">
+                        <a href="{% url 'users:register' %}" class="btn-primary large">
                             Get Started Free
                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
