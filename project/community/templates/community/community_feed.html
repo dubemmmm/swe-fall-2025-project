@@ -1,0 +1,151 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Timeline - PetNextdoor</title>
+    <link rel="stylesheet" href="{% static 'community/css/feed.css' %}">
+</head>
+<body>
+    <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-card">
+                <h3>Your Location</h3>
+                <div class="location-display">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" stroke="#6b7280" stroke-width="2"/>
+                        <circle cx="12" cy="10" r="3" stroke="#6b7280" stroke-width="2"/>
+                    </svg>
+                    <div>
+                        <div class="location-text">
+                            {% if user.location %}
+                                {{ user.location }}
+                            {% else %}
+                                Location not set
+                            {% endif %}
+                        </div>
+                        <div class="location-subtext">Showing posts within 5 miles</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-card">
+                <h3>Quick Actions</h3>
+                <div class="quick-actions">
+                    <a href="{% url 'community:post_alert' %}" class="action-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        Report Lost Pet
+                    </a>
+                    <a href="{% url 'pets:pet_create' %}" class="action-item">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                            <path d="M12 8v8M8 12h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Manage My Pets
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="header">
+                <div class="header-top">
+                    <a href="{% url 'users:home' %}" class="back-link">← PetNextdoor</a>
+                    <div class="header-actions">
+                        <a href="{% url 'community:alert-list' %}" class="btn-light">Alerts</a>
+                        <a href="{% url 'community:post_alert' %}" class="btn-primary">+ Create Post</a>
+                    </div>
+                </div>
+
+                <h1>Community Timeline</h1>
+                <p class="subtitle">Stay updated with the latest from your neighborhood pet community</p>
+            </div>
+
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- Posts Feed -->
+            {% if posts %}
+                <div class="feed">
+                    {% for post in posts %}
+                    <article class="post-card">
+                        <div class="post-header">
+                            <div class="user-section">
+                                <div class="user-avatar">
+                                    {{ post.user.profile_name|first|upper }}
+                                </div>
+                                <div class="user-info">
+                                    <div class="user-name">{{ post.user.profile_name }}</div>
+                                    <div class="post-meta">
+                                        {% if post.user.location %}
+                                            <span>{{ post.user.location|truncatewords:2 }}</span>
+                                            <span class="separator">•</span>
+                                        {% endif %}
+                                        <span>{{ post.timestamp|timesince }} ago</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="post-body">
+                            <p class="post-caption">{{ post.caption }}</p>
+
+                            {% if post.photo %}
+                                <div class="post-photo">
+                                    <img src="{{ post.photo.url }}" alt="Post photo">
+                                </div>
+                            {% endif %}
+                        </div>
+
+                        <div class="post-footer">
+                            <button class="action-btn" disabled>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                                Helpful
+                            </button>
+                            <button class="action-btn" disabled>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                                Comment
+                            </button>
+                            <button class="action-btn" disabled>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                                    <circle cx="18" cy="5" r="3" stroke="currentColor" stroke-width="2"/>
+                                    <circle cx="6" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+                                    <circle cx="18" cy="19" r="3" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M8.59 13.51l6.83 3.98M15.41 6.51l-6.82 3.98" stroke="currentColor" stroke-width="2"/>
+                                </svg>
+                                Share
+                            </button>
+                        </div>
+                    </article>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <svg width="80" height="80" viewBox="0 0 24 24" fill="none">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="#d1d5db" stroke-width="2"/>
+                        </svg>
+                    </div>
+                    <h3>No posts yet</h3>
+                    <p>Be the first to share something with your pet community!</p>
+                    <a href="{% url 'community:post_alert' %}" class="btn-primary">Create First Post</a>
+                </div>
+            {% endif %}
+        </main>
+    </div>
+</body>
+</html>

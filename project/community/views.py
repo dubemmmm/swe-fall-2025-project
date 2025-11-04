@@ -1,10 +1,11 @@
 from django.shortcuts import render
-from django.views.generic import CreateView, DetailView, UpdateView, ListView
+from django.views.generic import CreateView, DetailView, UpdateView, DeleteView, ListView
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib import messages
 from django.urls import reverse_lazy
 from django.db.models import Q
-from .models import CommunityAlert
+from .models import CommunityAlert, Post
+from .forms import CommunityAlertForm
 from decimal import Decimal
 import math
 
@@ -12,11 +13,9 @@ import math
 class CommunityAlertCreateView(LoginRequiredMixin, CreateView):
     """Create a new community alert"""
     model = CommunityAlert
-    fields = ['alert_type', 'title', 'description', 'pet_type', 'size',
-              'color_markings', 'location', 'latitude', 'longitude',
-              'contact_info', 'photo']
+    form_class = CommunityAlertForm
     template_name = 'community/alert_form.html'
-    success_url = reverse_lazy('alert-list')
+    success_url = reverse_lazy('community:alert-list')
 
     def form_valid(self, form):
         # Validate required fields
@@ -43,9 +42,9 @@ class CommunityAlertDetailView(DetailView):
 class CommunityAlertUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     """Update a community alert (mark as resolved, edit details)"""
     model = CommunityAlert
-    fields = ['title', 'description', 'pet_type', 'size', 'color_markings',
-              'location', 'latitude', 'longitude', 'contact_info', 'photo', 'is_active']
+    form_class = CommunityAlertForm
     template_name = 'community/alert_form.html'
+    context_object_name = 'alert'
 
     def test_func(self):
         alert = self.get_object()
@@ -56,7 +55,7 @@ class CommunityAlertUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateVi
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy('alert-detail', kwargs={'pk': self.object.pk})
+        return reverse_lazy('community:alert-detail', kwargs={'pk': self.object.pk})
 
 
 class CommunityAlertListView(ListView):
@@ -118,3 +117,36 @@ class CommunityAlertListView(ListView):
         c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
 
         return R * c
+
+
+class CommunityAlertDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
+    """Delete a community alert"""
+    model = CommunityAlert
+    template_name = 'community/alert_confirm_delete.html'
+    context_object_name = 'alert'
+    success_url = reverse_lazy('community:alert-list')
+
+    def test_func(self):
+        alert = self.get_object()
+        return self.request.user == alert.user
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, 'Alert deleted successfully.')
+        return super().delete(request, *args, **kwargs)
+
+
+class CommunityFeedView(ListView):
+    """Display community feed with posts from active users only"""
+    model = Post
+    template_name = 'community/community_feed.html'
+    context_object_name = 'posts'
+    paginate_by = 20
+
+    def get_queryset(self):
+        """
+        Filter posts by active users (Use Case 3 requirement).
+        Only active users with visible profiles are returned.
+        """
+        return Post.objects.filter(
+            user__is_active=True
+        ).select_related('user').order_by('-timestamp')

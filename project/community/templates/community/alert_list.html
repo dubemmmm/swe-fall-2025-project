@@ -1,0 +1,172 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Alerts</title>
+    <link rel="stylesheet" href="{% static 'community/css/alert_list.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="topbar">
+                <div class="actions">
+                    <a class="btn btn-primary" href="{% url 'community:post_alert' %}">+ Create New Alert</a>
+                    <a class="btn btn-light" href="{% url 'community:community_feed' %}">View Timeline</a>
+                </div>
+            </div>
+            <h1>Community Alerts</h1>
+            <p style="opacity:.95">Browse lost & found pets and emergency alerts in your area</p>
+        </div>
+
+        <div class="content">
+            {% if messages %}
+                <div class="messages">
+                    {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- Filters -->
+            <form method="get" class="filters">
+                <h3>Filters</h3>
+
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label for="type" class="label">Alert Type</label>
+                        <select name="type" id="type">
+                            <option value="">All Types</option>
+                            <option value="LOST" {% if request.GET.type == 'LOST' %}selected{% endif %}>Lost Pet</option>
+                            <option value="FOUND" {% if request.GET.type == 'FOUND' %}selected{% endif %}>Found Pet</option>
+                            <option value="EMERGENCY" {% if request.GET.type == 'EMERGENCY' %}selected{% endif %}>Emergency</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="status" class="label">Status</label>
+                        <select name="status" id="status">
+                            <option value="">Active Only</option>
+                            <option value="all" {% if request.GET.status == 'all' %}selected{% endif %}>All</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Apply Filters</button>
+            </form>
+
+            <!-- Alerts Grid -->
+            {% if alerts %}
+                <div class="grid">
+                    {% for alert in alerts %}
+                    <div class="card alert-card">
+                        <div class="card-head">
+                            <div class="alert-header">
+                                <div class="user-info">
+                                    <div class="user-avatar">
+                                        {{ alert.user.profile_name|first|upper }}
+                                    </div>
+                                    <div class="user-details">
+                                        <span class="user-name">{{ alert.user.profile_name }}</span>
+                                        <div class="meta">
+                                            <span class="location">{{ alert.location|truncatewords:3 }}</span>
+                                            <span class="separator">•</span>
+                                            <span class="time">{{ alert.created_at|timesince }} ago</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% if alert.alert_type == 'LOST' %}
+                                    <span class="badge badge-lost">Lost</span>
+                                {% elif alert.alert_type == 'FOUND' %}
+                                    <span class="badge badge-found">Found</span>
+                                {% else %}
+                                    <span class="badge badge-emergency">Emergency</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <h3 class="alert-title">{{ alert.title }}</h3>
+
+                            {% if alert.photo %}
+                                <div class="alert-photo">
+                                    <img src="{{ alert.photo.url }}" alt="{{ alert.title }}">
+                                </div>
+                            {% endif %}
+
+                            <p class="alert-description">{{ alert.description|truncatewords:30 }}</p>
+
+                            <div class="alert-details">
+                                {% if alert.pet_type %}
+                                    <div class="detail-item">
+                                        <span class="label">Pet Type:</span>
+                                        <span class="value">{{ alert.pet_type }}</span>
+                                    </div>
+                                {% endif %}
+                                {% if alert.size %}
+                                    <div class="detail-item">
+                                        <span class="label">Size:</span>
+                                        <span class="value">{{ alert.size }}</span>
+                                    </div>
+                                {% endif %}
+                                {% if alert.color_markings %}
+                                    <div class="detail-item">
+                                        <span class="label">Color:</span>
+                                        <span class="value">{{ alert.color_markings|truncatewords:5 }}</span>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="card-foot">
+                            <a class="link" href="{% url 'community:alert-detail' alert.pk %}">View Details →</a>
+                            <div class="actions">
+                                {% if user == alert.user %}
+                                    <a class="btn btn-light btn-sm" href="{% url 'community:alert-update' alert.pk %}">Edit</a>
+                                {% endif %}
+                                {% if not alert.is_active %}
+                                    <span class="pill pill-resolved">Resolved</span>
+                                {% else %}
+                                    <span class="pill pill-active">Active</span>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if is_paginated %}
+                    <div class="pagination">
+                        {% if page_obj.has_previous %}
+                            <a href="?page=1{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" class="page-link">First</a>
+                            <a href="?page={{ page_obj.previous_page_number }}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" class="page-link">Previous</a>
+                        {% endif %}
+
+                        <span class="page-info">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+
+                        {% if page_obj.has_next %}
+                            <a href="?page={{ page_obj.next_page_number }}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" class="page-link">Next</a>
+                            <a href="?page={{ page_obj.paginator.num_pages }}{% if request.GET.type %}&type={{ request.GET.type }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}" class="page-link">Last</a>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="empty">
+                    <div class="empty-icon">
+                        <svg width="80" height="80" viewBox="0 0 24 24" fill="none">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" stroke="#d1d5db" stroke-width="2"/>
+                            <line x1="12" y1="9" x2="12" y2="13" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+                            <line x1="12" y1="17" x2="12.01" y2="17" stroke="#d1d5db" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <h3 style="margin-bottom:6px; color:#111827;">No alerts found</h3>
+                    <p style="margin-bottom:14px;">Try adjusting your filters or be the first to post an alert in your community.</p>
+                    <a class="btn btn-primary" href="{% url 'community:post_alert' %}">Create Alert</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>
