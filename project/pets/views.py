@@ -32,7 +32,7 @@ class PetProfileCreateView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def get_success_url(self):
-        return reverse_lazy('pet_detail', kwargs={'pk': self.object.pk})
+        return reverse_lazy('pets:pet_detail', kwargs={'pk': self.object.pk})
 
 
 class PetProfileDetailView(LoginRequiredMixin, DetailView):
@@ -58,7 +58,7 @@ class PetProfileUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return self.request.user == pet.owner
 
     def get_success_url(self):
-        return reverse_lazy('pet_detail', kwargs={'pk': self.object.pk})
+        return reverse_lazy('pets:pet_detail', kwargs={'pk': self.object.pk})
 
 
 class PetProfileDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
@@ -68,7 +68,7 @@ class PetProfileDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = PetProfile
     template_name = 'pets/petprofile_confirm_delete.html'
     context_object_name = 'pet'
-    success_url = reverse_lazy('pet_list') # Redirect to the user's pet list after deletion
+    success_url = reverse_lazy('pets:pet_list') # Redirect to the user's pet list after deletion
 
     def test_func(self):
         pet = self.get_object()
