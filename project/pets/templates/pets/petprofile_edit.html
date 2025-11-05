@@ -10,13 +10,8 @@
 <body>
     <div class="container">
         <div class="header">
-            <a href="{% url 'pets:pet_detail' pet.pk %}" class="back-btn">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-                Back to {{ pet.name }}'s Profile
-            </a>
             <h1>Edit {{ pet.name }}'s Profile</h1>
+            <a href="{% url 'pets:pet_list' %}" class="cancel-btn">Cancel</a>
         </div>
 
         <form method="post" enctype="multipart/form-data" id="petProfileForm">
