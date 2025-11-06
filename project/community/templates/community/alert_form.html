@@ -1,0 +1,207 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if object %}Edit Alert{% else %}Create Community Alert{% endif %}</title>
+    <link rel="stylesheet" href="{% static 'community/css/alert_form.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>{% if object %}Edit Alert{% else %}Create Community Alert{% endif %}</h1>
+            <p class="subtitle">Help your community by reporting lost pets, found animals, or emergency situations</p>
+            <a href="{% url 'community:alert-list' %}" class="cancel-btn">Back to Alerts</a>
+        </div>
+
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data" id="alertForm">
+            {% csrf_token %}
+
+            <!-- Alert Type Selection -->
+            <div class="form-section">
+                <label class="section-title">Alert Type</label>
+                <div class="alert-type-cards">
+                    <label class="alert-card {% if form.alert_type.value == 'LOST' %}selected{% endif %}">
+                        <input type="radio" name="alert_type" value="LOST" {% if form.alert_type.value == 'LOST' %}checked{% endif %} required>
+                        <div class="card-content">
+                            <div class="icon icon-lost">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+                                    <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+                                    <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                            <h3>Lost Pet</h3>
+                            <p>Pet is missing</p>
+                        </div>
+                    </label>
+
+                    <label class="alert-card {% if form.alert_type.value == 'FOUND' %}selected{% endif %}">
+                        <input type="radio" name="alert_type" value="FOUND" {% if form.alert_type.value == 'FOUND' %}checked{% endif %} required>
+                        <div class="card-content">
+                            <div class="icon icon-found">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="currentColor" stroke-width="2" fill="none"/>
+                                </svg>
+                            </div>
+                            <h3>Found Pet</h3>
+                            <p>Found a stray</p>
+                        </div>
+                    </label>
+
+                    <label class="alert-card {% if form.alert_type.value == 'EMERGENCY' %}selected{% endif %}">
+                        <input type="radio" name="alert_type" value="EMERGENCY" {% if form.alert_type.value == 'EMERGENCY' %}checked{% endif %} required>
+                        <div class="card-content">
+                            <div class="icon icon-emergency">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none">
+                                    <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" stroke="currentColor" stroke-width="2"/>
+                                    <line x1="12" y1="9" x2="12" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                    <line x1="12" y1="17" x2="12.01" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                </svg>
+                            </div>
+                            <h3>Emergency</h3>
+                            <p>Animal in distress</p>
+                        </div>
+                    </label>
+                </div>
+            </div>
+
+            <!-- Alert Title -->
+            <div class="form-group">
+                <label for="id_title">Alert Title *</label>
+                <input type="text" name="title" id="id_title"
+                       value="{% if form.title.value %}{{ form.title.value }}{% endif %}"
+                       placeholder="e.g., Found Black Cat near Park"
+                       maxlength="200" required>
+                {% if form.title.errors %}
+                    <div class="error-message">{{ form.title.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Description -->
+            <div class="form-group">
+                <label for="id_description">Description *</label>
+                <textarea name="description" id="id_description" rows="4" required
+                          placeholder="Provide detailed description including behavior, distinguishing features, circumstances...">{% if form.description.value %}{{ form.description.value }}{% endif %}</textarea>
+                {% if form.description.errors %}
+                    <div class="error-message">{{ form.description.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Pet Details Row -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="id_pet_type">Pet Type</label>
+                    <input type="text" name="pet_type" id="id_pet_type"
+                           value="{% if form.pet_type.value %}{{ form.pet_type.value }}{% endif %}"
+                           placeholder="e.g., Dog, Cat">
+                    {% if form.pet_type.errors %}
+                        <div class="error-message">{{ form.pet_type.errors }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_size">Size</label>
+                    <input type="text" name="size" id="id_size"
+                           value="{% if form.size.value %}{{ form.size.value }}{% endif %}"
+                           placeholder="e.g., Small, Medium, Large">
+                    {% if form.size.errors %}
+                        <div class="error-message">{{ form.size.errors }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Color/Markings -->
+            <div class="form-group">
+                <label for="id_color_markings">Color/Markings</label>
+                <input type="text" name="color_markings" id="id_color_markings"
+                       value="{% if form.color_markings.value %}{{ form.color_markings.value }}{% endif %}"
+                       placeholder="e.g., Brown with white chest">
+                {% if form.color_markings.errors %}
+                    <div class="error-message">{{ form.color_markings.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Location -->
+            <div class="form-group">
+                <label for="id_location">Location (where found/last seen) *</label>
+                <input type="text" name="location" id="id_location"
+                       value="{% if form.location.value %}{{ form.location.value }}{% endif %}"
+                       placeholder="Street address or landmark"
+                       maxlength="255" required>
+                {% if form.location.errors %}
+                    <div class="error-message">{{ form.location.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Photo Upload -->
+            <div class="form-group">
+                <label for="id_photo">Photos</label>
+                <div class="photo-upload-area">
+                    <div class="upload-icon">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke="#9CA3AF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <p>Upload photos of the pet</p>
+                    <label for="id_photo" class="choose-photos-btn">Choose Photos</label>
+                    <input type="file" name="photo" id="id_photo" accept="image/*" style="display: none;">
+                </div>
+                {% if form.photo.errors %}
+                    <div class="error-message">{{ form.photo.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Contact Information -->
+            <div class="form-group">
+                <label for="id_contact_info">Contact Information *</label>
+                <input type="text" name="contact_info" id="id_contact_info"
+                       value="{% if form.contact_info.value %}{{ form.contact_info.value }}{% endif %}"
+                       placeholder="Phone number or email"
+                       maxlength="100" required>
+                {% if form.contact_info.errors %}
+                    <div class="error-message">{{ form.contact_info.errors }}</div>
+                {% endif %}
+            </div>
+
+            <!-- Privacy Notice -->
+            <div class="privacy-notice">
+                <h4>Privacy & Safety</h4>
+                <p>Your alert will be visible to the community. Only share contact information you're comfortable making public. Your exact location will be approximated for privacy.</p>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">Post Alert</button>
+                <a href="{% url 'community:alert-list' %}" class="btn-cancel">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Alert type card selection
+        document.querySelectorAll('.alert-card').forEach(card => {
+            card.addEventListener('click', function() {
+                document.querySelectorAll('.alert-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+            });
+        });
+
+        // Photo upload preview
+        document.getElementById('id_photo').addEventListener('change', function(e) {
+            if (e.target.files.length > 0) {
+                const fileName = e.target.files[0].name;
+                document.querySelector('.choose-photos-btn').textContent = fileName;
+            }
+        });
+    </script>
+</body>
+</html>
