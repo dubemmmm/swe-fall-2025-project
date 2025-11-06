@@ -1,9 +1,150 @@
 {% extends "base.html" %}
-{% block content %}
-<h2>{{ listing.pet.name }} - Adoption Listing</h2>
-<p><strong>Requirements:</strong> {{ listing.requirements }}</p>
-<p><strong>Additional Info:</strong> {{ listing.additional_info }}</p>
-<p><strong>Posted By:</strong> {{ listing.posted_by.username }}</p>
+{% load static %}
 
-<a href="{% url 'view_adoption_listings' %}">Back to all listings</a>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'adoption/css/view_post.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="adoption-detail-container">
+    <div class="back-navigation">
+        <a href="{% url 'adoption:view_adoption_listings' %}" class="back-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M19 12H5M12 19l-7-7 7-7"/>
+            </svg>
+            Back to All Listings
+        </a>
+    </div>
+
+    <div class="detail-content">
+        <div class="pet-image-section">
+            {% if listing.pet.image %}
+                <img src="{{ listing.pet.image.url }}" alt="{{ listing.pet.name }}" class="pet-main-image">
+            {% else %}
+                <div class="placeholder-main-image">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <path d="M12 8v4m0 4h.01"/>
+                    </svg>
+                    <p>No image available</p>
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="pet-details-section">
+            <div class="pet-header">
+                <h1 class="pet-name">{{ listing.pet.name }}</h1>
+                <span class="adoption-status-badge">Available for Adoption</span>
+            </div>
+
+            <div class="pet-quick-info">
+                {% if listing.pet.species %}
+                    <div class="quick-info-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z"/>
+                        </svg>
+                        <div>
+                            <span class="label">Species</span>
+                            <span class="value">{{ listing.pet.species }}</span>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if listing.pet.breed %}
+                    <div class="quick-info-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                            <circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        <div>
+                            <span class="label">Breed</span>
+                            <span class="value">{{ listing.pet.breed }}</span>
+                        </div>
+                    </div>
+                {% endif %}
+
+                {% if listing.pet.age %}
+                    <div class="quick-info-item">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                        <div>
+                            <span class="label">Age</span>
+                            <span class="value">{{ listing.pet.age }}</span>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            <div class="info-card requirements-card">
+                <div class="card-header">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M9 11l3 3L22 4"/>
+                        <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                    </svg>
+                    <h2>Adoption Requirements</h2>
+                </div>
+                <div class="card-content">
+                    <p>{{ listing.requirements }}</p>
+                </div>
+            </div>
+
+            {% if listing.additional_info %}
+                <div class="info-card additional-card">
+                    <div class="card-header">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 16v-4m0-4h.01"/>
+                        </svg>
+                        <h2>Additional Information</h2>
+                    </div>
+                    <div class="card-content">
+                        <p>{{ listing.additional_info }}</p>
+                    </div>
+                </div>
+            {% endif %}
+
+            <div class="owner-info-card">
+                <div class="owner-header">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                    </svg>
+                    <h3>Posted By</h3>
+                </div>
+                <div class="owner-details">
+                    <p class="owner-name">{{ listing.posted_by.username }}</p>
+                    {% if listing.posted_by.email %}
+                        <a href="mailto:{{ listing.posted_by.email }}" class="contact-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                <path d="M22 6l-10 7L2 6"/>
+                            </svg>
+                            Contact Owner
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="action-buttons">
+                <a href="{% url 'adoption:view_adoption_listings' %}" class="btn btn-secondary">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    </svg>
+                    Browse More Pets
+                </a>
+                {% if user.is_authenticated and listing.posted_by == user %}
+                    <a href="{% url 'adoption:update_adoption_post' listing.id %}" class="btn btn-primary">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                        </svg>
+                        Edit Listing
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

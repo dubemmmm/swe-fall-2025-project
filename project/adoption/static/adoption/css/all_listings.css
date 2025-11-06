@@ -1,0 +1,272 @@
+/* All Listings Page Styles */
+
+.adoption-listings-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.listings-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.listings-header h1 {
+    font-size: 2.5rem;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.listings-header .subtitle {
+    font-size: 1.2rem;
+    color: #7f8c8d;
+    font-weight: 400;
+}
+
+/* Grid Layout */
+.listings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+/* Listing Card */
+.listing-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+}
+
+.listing-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Card Image */
+.card-image {
+    width: 100%;
+    height: 250px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    position: relative;
+}
+
+.card-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.listing-card:hover .card-image img {
+    transform: scale(1.05);
+}
+
+.placeholder-image {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.placeholder-image svg {
+    width: 80px;
+    height: 80px;
+    color: white;
+    stroke-width: 1.5;
+}
+
+/* Card Content */
+.card-content {
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.pet-name {
+    font-size: 1.5rem;
+    color: #2c3e50;
+    margin: 0 0 1rem 0;
+    font-weight: 600;
+}
+
+/* Pet Info Badges */
+.pet-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.info-badge {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    background: #e8f4f8;
+    color: #3498db;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+/* Requirements Section */
+.requirements-section {
+    margin-bottom: 1rem;
+}
+
+.requirements-section h3 {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin: 0 0 0.5rem 0;
+    font-weight: 600;
+}
+
+.requirements-section p {
+    color: #34495e;
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Additional Info */
+.additional-info {
+    margin-bottom: 1rem;
+    padding: 0.8rem;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border-left: 3px solid #3498db;
+}
+
+.additional-info p {
+    margin: 0;
+    color: #555;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* Posted By */
+.posted-by {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid #ecf0f1;
+    color: #7f8c8d;
+    font-size: 0.9rem;
+}
+
+.posted-by svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2;
+}
+
+/* View Details Button */
+.view-details-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding: 0.8rem 1.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.view-details-btn:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    transform: translateX(2px);
+}
+
+.view-details-btn svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2;
+    transition: transform 0.3s ease;
+}
+
+.view-details-btn:hover svg {
+    transform: translateX(3px);
+}
+
+/* Empty State */
+.empty-state {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.empty-state svg {
+    width: 80px;
+    height: 80px;
+    color: #bdc3c7;
+    margin-bottom: 1.5rem;
+    stroke-width: 1.5;
+}
+
+.empty-state h2 {
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.empty-state p {
+    color: #7f8c8d;
+    font-size: 1.1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .adoption-listings-container {
+        padding: 1rem;
+    }
+
+    .listings-header h1 {
+        font-size: 2rem;
+    }
+
+    .listings-header .subtitle {
+        font-size: 1rem;
+    }
+
+    .listings-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .card-image {
+        height: 200px;
+    }
+}
+
+@media (max-width: 480px) {
+    .listings-header h1 {
+        font-size: 1.5rem;
+    }
+
+    .pet-name {
+        font-size: 1.3rem;
+    }
+
+    .card-content {
+        padding: 1rem;
+    }
+}

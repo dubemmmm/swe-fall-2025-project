@@ -1,16 +1,83 @@
 {% extends "base.html" %}
-{% block content %}
-<h2>All Adoption Listings</h2>
+{% load static %}
 
-{% for listing in listings %}
-    <div>
-        <h3>{{ listing.pet.name }}</h3>
-        <p>{{ listing.requirements }}</p>
-        <p>{{ listing.additional_info }}</p>
-        <p>Posted By: {{ listing.posted_by.username }}</p>
-        <a href="{% url 'adoption:view_adoption_post' listing.id %}">View Details</a>
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'adoption/css/all_listings.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="adoption-listings-container">
+    <header class="listings-header">
+        <h1>Find Your Perfect Companion</h1>
+        <p class="subtitle">Browse our available pets looking for loving homes</p>
+    </header>
+
+    <div class="listings-grid">
+        {% for listing in listings %}
+            <div class="listing-card">
+                <div class="card-image">
+                    {% if listing.pet.image %}
+                        <img src="{{ listing.pet.image.url }}" alt="{{ listing.pet.name }}">
+                    {% else %}
+                        <div class="placeholder-image">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+                            </svg>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="card-content">
+                    <h2 class="pet-name">{{ listing.pet.name }}</h2>
+
+                    <div class="pet-info">
+                        {% if listing.pet.species %}
+                            <span class="info-badge">{{ listing.pet.species }}</span>
+                        {% endif %}
+                        {% if listing.pet.breed %}
+                            <span class="info-badge">{{ listing.pet.breed }}</span>
+                        {% endif %}
+                        {% if listing.pet.age %}
+                            <span class="info-badge">{{ listing.pet.age }} old</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="requirements-section">
+                        <h3>Requirements</h3>
+                        <p>{{ listing.requirements|truncatewords:20 }}</p>
+                    </div>
+
+                    {% if listing.additional_info %}
+                        <div class="additional-info">
+                            <p>{{ listing.additional_info|truncatewords:15 }}</p>
+                        </div>
+                    {% endif %}
+
+                    <div class="posted-by">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                        <span>{{ listing.posted_by.username }}</span>
+                    </div>
+
+                    <a href="{% url 'adoption:view_adoption_post' listing.id %}" class="view-details-btn">
+                        View Full Details
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                            <path d="M5 12h14M12 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        {% empty %}
+            <div class="empty-state">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <path d="M16 16s-1.5-2-4-2-4 2-4 2M9 9h.01M15 9h.01"/>
+                </svg>
+                <h2>No Pets Available</h2>
+                <p>There are no pets available for adoption at the moment. Check back soon!</p>
+            </div>
+        {% endfor %}
     </div>
-{% empty %}
-    <p>No pets available for adoption at the moment.</p>
-{% endfor %}
+</div>
 {% endblock %}

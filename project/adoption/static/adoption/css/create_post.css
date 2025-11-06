@@ -1,0 +1,366 @@
+/* Create Post Form Styles */
+
+.create-post-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+/* Back Navigation */
+.back-navigation {
+    margin-bottom: 2rem;
+}
+
+.back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.6rem 1.2rem;
+    color: #667eea;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    background: white;
+    border: 2px solid #667eea;
+}
+
+.back-btn:hover {
+    background: #667eea;
+    color: white;
+    transform: translateX(-3px);
+}
+
+.back-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2;
+}
+
+/* Form Wrapper */
+.form-wrapper {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Form Header */
+.form-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 2rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.header-icon {
+    flex-shrink: 0;
+}
+
+.header-icon svg {
+    width: 60px;
+    height: 60px;
+    stroke-width: 1.5;
+}
+
+.header-text h1 {
+    font-size: 2rem;
+    margin: 0 0 0.5rem 0;
+    font-weight: 700;
+}
+
+.header-text p {
+    margin: 0;
+    opacity: 0.9;
+    font-size: 1rem;
+}
+
+/* Pet Preview Card */
+.pet-preview-card {
+    display: flex;
+    gap: 1.5rem;
+    margin: 2rem;
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 2px solid #e9ecef;
+}
+
+.preview-icon {
+    flex-shrink: 0;
+}
+
+.preview-icon svg {
+    width: 50px;
+    height: 50px;
+    color: #667eea;
+    stroke-width: 1.5;
+}
+
+.preview-info {
+    flex: 1;
+}
+
+.preview-info h3 {
+    font-size: 1.2rem;
+    color: #2c3e50;
+    margin: 0 0 1rem 0;
+    font-weight: 600;
+}
+
+.preview-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.5rem;
+}
+
+.preview-details p {
+    margin: 0;
+    color: #34495e;
+    font-size: 0.95rem;
+}
+
+.preview-details strong {
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+/* Form Styles */
+.adoption-form {
+    padding: 2rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* Field Wrapper */
+.field-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.field-label {
+    font-size: 1rem;
+    color: #2c3e50;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+}
+
+.required-indicator {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.field-help {
+    font-size: 0.85rem;
+    color: #7f8c8d;
+    margin: 0;
+    line-height: 1.4;
+}
+
+/* Input Styling */
+.field-input input[type="text"],
+.field-input input[type="email"],
+.field-input input[type="number"],
+.field-input input[type="date"],
+.field-input textarea,
+.field-input select {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.field-input input:focus,
+.field-input textarea:focus,
+.field-input select:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.field-input textarea {
+    min-height: 120px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+/* Checkbox and Radio Styling */
+.field-input input[type="checkbox"],
+.field-input input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    margin-right: 0.5rem;
+    cursor: pointer;
+}
+
+/* Select Dropdown */
+.field-input select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23667eea' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.8rem center;
+    background-size: 20px;
+    padding-right: 3rem;
+}
+
+/* Error Styling */
+.field-errors,
+.non-field-errors {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.error-message {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.8rem;
+    background: #fee;
+    border-left: 3px solid #e74c3c;
+    border-radius: 6px;
+    color: #c0392b;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.error-message svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2;
+    flex-shrink: 0;
+}
+
+.field-input input.error,
+.field-input textarea.error,
+.field-input select.error {
+    border-color: #e74c3c;
+}
+
+/* Form Actions */
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid #ecf0f1;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.9rem 1.8rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    flex: 1;
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.btn svg {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: white;
+    color: #7f8c8d;
+    border: 2px solid #e9ecef;
+}
+
+.btn-secondary:hover {
+    background: #f8f9fa;
+    border-color: #7f8c8d;
+    color: #2c3e50;
+    transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .create-post-container {
+        padding: 1rem;
+    }
+
+    .form-header {
+        flex-direction: column;
+        text-align: center;
+        padding: 1.5rem;
+    }
+
+    .header-text h1 {
+        font-size: 1.5rem;
+    }
+
+    .pet-preview-card {
+        flex-direction: column;
+        margin: 1.5rem;
+        padding: 1rem;
+    }
+
+    .preview-details {
+        grid-template-columns: 1fr;
+    }
+
+    .adoption-form {
+        padding: 1.5rem;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .header-text h1 {
+        font-size: 1.3rem;
+    }
+
+    .header-text p {
+        font-size: 0.9rem;
+    }
+
+    .header-icon svg {
+        width: 50px;
+        height: 50px;
+    }
+
+    .adoption-form {
+        padding: 1rem;
+    }
+
+    .pet-preview-card {
+        margin: 1rem;
+    }
+}
