@@ -8,7 +8,7 @@
         <p>{{ listing.requirements }}</p>
         <p>{{ listing.additional_info }}</p>
         <p>Posted By: {{ listing.posted_by.username }}</p>
-        <a href="{% url 'view_adoption_post' listing.id %}">View Details</a>
+        <a href="{% url 'adoption:view_adoption_post' listing.id %}">View Details</a>
     </div>
 {% empty %}
     <p>No pets available for adoption at the moment.</p>
