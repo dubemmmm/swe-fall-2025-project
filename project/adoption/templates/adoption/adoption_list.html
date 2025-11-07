@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Adoption - PetNextDoor</title>
+    <link rel="stylesheet" href="{% static 'adoption/css/adoption_list.css' %}">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container header-content">
+            <a href="{% url 'users:home' %}" class="back-button">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                <span>Back to Home</span>
+            </a>
+            <div class="header-title">
+                <svg class="icon heart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+                <span>Pet Adoption</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Title Section -->
+            <div class="title-section">
+                <h1>Pets Looking for Homes</h1>
+                <p class="subtitle">Help these wonderful pets find their forever families</p>
+            </div>
+
+            <!-- Pet Cards Grid -->
+            {% if adoptions %}
+                <div class="pet-grid">
+                    {% for adoption in adoptions %}
+                    <div class="pet-card">
+                        <div class="pet-image">
+                            {% if adoption.pet.profile_picture %}
+                                <img src="{{ adoption.pet.profile_picture.url }}" alt="{{ adoption.pet.name }}">
+                            {% else %}
+                                <div class="placeholder-image">
+                                    <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M40 48C42.7614 48 45 45.7614 45 43C45 40.2386 42.7614 38 40 38C37.2386 38 35 40.2386 35 43C35 45.7614 37.2386 48 40 48Z" fill="#dee2e6"/>
+                                        <path d="M80 48C82.7614 48 85 45.7614 85 43C85 40.2386 82.7614 38 80 38C77.2386 38 75 40.2386 75 43C75 45.7614 77.2386 48 80 48Z" fill="#dee2e6"/>
+                                        <path d="M60 78C69.9411 78 78 69.9411 78 60H42C42 69.9411 50.0589 78 60 78Z" fill="#dee2e6"/>
+                                    </svg>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="pet-content">
+                            <div class="pet-header">
+                                <h3>{{ adoption.pet.name }}</h3>
+                                <div class="owner-info">
+                                    <svg class="icon-small" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                        <circle cx="12" cy="7" r="4"/>
+                                    </svg>
+                                    <span>{{ adoption.owner.profile_name }}</span>
+                                </div>
+                            </div>
+                            <div class="pet-info">
+                                <span class="species-badge">{{ adoption.pet.get_species_display }}</span>
+                                <span class="meta-dot">•</span>
+                                <span>{{ adoption.pet.age }}</span>
+                                {% if adoption.pet.breed %}
+                                    <span class="meta-dot">•</span>
+                                    <span>{{ adoption.pet.breed }}</span>
+                                {% endif %}
+                            </div>
+
+                            {% if adoption.pet.bio %}
+                            <p class="pet-description">
+                                {{ adoption.pet.bio|truncatewords:20 }}
+                            </p>
+                            {% endif %}
+
+                            <!-- Pet Traits -->
+                            {% if adoption.pet.traits.exists %}
+                            <div class="pet-tags">
+                                {% for trait in adoption.pet.traits.all|slice:":3" %}
+                                    <span class="badge badge-blue">{{ trait.trait }}</span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+
+                            <!-- Requirements Preview -->
+                            {% if adoption.requirements %}
+                            <div class="requirements-preview">
+                                <strong>Requirements:</strong>
+                                <p>{{ adoption.requirements|truncatewords:15 }}</p>
+                            </div>
+                            {% endif %}
+
+                            <a href="{% url 'adoption:detail' adoption.pk %}" class="adopt-button">
+                                <svg class="icon-small heart-filled" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                                </svg>
+                                View Details
+                            </a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="60" cy="60" r="60" fill="#f8f9fa"/>
+                            <path d="M45 50C47.7614 50 50 47.7614 50 45C50 42.2386 47.7614 40 45 40C42.2386 40 40 42.2386 40 45C40 47.7614 42.2386 50 45 50Z" fill="#dee2e6"/>
+                            <path d="M75 50C77.7614 50 80 47.7614 80 45C80 42.2386 77.7614 40 75 40C72.2386 40 70 42.2386 70 45C70 47.7614 72.2386 50 75 50Z" fill="#dee2e6"/>
+                            <path d="M60 80C69.9411 80 78 71.9411 78 62H42C42 71.9411 50.0589 80 60 80Z" fill="#dee2e6"/>
+                        </svg>
+                    </div>
+                    <h2>No Pets Available for Adoption</h2>
+                    <p>There are currently no pets listed for adoption. Check back soon!</p>
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'adoption:create' %}" class="btn-primary">
+                            List Your Pet for Adoption
+                        </a>
+                    {% endif %}
+                </div>
+            {% endif %}
+        </div>
+    </main>
+</body>
+</html>

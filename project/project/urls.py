@@ -29,6 +29,7 @@ urlpatterns = [
     path('playdates/', include('playdates.urls', namespace='playdates')),
     path('adoption/', include('adoption.urls', namespace='adoption')),
     path("pets/", include("pets.urls", namespace='pets')),
+    path('notifications/', include('notifications.urls', namespace='notifications')),
 ]
 
 # Serve media files in development

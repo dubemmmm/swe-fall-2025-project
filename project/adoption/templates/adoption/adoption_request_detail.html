@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adoption Request from {{ request.full_name }}</title>
+    <link rel="stylesheet" href="{% static 'adoption/css/adoption_request_detail.css' %}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <a href="{% url 'adoption:my_requests' %}" class="back-btn">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Back to Requests
+            </a>
+        </div>
+
+        <div class="content-grid">
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Pet Card -->
+                <div class="pet-card">
+                    <h2>Adoption Request for</h2>
+                    <div class="pet-info">
+                        <div class="pet-image">
+                            {% if request.adoption_post.pet.profile_picture %}
+                                <img src="{{ request.adoption_post.pet.profile_picture.url }}" alt="{{ request.adoption_post.pet.name }}">
+                            {% else %}
+                                <div class="pet-image-placeholder">
+                                    <svg width="100" height="100" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M70 90C77.1797 90 83 84.1797 83 77C83 69.8203 77.1797 64 70 64C62.8203 64 57 69.8203 57 77C57 84.1797 62.8203 90 70 90Z" fill="#dee2e6"/>
+                                        <path d="M130 90C137.18 90 143 84.1797 143 77C143 69.8203 137.18 64 130 64C122.82 64 117 69.8203 117 77C117 84.1797 122.82 90 130 90Z" fill="#dee2e6"/>
+                                        <path d="M100 136C115.464 136 128 123.464 128 108H72C72 123.464 84.536 136 100 136Z" fill="#dee2e6"/>
+                                    </svg>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <div class="pet-details">
+                            <h3>{{ request.adoption_post.pet.name }}</h3>
+                            <div class="pet-meta">
+                                <span class="badge">{{ request.adoption_post.pet.get_species_display }}</span>
+                                <span class="badge">{{ request.adoption_post.pet.age }}</span>
+                                {% if request.adoption_post.pet.breed %}
+                                    <span class="badge">{{ request.adoption_post.pet.breed }}</span>
+                                {% endif %}
+                            </div>
+                            <a href="{% url 'adoption:detail' request.adoption_post.pk %}" class="view-listing">View Listing</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="#ff5722" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="12" cy="7" r="4" stroke="#ff5722" stroke-width="2"/>
+                        </svg>
+                        <h3>Contact Information</h3>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Full Name</label>
+                            <p>{{ request.full_name }}</p>
+                        </div>
+                        <div class="info-item">
+                            <label>Email</label>
+                            <p><a href="mailto:{{ request.email }}">{{ request.email }}</a></p>
+                        </div>
+                        <div class="info-item">
+                            <label>Phone Number</label>
+                            <p><a href="tel:{{ request.phone_number }}">{{ request.phone_number }}</a></p>
+                        </div>
+                        <div class="info-item full-width">
+                            <label>Address</label>
+                            <p>{{ request.address }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Housing Information -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#ff5722" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <polyline points="9 22 9 12 15 12 15 22" stroke="#ff5722" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h3>Housing Information</h3>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Housing Type</label>
+                            <p>{{ request.housing_type }}</p>
+                        </div>
+                        <div class="info-item">
+                            <label>Ownership</label>
+                            <p>{{ request.get_owns_or_rents_display }}</p>
+                        </div>
+                        <div class="info-item">
+                            <label>Has Yard</label>
+                            <p>{% if request.has_yard %}<span class="status-yes">Yes</span>{% else %}<span class="status-no">No</span>{% endif %}</p>
+                        </div>
+                        <div class="info-item">
+                            <label>Landlord Approval</label>
+                            <p>{% if request.landlord_approval %}<span class="status-yes">Yes</span>{% else %}<span class="status-no">N/A</span>{% endif %}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pet Experience -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="11" cy="4" r="2" stroke="#ff5722" stroke-width="2"/>
+                            <circle cx="18" cy="8" r="2" stroke="#ff5722" stroke-width="2"/>
+                            <circle cx="4" cy="8" r="2" stroke="#ff5722" stroke-width="2"/>
+                            <path d="M11 6c-2 0-3.5 1-4.5 2.5C5.5 10 5 12 5 14c0 3 2 5 6 5s6-2 6-5c0-2-.5-4-1.5-5.5C14.5 7 13 6 11 6z" stroke="#ff5722" stroke-width="2"/>
+                        </svg>
+                        <h3>Pet Experience</h3>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <label>Currently Has Pets</label>
+                            <p>{% if request.has_pets_currently %}<span class="status-yes">Yes</span>{% else %}<span class="status-no">No</span>{% endif %}</p>
+                        </div>
+                        {% if request.has_pets_currently and request.current_pets_description %}
+                        <div class="info-item full-width">
+                            <label>Current Pets</label>
+                            <p>{{ request.current_pets_description }}</p>
+                        </div>
+                        {% endif %}
+                        <div class="info-item full-width">
+                            <label>Previous Pet Experience</label>
+                            <p>{{ request.previous_pet_experience }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Adoption Motivation -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="#ff5722" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h3>Adoption Plan</h3>
+                    </div>
+                    <div class="info-grid">
+                        <div class="info-item full-width">
+                            <label>Why They Want to Adopt</label>
+                            <p>{{ request.why_adopt }}</p>
+                        </div>
+                        <div class="info-item full-width">
+                            <label>Daily Care Plan</label>
+                            <p>{{ request.daily_care_plan }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Additional Information -->
+                {% if request.veterinarian_info or request.references or request.additional_notes %}
+                <div class="section-card">
+                    <div class="section-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="12" cy="12" r="10" stroke="#ff5722" stroke-width="2"/>
+                            <path d="M12 16v-4M12 8h.01" stroke="#ff5722" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        <h3>Additional Information</h3>
+                    </div>
+                    <div class="info-grid">
+                        {% if request.veterinarian_info %}
+                        <div class="info-item full-width">
+                            <label>Veterinarian Information</label>
+                            <p>{{ request.veterinarian_info }}</p>
+                        </div>
+                        {% endif %}
+                        {% if request.references %}
+                        <div class="info-item full-width">
+                            <label>References</label>
+                            <p>{{ request.references }}</p>
+                        </div>
+                        {% endif %}
+                        {% if request.additional_notes %}
+                        <div class="info-item full-width">
+                            <label>Additional Notes</label>
+                            <p>{{ request.additional_notes }}</p>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <!-- Status Card -->
+                <div class="status-card">
+                    <h3>Request Status</h3>
+                    <div class="status-badge status-{{ request.status }}">
+                        {{ request.get_status_display }}
+                    </div>
+                    <div class="timestamp">
+                        <p>Submitted {{ request.created_at|timesince }} ago</p>
+                        {% if request.updated_at != request.created_at %}
+                            <p>Updated {{ request.updated_at|timesince }} ago</p>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- Decision Card -->
+                {% if request.status == 'pending' %}
+                <div class="decision-card">
+                    <h3>Make a Decision</h3>
+                    <p class="decision-text">Review the request and choose to accept or reject this adoption application.</p>
+                    <div class="decision-buttons">
+                        <form method="post" action="{% url 'adoption:approve_request' request.pk %}" style="flex: 1;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-approve">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M20 6L9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Approve Request
+                            </button>
+                        </form>
+                        <form method="post" action="{% url 'adoption:reject_request' request.pk %}" style="flex: 1;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-reject">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Reject Request
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Actions Card -->
+                <div class="actions-card">
+                    <h3>Contact</h3>
+                    <div class="action-buttons">
+                        <a href="mailto:{{ request.email }}" class="btn-action btn-contact">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2"/>
+                                <polyline points="22,6 12,13 2,6" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            Contact Requester
+                        </a>
+                        <a href="tel:{{ request.phone_number }}" class="btn-action btn-call">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                            Call Requester
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Requester Card -->
+                <div class="requester-card">
+                    <h3>Requester</h3>
+                    <div class="requester-info">
+                        <div class="requester-avatar">
+                            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="#ff5722" stroke-width="2"/>
+                                <circle cx="12" cy="7" r="4" stroke="#ff5722" stroke-width="2"/>
+                            </svg>
+                        </div>
+                        <h4>{{ request.full_name }}</h4>
+                        <p>{{ request.requester.username }}</p>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+</body>
+</html>

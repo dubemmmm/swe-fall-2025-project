@@ -1,9 +1,148 @@
-<h1>My Adoption Posts</h1>
-<ul>
-{% for post in object_list %}
-  <li>{{ post.pet.name }} - {{ post.requirements }}</li>
-{% empty %}
-  <li>No adoption posts yet.</li>
-{% endfor %}
-</ul>
-<a href="{% url 'adoption:create' %}">Create New Adoption Post</a>
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Adoption Listings - PetNextDoor</title>
+    <link rel="stylesheet" href="{% static 'adoption/css/user_adoptions.css' %}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-top">
+                <a href="{% url 'users:home' %}" class="back-btn">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Back to Home
+                </a>
+            </div>
+            <div class="header-main">
+                <div class="header-content">
+                    <h1>My Adoption Listings</h1>
+                    <p class="subtitle">Manage your pets listed for adoption</p>
+                </div>
+                <div class="header-actions">
+                    <a href="{% url 'adoption:my_requests' %}" class="btn-secondary">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16.667 17.5v-1.667a3.333 3.333 0 0 0-3.334-3.333H6.667a3.333 3.333 0 0 0-3.334 3.333V17.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="10" cy="5.833" r="3.333" stroke="currentColor" stroke-width="1.5"/>
+                        </svg>
+                        View Requests
+                    </a>
+                    <a href="{% url 'adoption:create' %}" class="btn-create">
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M10 4V16M4 10H16" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Create New Listing
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        {% if object_list %}
+            <div class="listings-grid">
+                {% for post in object_list %}
+                <div class="listing-card">
+                    <div class="card-image">
+                        {% if post.pet.profile_picture %}
+                            <img src="{{ post.pet.profile_picture.url }}" alt="{{ post.pet.name }}">
+                        {% else %}
+                            <div class="placeholder-image">
+                                <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M24 28C26.2091 28 28 26.2091 28 24C28 21.7909 26.2091 20 24 20C21.7909 20 20 21.7909 20 24C20 26.2091 21.7909 28 24 28Z" fill="#ccc"/>
+                                    <path d="M40 28C42.2091 28 44 26.2091 44 24C44 21.7909 42.2091 20 40 20C37.7909 20 36 21.7909 36 24C36 26.2091 37.7909 28 40 28Z" fill="#ccc"/>
+                                    <path d="M32 48C38.6274 48 44 42.6274 44 36H20C20 42.6274 25.3726 48 32 48Z" fill="#ccc"/>
+                                </svg>
+                            </div>
+                        {% endif %}
+                        <div class="adoption-badge">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M14.4 3.70667C14.1778 3.48384 13.9147 3.30703 13.6258 3.18583C13.3369 3.06462 13.0279 3.00146 12.716 3.00013C12.4041 2.99879 12.0946 3.05929 11.8047 3.17817C11.5148 3.29705 11.2502 3.47194 11.026 3.69333L10 4.72L8.974 3.69333C8.52054 3.23986 7.90517 2.98479 7.264 2.98479C6.62284 2.98479 6.00746 3.23986 5.554 3.69333C5.10054 4.14679 4.84547 4.76217 4.84547 5.40333C4.84547 6.0445 5.10054 6.65988 5.554 7.11333L6.58 8.14L10 11.56L13.42 8.14L14.446 7.11333C14.6674 6.88913 14.8423 6.62453 14.9611 6.33559C15.08 6.04666 15.1405 5.73817 15.1392 5.42627C15.1378 5.11437 15.0746 4.80645 14.9534 4.51846C14.8322 4.23046 14.6551 3.96725 14.432 3.74467L14.4 3.70667Z" fill="white"/>
+                            </svg>
+                            For Adoption
+                        </div>
+                    </div>
+
+                    <div class="card-content">
+                        <div class="pet-info">
+                            <h3>{{ post.pet.name }}</h3>
+                            <div class="pet-meta">
+                                <span class="species-badge">{{ post.pet.get_species_display }}</span>
+                                <span class="meta-item">{{ post.pet.age }}</span>
+                                {% if post.pet.breed %}
+                                    <span class="meta-item">{{ post.pet.breed }}</span>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="requirements">
+                            <h4>Requirements:</h4>
+                            <p>{{ post.requirements|truncatewords:15 }}</p>
+                        </div>
+
+                        <div class="post-meta">
+                            <span class="date">
+                                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.5"/>
+                                    <path d="M7 3.5V7L9.5 9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                                </svg>
+                                Posted {{ post.created_at|timesince }} ago
+                            </span>
+                            {% if post.is_active %}
+                                <span class="status-active">Active</span>
+                            {% else %}
+                                <span class="status-inactive">Inactive</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="card-actions">
+                            <a href="{% url 'adoption:detail' post.pk %}" class="btn-view">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M0.666687 8C0.666687 8 3.33335 2.66667 8.00002 2.66667C12.6667 2.66667 15.3334 8 15.3334 8C15.3334 8 12.6667 13.3333 8.00002 13.3333C3.33335 13.3333 0.666687 8 0.666687 8Z" stroke="currentColor" stroke-width="1.5"/>
+                                    <circle cx="8" cy="8" r="2" stroke="currentColor" stroke-width="1.5"/>
+                                </svg>
+                                View
+                            </a>
+                            <a href="{% url 'adoption:update' post.pk %}" class="btn-edit">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M11.3334 2.00004C11.5086 1.82485 11.7164 1.68605 11.9451 1.59129C12.1738 1.49653 12.419 1.44749 12.6667 1.44749C12.9145 1.44749 13.1596 1.49653 13.3883 1.59129C13.6171 1.68605 13.8249 1.82485 14 2.00004C14.1752 2.17523 14.314 2.383 14.4088 2.61176C14.5035 2.84052 14.5526 3.08569 14.5526 3.33337C14.5526 3.58106 14.5035 3.82623 14.4088 4.05499C14.314 4.28375 14.1752 4.49152 14 4.66671L5.00002 13.6667L1.33335 14.6667L2.33335 11L11.3334 2.00004Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Edit
+                            </a>
+                            <a href="{% url 'adoption:delete' post.pk %}" class="btn-delete">
+                                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2 4H3.33333H14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M5.33331 4V2.66667C5.33331 2.31304 5.47379 1.97391 5.72384 1.72386C5.97389 1.47381 6.31302 1.33333 6.66665 1.33333H9.33331C9.68694 1.33333 10.0261 1.47381 10.2761 1.72386C10.5262 1.97391 10.6666 2.31304 10.6666 2.66667V4M12.6666 4V13.3333C12.6666 13.687 12.5262 14.0261 12.2761 14.2761C12.0261 14.5262 11.687 14.6667 11.3333 14.6667H4.66665C4.31302 14.6667 3.97389 14.5262 3.72384 14.2761C3.47379 14.0261 3.33331 13.687 3.33331 13.3333V4H12.6666Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Delete
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-icon">
+                    <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="60" cy="60" r="60" fill="#f8f9fa"/>
+                        <path d="M45 50C47.7614 50 50 47.7614 50 45C50 42.2386 47.7614 40 45 40C42.2386 40 40 42.2386 40 45C40 47.7614 42.2386 50 45 50Z" fill="#dee2e6"/>
+                        <path d="M75 50C77.7614 50 80 47.7614 80 45C80 42.2386 77.7614 40 75 40C72.2386 40 70 42.2386 70 45C70 47.7614 72.2386 50 75 50Z" fill="#dee2e6"/>
+                        <path d="M60 80C69.9411 80 78 71.9411 78 62H42C42 71.9411 50.0589 80 60 80Z" fill="#dee2e6"/>
+                    </svg>
+                </div>
+                <h2>No Adoption Listings Yet</h2>
+                <p>You haven't created any adoption listings. Help your pets find their forever homes by creating a listing!</p>
+                <a href="{% url 'adoption:create' %}" class="btn-create-large">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 5V19M5 12H19" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Create Your First Listing
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</body>
+</html>

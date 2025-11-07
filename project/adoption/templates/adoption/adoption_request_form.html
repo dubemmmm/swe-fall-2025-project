@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adoption Request for {{ adoption_post.pet.name }}</title>
+    <link rel="stylesheet" href="{% static 'adoption/css/adoption_request_form.css' %}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <a href="{% url 'adoption:detail' adoption_post.pk %}" class="back-btn">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Back to Listing
+            </a>
+            <h1>Adoption Request</h1>
+            <p class="subtitle">Apply to adopt {{ adoption_post.pet.name }}</p>
+        </div>
+
+        <!-- Pet Summary Card -->
+        <div class="pet-summary">
+            <div class="pet-summary-image">
+                {% if adoption_post.pet.profile_picture %}
+                    <img src="{{ adoption_post.pet.profile_picture.url }}" alt="{{ adoption_post.pet.name }}">
+                {% else %}
+                    <div class="pet-image-placeholder">
+                        <svg width="80" height="80" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M70 90C77.1797 90 83 84.1797 83 77C83 69.8203 77.1797 64 70 64C62.8203 64 57 69.8203 57 77C57 84.1797 62.8203 90 70 90Z" fill="#dee2e6"/>
+                            <path d="M130 90C137.18 90 143 84.1797 143 77C143 69.8203 137.18 64 130 64C122.82 64 117 69.8203 117 77C117 84.1797 122.82 90 130 90Z" fill="#dee2e6"/>
+                            <path d="M100 136C115.464 136 128 123.464 128 108H72C72 123.464 84.536 136 100 136Z" fill="#dee2e6"/>
+                        </svg>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="pet-summary-info">
+                <h2>{{ adoption_post.pet.name }}</h2>
+                <div class="pet-meta">
+                    <span class="badge">{{ adoption_post.pet.get_species_display }}</span>
+                    <span class="badge">{{ adoption_post.pet.age }}</span>
+                    {% if adoption_post.pet.breed %}
+                        <span class="badge">{{ adoption_post.pet.breed }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Form -->
+        <form method="post" class="adoption-request-form">
+            {% csrf_token %}
+
+            <!-- Contact Information -->
+            <div class="form-section">
+                <div class="section-header">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="#ff5722" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="12" cy="7" r="4" stroke="#ff5722" stroke-width="2"/>
+                    </svg>
+                    <h3>Contact Information</h3>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>{{ form.full_name.label }}</label>
+                        {{ form.full_name }}
+                        {% if form.full_name.errors %}
+                            <div class="error-message">{{ form.full_name.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>{{ form.email.label }}</label>
+                        {{ form.email }}
+                        {% if form.email.errors %}
+                            <div class="error-message">{{ form.email.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label>{{ form.phone_number.label }}</label>
+                        {{ form.phone_number }}
+                        {% if form.phone_number.errors %}
+                            <div class="error-message">{{ form.phone_number.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>{{ form.address.label }}</label>
+                        {{ form.address }}
+                        {% if form.address.errors %}
+                            <div class="error-message">{{ form.address.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Housing Information -->
+            <div class="form-section">
+                <div class="section-header">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="#ff5722" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <polyline points="9 22 9 12 15 12 15 22" stroke="#ff5722" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <h3>Housing Information</h3>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>{{ form.housing_type.label }}</label>
+                        {{ form.housing_type }}
+                        {% if form.housing_type.errors %}
+                            <div class="error-message">{{ form.housing_type.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label>{{ form.owns_or_rents.label }}</label>
+                        {{ form.owns_or_rents }}
+                        {% if form.owns_or_rents.errors %}
+                            <div class="error-message">{{ form.owns_or_rents.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group checkbox-group">
+                        {{ form.has_yard }}
+                        <label for="{{ form.has_yard.id_for_label }}">{{ form.has_yard.label }}</label>
+                        {% if form.has_yard.errors %}
+                            <div class="error-message">{{ form.has_yard.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group checkbox-group">
+                        {{ form.landlord_approval }}
+                        <label for="{{ form.landlord_approval.id_for_label }}">{{ form.landlord_approval.label }}</label>
+                        {% if form.landlord_approval.errors %}
+                            <div class="error-message">{{ form.landlord_approval.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pet Experience -->
+            <div class="form-section">
+                <div class="section-header">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="11" cy="4" r="2" stroke="#ff5722" stroke-width="2"/>
+                        <circle cx="18" cy="8" r="2" stroke="#ff5722" stroke-width="2"/>
+                        <circle cx="4" cy="8" r="2" stroke="#ff5722" stroke-width="2"/>
+                        <path d="M11 6c-2 0-3.5 1-4.5 2.5C5.5 10 5 12 5 14c0 3 2 5 6 5s6-2 6-5c0-2-.5-4-1.5-5.5C14.5 7 13 6 11 6z" stroke="#ff5722" stroke-width="2"/>
+                    </svg>
+                    <h3>Pet Experience</h3>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group checkbox-group">
+                        {{ form.has_pets_currently }}
+                        <label for="{{ form.has_pets_currently.id_for_label }}">{{ form.has_pets_currently.label }}</label>
+                        {% if form.has_pets_currently.errors %}
+                            <div class="error-message">{{ form.has_pets_currently.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>{{ form.current_pets_description.label }}</label>
+                        {{ form.current_pets_description }}
+                        {% if form.current_pets_description.errors %}
+                            <div class="error-message">{{ form.current_pets_description.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>{{ form.previous_pet_experience.label }}</label>
+                        {{ form.previous_pet_experience }}
+                        {% if form.previous_pet_experience.errors %}
+                            <div class="error-message">{{ form.previous_pet_experience.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Adoption Motivation -->
+            <div class="form-section">
+                <div class="section-header">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" stroke="#ff5722" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <h3>Your Adoption Plan</h3>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>{{ form.why_adopt.label }}</label>
+                        {{ form.why_adopt }}
+                        {% if form.why_adopt.errors %}
+                            <div class="error-message">{{ form.why_adopt.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>{{ form.daily_care_plan.label }}</label>
+                        {{ form.daily_care_plan }}
+                        {% if form.daily_care_plan.errors %}
+                            <div class="error-message">{{ form.daily_care_plan.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Optional Information -->
+            <div class="form-section">
+                <div class="section-header">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" stroke="#ff5722" stroke-width="2"/>
+                        <path d="M12 16v-4M12 8h.01" stroke="#ff5722" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <h3>Additional Information (Optional)</h3>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>{{ form.veterinarian_info.label }}</label>
+                        {{ form.veterinarian_info }}
+                        {% if form.veterinarian_info.errors %}
+                            <div class="error-message">{{ form.veterinarian_info.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>{{ form.references.label }}</label>
+                        {{ form.references }}
+                        {% if form.references.errors %}
+                            <div class="error-message">{{ form.references.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>{{ form.additional_notes.label }}</label>
+                        {{ form.additional_notes }}
+                        {% if form.additional_notes.errors %}
+                            <div class="error-message">{{ form.additional_notes.errors }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="form-actions">
+                <button type="submit" class="btn-submit">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M18 4.61C17.6493 4.2584 17.2357 3.97803 16.7795 3.78506C16.3232 3.59209 15.8327 3.49014 15.3367 3.48484C14.8407 3.47955 14.3481 3.57099 13.8872 3.75374C13.4264 3.93649 13.0067 4.20692 12.6517 4.55L10.2867 6.915L7.92168 4.55C7.21042 3.83872 6.25425 3.43884 5.25668 3.43884C4.25911 3.43884 3.30294 3.83872 2.59168 4.55C1.8804 5.26126 1.48053 6.21743 1.48053 7.215C1.48053 8.21257 1.8804 9.16874 2.59168 9.88L4.95668 12.245L10.2867 17.575L15.6167 12.245L17.9817 9.88C18.3248 9.52493 18.5952 9.10518 18.7779 8.64436C18.9607 8.18354 19.0522 7.69095 19.0469 7.19492C19.0415 6.69889 18.9396 6.20859 18.7466 5.75241C18.5536 5.29623 18.2732 4.88208 17.9217 4.53417L18 4.61Z" fill="white"/>
+                    </svg>
+                    Submit Adoption Request
+                </button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

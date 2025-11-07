@@ -1,4 +1,248 @@
-<h1>{{ object.pet.name }}</h1>
-<p>Requirements: {{ object.requirements }}</p>
-<p>Additional Info: {{ object.additional_info }}</p>
-<p>Owner: {{ object.owner.username }}</p>
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ object.pet.name }} - Adoption Details</title>
+    <link rel="stylesheet" href="{% static 'adoption/css/adoption_detail.css' %}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <a href="{% url 'adoption:list' %}" class="back-btn">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Back to Listings
+            </a>
+        </div>
+
+        <!-- Approval Notification Banner -->
+        {% if user_request_status == 'approved' %}
+        <div class="approval-banner">
+            <div class="approval-content">
+                <div class="approval-icon">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="10" fill="#28a745"/>
+                        <path d="M8 12l2 2 4-4" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="approval-message">
+                    <h2>Congratulations! Your Adoption Request Has Been Approved!</h2>
+                    <p>Great news! The pet owner has approved your adoption request for <strong>{{ object.pet.name }}</strong>.</p>
+                    <p>You will receive further information via email at <strong>{{ user_request.email }}</strong> regarding the next steps in the adoption process.</p>
+                    <div class="next-steps">
+                        <h3>What's Next?</h3>
+                        <ul>
+                            <li>Check your email for detailed instructions from the pet owner</li>
+                            <li>The owner will schedule a meet and greet with {{ object.pet.name }}</li>
+                            <li>Prepare any required documentation</li>
+                            <li>Be ready for a possible home visit</li>
+                        </ul>
+                    </div>
+                    <p class="contact-info">If you have any questions, you can contact the owner at: <a href="mailto:{{ object.owner.email }}">{{ object.owner.email }}</a></p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div class="content-grid">
+            <!-- Pet Details Section -->
+            <div class="main-content">
+                <!-- Pet Image -->
+                <div class="pet-image-section">
+                    {% if object.pet.profile_picture %}
+                        <img src="{{ object.pet.profile_picture.url }}" alt="{{ object.pet.name }}" class="pet-main-image">
+                    {% else %}
+                        <div class="pet-image-placeholder">
+                            <svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M70 90C77.1797 90 83 84.1797 83 77C83 69.8203 77.1797 64 70 64C62.8203 64 57 69.8203 57 77C57 84.1797 62.8203 90 70 90Z" fill="#dee2e6"/>
+                                <path d="M130 90C137.18 90 143 84.1797 143 77C143 69.8203 137.18 64 130 64C122.82 64 117 69.8203 117 77C117 84.1797 122.82 90 130 90Z" fill="#dee2e6"/>
+                                <path d="M100 136C115.464 136 128 123.464 128 108H72C72 123.464 84.536 136 100 136Z" fill="#dee2e6"/>
+                            </svg>
+                        </div>
+                    {% endif %}
+
+                    {% if object.is_active %}
+                        <div class="available-badge">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M18 4.61C17.6493 4.2584 17.2357 3.97803 16.7795 3.78506C16.3232 3.59209 15.8327 3.49014 15.3367 3.48484C14.8407 3.47955 14.3481 3.57099 13.8872 3.75374C13.4264 3.93649 13.0067 4.20692 12.6517 4.55L10.2867 6.915L7.92168 4.55C7.21042 3.83872 6.25425 3.43884 5.25668 3.43884C4.25911 3.43884 3.30294 3.83872 2.59168 4.55C1.8804 5.26126 1.48053 6.21743 1.48053 7.215C1.48053 8.21257 1.8804 9.16874 2.59168 9.88L4.95668 12.245L10.2867 17.575L15.6167 12.245L17.9817 9.88C18.3248 9.52493 18.5952 9.10518 18.7779 8.64436C18.9607 8.18354 19.0522 7.69095 19.0469 7.19492C19.0415 6.69889 18.9396 6.20859 18.7466 5.75241C18.5536 5.29623 18.2732 4.88208 17.9217 4.53417L18 4.61Z" fill="white"/>
+                            </svg>
+                            Available for Adoption
+                        </div>
+                    {% endif %}
+                </div>
+
+                <!-- Pet Info Card -->
+                <div class="pet-info-card">
+                    <div class="pet-header-section">
+                        <h1 class="pet-name">{{ object.pet.name }}</h1>
+                        <div class="pet-meta-tags">
+                            <span class="species-badge">{{ object.pet.get_species_display }}</span>
+                            {% if object.pet.breed %}
+                                <span class="breed-badge">{{ object.pet.breed }}</span>
+                            {% endif %}
+                            <span class="age-badge">{{ object.pet.age }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Pet Stats -->
+                    <div class="pet-stats-grid">
+                        {% if object.pet.weight %}
+                        <div class="stat-item">
+                            <div class="stat-icon">⚖️</div>
+                            <div class="stat-info">
+                                <span class="stat-label">Weight</span>
+                                <span class="stat-value">{{ object.pet.weight }} lbs</span>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if object.pet.general_size %}
+                        <div class="stat-item">
+                            <div class="stat-icon">📏</div>
+                            <div class="stat-info">
+                                <span class="stat-label">Size</span>
+                                <span class="stat-value">{{ object.pet.get_general_size_display }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if object.pet.energy_level %}
+                        <div class="stat-item">
+                            <div class="stat-icon">⚡</div>
+                            <div class="stat-info">
+                                <span class="stat-label">Energy Level</span>
+                                <span class="stat-value">{{ object.pet.get_energy_level_display }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+
+                        {% if object.pet.color_markings %}
+                        <div class="stat-item">
+                            <div class="stat-icon">🎨</div>
+                            <div class="stat-info">
+                                <span class="stat-label">Color</span>
+                                <span class="stat-value">{{ object.pet.color_markings }}</span>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Pet Description -->
+                    {% if object.pet.bio %}
+                    <div class="section">
+                        <h3 class="section-title">About {{ object.pet.name }}</h3>
+                        <p class="pet-bio">{{ object.pet.bio }}</p>
+                    </div>
+                    {% endif %}
+
+                    <!-- Pet Traits -->
+                    {% if object.pet.traits.exists %}
+                    <div class="section">
+                        <h3 class="section-title">Personality Traits</h3>
+                        <div class="traits-container">
+                            {% for trait in object.pet.traits.all %}
+                                <span class="trait-badge">{{ trait.trait }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Adoption Requirements -->
+                    <div class="section">
+                        <h3 class="section-title">Adoption Requirements</h3>
+                        <div class="requirements-box">
+                            <p>{{ object.requirements }}</p>
+                        </div>
+                    </div>
+
+                    <!-- Additional Info -->
+                    {% if object.additional_info %}
+                    <div class="section">
+                        <h3 class="section-title">Additional Information</h3>
+                        <p class="additional-info">{{ object.additional_info }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <!-- Owner Card -->
+                <div class="owner-card">
+                    <h3 class="card-title">Listed By</h3>
+                    <div class="owner-info">
+                        {% if object.owner.profile_photo %}
+                            <img src="{{ object.owner.profile_photo.url }}" alt="{{ object.owner.profile_name }}" class="owner-avatar">
+                        {% else %}
+                            <div class="owner-avatar-placeholder">
+                                <svg width="60" height="60" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="#ff5722" stroke-width="2"/>
+                                    <circle cx="12" cy="7" r="4" stroke="#ff5722" stroke-width="2"/>
+                                </svg>
+                            </div>
+                        {% endif %}
+                        <div class="owner-details">
+                            <h4>{{ object.owner.profile_name }}</h4>
+                            {% if object.owner.location %}
+                                <p class="owner-location">
+                                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M12.25 5.83333C12.25 9.91667 7 13.4167 7 13.4167C7 13.4167 1.75 9.91667 1.75 5.83333C1.75 2.6425 4.29167 0.583333 7 0.583333C9.70833 0.583333 12.25 2.6425 12.25 5.83333Z" stroke="currentColor" stroke-width="1.2"/>
+                                        <circle cx="7" cy="5.83333" r="1.75" stroke="currentColor" stroke-width="1.2"/>
+                                    </svg>
+                                    {{ object.owner.location }}
+                                </p>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <p class="post-date">Posted {{ object.created_at|timesince }} ago</p>
+                </div>
+
+                <!-- Adoption Request Button -->
+                {% if user.is_authenticated %}
+                    {% if user != object.owner %}
+                        {% if not user_has_requested %}
+                            <a href="{% url 'adoption:request_adoption' object.pk %}" class="adopt-btn">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M18 4.61C17.6493 4.2584 17.2357 3.97803 16.7795 3.78506C16.3232 3.59209 15.8327 3.49014 15.3367 3.48484C14.8407 3.47955 14.3481 3.57099 13.8872 3.75374C13.4264 3.93649 13.0067 4.20692 12.6517 4.55L10.2867 6.915L7.92168 4.55C7.21042 3.83872 6.25425 3.43884 5.25668 3.43884C4.25911 3.43884 3.30294 3.83872 2.59168 4.55C1.8804 5.26126 1.48053 6.21743 1.48053 7.215C1.48053 8.21257 1.8804 9.16874 2.59168 9.88L4.95668 12.245L10.2867 17.575L15.6167 12.245L17.9817 9.88C18.3248 9.52493 18.5952 9.10518 18.7779 8.64436C18.9607 8.18354 19.0522 7.69095 19.0469 7.19492C19.0415 6.69889 18.9396 6.20859 18.7466 5.75241C18.5536 5.29623 18.2732 4.88208 17.9217 4.53417L18 4.61Z" fill="white"/>
+                                </svg>
+                                Request to Adopt
+                            </a>
+                        {% else %}
+                            <div class="already-requested">
+                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M16.6667 5L7.50004 14.1667L3.33337 10" stroke="#28a745" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                Request Submitted
+                            </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="owner-notice">
+                            <p>This is your adoption listing</p>
+                            <a href="{% url 'adoption:update' object.pk %}" class="edit-listing-btn">Edit Listing</a>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <a href="{% url 'users:login' %}" class="adopt-btn">
+                        Sign In to Request Adoption
+                    </a>
+                {% endif %}
+
+                <!-- Important Notice -->
+                <div class="notice-card">
+                    <h4>Important</h4>
+                    <ul>
+                        <li>Meet the pet before finalizing adoption</li>
+                        <li>All requirements must be met</li>
+                        <li>Adoption fees may apply</li>
+                        <li>Be prepared for a home visit</li>
+                    </ul>
+                </div>
+            </aside>
+        </div>
+    </div>
+</body>
+</html>

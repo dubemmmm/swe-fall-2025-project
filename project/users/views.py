@@ -128,7 +128,7 @@ def logout_view(request):
     """User logout view"""
     logout(request)
     messages.success(request, 'You have been logged out.')
-    return redirect('users:home')
+    return redirect('landing')
 
 
 @login_required

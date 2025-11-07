@@ -1,0 +1,147 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notifications - PetNextDoor</title>
+    <link rel="stylesheet" href="{% static 'notifications/css/notification_list.css' %}">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <a href="{% url 'users:home' %}" class="back-btn">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                </svg>
+                Back to Home
+            </a>
+        </div>
+
+        <!-- Page Title -->
+        <div class="page-title-section">
+            <h1>Notifications</h1>
+            {% if unread_count > 0 %}
+            <div class="unread-badge">{{ unread_count }} unread</div>
+            {% endif %}
+        </div>
+
+        <!-- Mark All Read Button -->
+        {% if unread_count > 0 %}
+        <div class="actions-bar">
+            <a href="{% url 'notifications:mark_all_read' %}" class="mark-all-btn">
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+                Mark all as read
+            </a>
+        </div>
+        {% endif %}
+
+        <!-- Notifications List -->
+        <div class="notifications-container">
+            {% if notifications %}
+                {% for notification in notifications %}
+                <a href="{% url 'notifications:mark_read' notification.pk %}" class="notification-card {% if not notification.is_read %}unread{% endif %}">
+                    <div class="notification-icon-wrapper">
+                        {% if notification.notification_type == 'adoption_approved' %}
+                        <div class="notification-icon success">
+                            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.2"/>
+                                <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        {% elif notification.notification_type == 'adoption_rejected' %}
+                        <div class="notification-icon danger">
+                            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.2"/>
+                                <path d="M15 9l-6 6m0-6l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                            </svg>
+                        </div>
+                        {% elif notification.notification_type == 'playdate_approved' %}
+                        <div class="notification-icon success">
+                            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.2"/>
+                                <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        {% elif notification.notification_type == 'playdate_rejected' %}
+                        <div class="notification-icon danger">
+                            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.2"/>
+                                <path d="M15 9l-6 6m0-6l6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                            </svg>
+                        </div>
+                        {% elif notification.notification_type == 'new_adoption_request' %}
+                        <div class="notification-icon info">
+                            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.2"/>
+                                <path d="M12 8v4m0 4h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                            </svg>
+                        </div>
+                        {% elif notification.notification_type == 'new_playdate_request' %}
+                        <div class="notification-icon info">
+                            <svg width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.2"/>
+                                <path d="M12 8v4m0 4h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                            </svg>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="notification-content">
+                        <div class="notification-header">
+                            <h3>{{ notification.title }}</h3>
+                            {% if not notification.is_read %}
+                            <span class="new-badge">NEW</span>
+                            {% endif %}
+                        </div>
+                        <p class="notification-message">{{ notification.message }}</p>
+                        <span class="notification-time">{{ notification.created_at|timesince }} ago</span>
+                    </div>
+
+                    <div class="notification-arrow">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </div>
+                </a>
+                {% endfor %}
+
+                <!-- Pagination -->
+                {% if is_paginated %}
+                <div class="pagination">
+                    {% if page_obj.has_previous %}
+                    <a href="?page=1" class="page-btn">&laquo; First</a>
+                    <a href="?page={{ page_obj.previous_page_number }}" class="page-btn">Previous</a>
+                    {% endif %}
+
+                    <span class="page-info">
+                        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+                    </span>
+
+                    {% if page_obj.has_next %}
+                    <a href="?page={{ page_obj.next_page_number }}" class="page-btn">Next</a>
+                    <a href="?page={{ page_obj.paginator.num_pages }}" class="page-btn">Last &raquo;</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+            {% else %}
+                <!-- Empty State -->
+                <div class="empty-state">
+                    <div class="empty-icon">
+                        <svg width="80" height="80" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                        </svg>
+                    </div>
+                    <h2>No notifications yet</h2>
+                    <p>When you receive notifications about your adoption requests, playdates, or other activities, they'll appear here.</p>
+                    <a href="{% url 'landing:home' %}" class="explore-btn">Explore Pets</a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

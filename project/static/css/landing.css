@@ -61,7 +61,47 @@ body {
 
 .nav-actions {
     display: flex;
+    align-items: center;
     gap: 12px;
+}
+
+/* Notification Icon */
+.notification-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #f8f9fa;
+    color: #333;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.notification-icon:hover {
+    background-color: #e9ecef;
+    transform: scale(1.05);
+}
+
+.notification-badge {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    min-width: 20px;
+    height: 20px;
+    background: linear-gradient(135deg, #ff5722 0%, #e64a19 100%);
+    color: white;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 0 5px;
+    border: 2px solid white;
+    box-shadow: 0 2px 8px rgba(255, 87, 34, 0.3);
 }
 
 .mobile-menu-btn {
