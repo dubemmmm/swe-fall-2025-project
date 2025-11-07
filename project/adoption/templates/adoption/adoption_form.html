@@ -1,105 +1,214 @@
 <!DOCTYPE html>
-{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% if object %}Edit Adoption Listing{% else %}List Pet for Adoption{% endif %} - PetNextDoor</title>
-    <link rel="stylesheet" href="{% static 'adoption/css/adoption_form.css' %}">
+    <title>Post Pet for Adoption - Pet Next Door</title>
+    <link rel="stylesheet" href="adoption-form.css">
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <a href="{% url 'adoption:user_adoptions' %}" class="back-btn">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+    <!-- Header -->
+    <header class="header">
+        <div class="container-header">
+            <button class="back-button">
+                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
                 </svg>
-                Back to My Listings
-            </a>
-            <h1>{% if object %}Edit Adoption Listing{% else %}List Pet for Adoption{% endif %}</h1>
-            <p class="subtitle">Help your pet find their forever home</p>
+                <span>Back to Dashboard</span>
+            </button>
         </div>
+    </header>
 
-        {% if messages %}
-            <div class="messages">
-                {% for message in messages %}
-                    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-                {% endfor %}
-            </div>
-        {% endif %}
-
-        <form method="post" class="adoption-form">
-            {% csrf_token %}
-
-            <!-- Pet Selection -->
-            <div class="form-section">
-                <div class="section-title">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M10 12C11.1046 12 12 11.1046 12 10C12 8.89543 11.1046 8 10 8C8.89543 8 8 8.89543 8 10C8 11.1046 8.89543 12 10 12Z" fill="#ff5722"/>
-                        <path d="M14 12C15.1046 12 16 11.1046 16 10C16 8.89543 15.1046 8 14 8C12.8954 8 12 8.89543 12 10C12 11.1046 12.8954 12 14 12Z" fill="#ff5722"/>
-                        <path d="M12 20C15.3137 20 18 17.3137 18 14H6C6 17.3137 8.68629 20 12 20Z" fill="#ff5722"/>
-                    </svg>
-                    Select Pet
-                </div>
-                <div class="form-group">
-                    <label for="{{ form.pet.id_for_label }}">Which pet are you listing for adoption?</label>
-                    {{ form.pet }}
-                    {% if form.pet.errors %}
-                        <div class="error-message">{{ form.pet.errors }}</div>
-                    {% endif %}
-                    <small class="help-text">You can only list pets that you own</small>
-                </div>
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container-form">
+            <!-- Title Section -->
+            <div class="title-section">
+                <h1>Post Your Pet for Adoption</h1>
+                <p>Fill out the details below to help your pet find their forever home.</p>
             </div>
 
-            <!-- Requirements -->
-            <div class="form-section">
-                <div class="section-title">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M9 11L12 14L22 4" stroke="#ff5722" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M21 12V19C21 19.5304 20.7893 20.0391 20.4142 20.4142C20.0391 20.7893 19.5304 21 19 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H16" stroke="#ff5722" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    Adoption Requirements
-                </div>
-                <div class="form-group">
-                    <label for="{{ form.requirements.id_for_label }}">What are your requirements for the new owner?</label>
-                    {{ form.requirements }}
-                    {% if form.requirements.errors %}
-                        <div class="error-message">{{ form.requirements.errors }}</div>
-                    {% endif %}
-                    <small class="help-text">E.g., must have a fenced yard, experience with this breed, time for daily walks, etc.</small>
-                </div>
-            </div>
+            <!-- Form Card -->
+            <div class="form-card">
+                <form id="petAdoptionForm">
+                    <!-- Pet Name -->
+                    <div class="form-group">
+                        <label for="petName" class="form-label">Pet Name</label>
+                        <input 
+                            type="text" 
+                            id="petName" 
+                            name="petName" 
+                            class="form-input" 
+                            placeholder="Enter your pet's name"
+                            required
+                        >
+                        <span class="error-message" id="petNameError"></span>
+                    </div>
 
-            <!-- Additional Information -->
-            <div class="form-section">
-                <div class="section-title">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <circle cx="12" cy="12" r="10" stroke="#ff5722" stroke-width="2"/>
-                        <path d="M12 16V12M12 8H12.01" stroke="#ff5722" stroke-width="2" stroke-linecap="round"/>
-                    </svg>
-                    Additional Information
-                </div>
-                <div class="form-group">
-                    <label for="{{ form.additional_info.id_for_label }}">Any additional information about the adoption?</label>
-                    {{ form.additional_info }}
-                    {% if form.additional_info.errors %}
-                        <div class="error-message">{{ form.additional_info.errors }}</div>
-                    {% endif %}
-                    <small class="help-text">Optional: Share any other details that might be helpful for potential adopters</small>
-                </div>
-            </div>
+                    <!-- Animal Type -->
+                    <div class="form-group">
+                        <label for="animalType" class="form-label">Animal Type</label>
+                        <select 
+                            id="animalType" 
+                            name="animalType" 
+                            class="form-select"
+                            required
+                        >
+                            <option value="">Select animal type</option>
+                            <option value="dog">Dog</option>
+                            <option value="cat">Cat</option>
+                            <option value="rabbit">Rabbit</option>
+                            <option value="bird">Bird</option>
+                            <option value="hamster">Hamster</option>
+                            <option value="other">Other</option>
+                        </select>
+                        <span class="error-message" id="animalTypeError"></span>
+                    </div>
 
-            <!-- Action Buttons -->
-            <div class="form-actions">
-                <a href="{% url 'adoption:user_adoptions' %}" class="btn-secondary">Cancel</a>
-                <button type="submit" class="btn-primary">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M16.6667 5L7.50004 14.1667L3.33337 10" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    {% if object %}Update Listing{% else %}Create Listing{% endif %}
-                </button>
+                    <!-- Age and Gender Row -->
+                    <div class="form-row">
+                        <!-- Age -->
+                        <div class="form-group">
+                            <label for="age" class="form-label">Age</label>
+                            <input 
+                                type="number" 
+                                id="age" 
+                                name="age" 
+                                class="form-input" 
+                                placeholder="Age in years"
+                                min="0"
+                                required
+                            >
+                            <span class="error-message" id="ageError"></span>
+                        </div>
+
+                        <!-- Gender -->
+                        <div class="form-group">
+                            <label for="gender" class="form-label">Gender</label>
+                            <select 
+                                id="gender" 
+                                name="gender" 
+                                class="form-select"
+                                required
+                            >
+                                <option value="">Select gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                            </select>
+                            <span class="error-message" id="genderError"></span>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="form-group">
+                        <label for="description" class="form-label">Description</label>
+                        <textarea 
+                            id="description" 
+                            name="description" 
+                            class="form-textarea" 
+                            placeholder="Tell us about your pet's personality, habits, and any special needs..."
+                            rows="5"
+                            required
+                        ></textarea>
+                        <span class="error-message" id="descriptionError"></span>
+                    </div>
+
+                    <!-- Upload Photo -->
+                    <div class="form-group">
+                        <label class="form-label">Upload Photo</label>
+                        <div class="upload-area" id="uploadArea">
+                            <div class="upload-prompt" id="uploadPrompt">
+                                <div class="upload-icon">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="17 8 12 3 7 8"/>
+                                        <line x1="12" y1="3" x2="12" y2="15"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="upload-text">Click to upload or drag and drop</p>
+                                    <p class="upload-subtext">PNG, JPG or JPEG (max. 5MB)</p>
+                                </div>
+                            </div>
+                            <div class="image-preview" id="imagePreview" style="display: none;">
+                                <img id="previewImage" src="" alt="Preview">
+                                <button type="button" class="remove-image-btn" id="removeImageBtn">
+                                    Remove Image
+                                </button>
+                            </div>
+                            <input 
+                                type="file" 
+                                id="photoUpload" 
+                                name="photo" 
+                                accept="image/*"
+                                style="display: none;"
+                            >
+                        </div>
+                        <span class="error-message" id="photoError"></span>
+                    </div>
+
+                    <!-- Checkboxes -->
+                    <div class="form-group">
+                        <label class="form-label">Additional Information</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input 
+                                    type="checkbox" 
+                                    id="vaccinated" 
+                                    name="vaccinated"
+                                    class="checkbox-input"
+                                >
+                                <label for="vaccinated" class="checkbox-label">Vaccinated</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input 
+                                    type="checkbox" 
+                                    id="goodWithKids" 
+                                    name="goodWithKids"
+                                    class="checkbox-input"
+                                >
+                                <label for="goodWithKids" class="checkbox-label">Good with Kids</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input 
+                                    type="checkbox" 
+                                    id="spayedNeutered" 
+                                    name="spayedNeutered"
+                                    class="checkbox-input"
+                                >
+                                <label for="spayedNeutered" class="checkbox-label">Spayed/Neutered</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="submit-section">
+                        <button type="submit" class="submit-btn" id="submitBtn">
+                            <span id="submitText">Post for Adoption</span>
+                            <span id="submitLoader" class="loader" style="display: none;">
+                                <svg class="spinner" viewBox="0 0 24 24">
+                                    <circle class="spinner-circle" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/>
+                                </svg>
+                                Posting...
+                            </span>
+                        </button>
+                    </div>
+                </form>
             </div>
-        </form>
+        </div>
+    </main>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="toast-content">
+            <div class="toast-icon" id="toastIcon"></div>
+            <div class="toast-text">
+                <p class="toast-title" id="toastTitle"></p>
+                <p class="toast-description" id="toastDescription"></p>
+            </div>
+        </div>
     </div>
+
+    <script src="adoption-form.js"></script>
 </body>
 </html>
