@@ -39,3 +39,11 @@ other_test_cases.txt
 */migrations/*.py
 !*/migrations/__init__.py
 .claude
+screenshots/
+capture_screenshots.py
+
+# Documentation files
+COMMIT_MESSAGE.txt
+REDESIGN_SUMMARY.md
+SCREENSHOTS_README.md
+SCREENSHOT_INSTRUCTIONS.md

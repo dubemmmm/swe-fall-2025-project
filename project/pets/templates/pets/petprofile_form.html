@@ -1,175 +1,332 @@
-<!DOCTYPE html>
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% if pet %}Edit Pet Profile{% else %}Add New Pet{% endif %}</title>
-    <link rel="stylesheet" href="{% static 'pets/css/petprofile_form.css'%}">
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    <style>
+        body {
+            background-color: var(--bg-beige);
+        }
+
+        .page-header {
+            background: var(--bg-white);
+            padding: var(--space-3xl) 0;
+            margin-bottom: var(--space-4xl);
+            border-bottom: 1px solid var(--border-light);
+            box-shadow: var(--shadow-sm);
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: var(--space-lg);
+        }
+        .back-link:hover {
+            color: var(--primary);
+        }
+        .form-card {
+            background: var(--bg-white);
+            border-radius: var(--radius-xl);
+            padding: var(--space-4xl);
+            box-shadow: var(--shadow-md);
+            margin-bottom: var(--space-3xl);
+        }
+        .form-section {
+            margin-bottom: var(--space-3xl);
+        }
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: var(--space-lg);
+            padding-bottom: var(--space-md);
+            border-bottom: 2px solid var(--border-light);
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: var(--space-2xl);
+        }
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+        .photo-upload-area {
+            border: 2px dashed var(--border-medium);
+            border-radius: var(--radius-md);
+            padding: var(--space-3xl);
+            text-align: center;
+            background: var(--bg-gray-light);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: block;
+        }
+        .photo-upload-area:hover {
+            border-color: var(--primary);
+            background: white;
+        }
+        .photo-icon svg {
+            width: 48px;
+            height: 48px;
+            color: var(--text-tertiary);
+            margin-bottom: var(--space-md);
+        }
+        .upload-text {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: var(--space-md);
+        }
+        .choose-photos-btn {
+            display: inline-block;
+            padding: var(--space-sm) var(--space-xl);
+            background: var(--primary);
+            color: white;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .choose-photos-btn:hover {
+            background: var(--primary-hover);
+        }
+        .traits-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: var(--space-lg);
+        }
+        @media (max-width: 768px) {
+            .traits-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .trait-checkbox {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+        .trait-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        .trait-checkbox label {
+            font-size: 0.875rem;
+            color: var(--text-primary);
+            cursor: pointer;
+        }
+        .error-message {
+            color: var(--red);
+            font-size: 0.8125rem;
+            margin-top: var(--space-xs);
+            display: block;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <a href="{% url 'pets:pet_list' %}" class="back-btn">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <div class="page-header">
+        <div class="container container-narrow">
+            <a href="{% url 'pets:pet_list' %}" class="back-link">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
                 Back to My Pets
             </a>
             <h1>{% if pet %}Edit {{ pet.name }}'s Profile{% else %}Add New Pet{% endif %}</h1>
         </div>
+    </div>
 
-        <form method="post" enctype="multipart/form-data" id="petProfileForm">
-            {% csrf_token %}
-            <!-- Profile Picture Section -->
-            <div class="form-section">
-                <div class="section-title">Profile Picture</div>
-                <label for="{{ form.profile_picture.id_for_label }}" class="photo-upload-area">
-                    <div class="photo-icon">
-                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M23 19C23 19.5304 22.7893 20.0391 22.4142 20.4142C22.0391 20.7893 21.5304 21 21 21H3C2.46957 21 1.96086 20.7893 1.58579 20.4142C1.21071 20.0391 1 19.5304 1 19V8C1 7.46957 1.21071 6.96086 1.58579 6.58579C1.96086 6.21071 2.46957 6 3 6H7L9 3H15L17 6H21C21.5304 6 22.0391 6.21071 22.4142 6.58579C22.7893 6.96086 23 7.46957 23 8V19Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                    </div>
-                    <div class="upload-text">Upload profile picture of your pet</div>
-                    <span class="choose-photos-btn">Choose Photo</span>
-                    {{ form.profile_picture }}
-                </label>
-                {% if form.profile_picture.errors %}
-                    <div class="error-message">{{ form.profile_picture.errors }}</div>
-                {% endif %}
-            </div>
-
-            <!-- Pet Name and Type -->
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="{{ form.name.id_for_label }}">Pet Name</label>
-                    {{ form.name }}
-                    {% if form.name.errors %}
-                        <div class="error-message">{{ form.name.errors }}</div>
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                    <label for="{{ form.species.id_for_label }}">Pet Type</label>
-                    {{ form.species }}
-                    {% if form.species.errors %}
-                        <div class="error-message">{{ form.species.errors }}</div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- Breed and Age -->
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="{{ form.breed.id_for_label }}">Breed</label>
-                    {{ form.breed }}
-                    {% if form.breed.errors %}
-                        <div class="error-message">{{ form.breed.errors }}</div>
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                    <label for="{{ form.age.id_for_label }}">Age</label>
-                    {{ form.age }}
-                    {% if form.age.errors %}
-                        <div class="error-message">{{ form.age.errors }}</div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- Size and Energy Level -->
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="{{ form.general_size.id_for_label }}">Size</label>
-                    {{ form.general_size }}
-                    {% if form.general_size.errors %}
-                        <div class="error-message">{{ form.general_size.errors }}</div>
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                    <label for="{{ form.energy_level.id_for_label }}">Energy Level</label>
-                    {{ form.energy_level }}
-                    {% if form.energy_level.errors %}
-                        <div class="error-message">{{ form.energy_level.errors }}</div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- Weight and Color/Markings -->
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="{{ form.weight.id_for_label }}">Weight (lbs)</label>
-                    {{ form.weight }}
-                    {% if form.weight.errors %}
-                        <div class="error-message">{{ form.weight.errors }}</div>
-                    {% endif %}
-                </div>
-                <div class="form-group">
-                    <label for="{{ form.color_markings.id_for_label }}">Color/Markings</label>
-                    {{ form.color_markings }}
-                    {% if form.color_markings.errors %}
-                        <div class="error-message">{{ form.color_markings.errors }}</div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- Description -->
-            <div class="form-section">
-                <div class="form-group full-width">
-                    <label for="{{ form.bio.id_for_label }}">Description</label>
-                    <div class="description-wrapper">
-                        {{ form.bio }}
-                        <span class="emoji-hint">😊</span>
-                    </div>
-                    {% if form.bio.errors %}
-                        <div class="error-message">{{ form.bio.errors }}</div>
-                    {% endif %}
-                </div>
-            </div>
-
-            <!-- Personality Traits -->
-            <div class="form-section">
-                <div class="section-title">Personality Traits</div>
-                <div class="traits-grid">
-                    {% for choice in form.traits %}
-                        <div class="trait-checkbox">
-                            {{ choice.tag }}
-                            <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+    <main>
+        <div class="container container-narrow">
+            {% if messages %}
+                <div class="mb-3">
+                    {% for message in messages %}
+                        <div style="padding: var(--space-md); background: var(--red-light); color: var(--red); border-radius: var(--radius-sm); margin-bottom: var(--space-md);">
+                            {{ message }}
                         </div>
                     {% endfor %}
                 </div>
-                {% if form.traits.errors %}
-                    <div class="error-message">{{ form.traits.errors }}</div>
-                {% endif %}
-            </div>
+            {% endif %}
 
-            <!-- Playdate Availability -->
-            <div class="form-section">
-                <div class="form-group">
-                    <div class="trait-checkbox">
-                        {{ form.is_playdate_available }}
-                        <label for="{{ form.is_playdate_available.id_for_label }}">Available for Playdates</label>
+            <div class="form-card">
+                <form method="post" enctype="multipart/form-data" id="petProfileForm">
+                    {% csrf_token %}
+
+                    <div class="form-section">
+                        <div class="section-title">Profile Picture</div>
+                        <label for="{{ form.profile_picture.id_for_label }}" class="photo-upload-area">
+                            <div class="photo-icon">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M23 19C23 19.5304 22.7893 20.0391 22.4142 20.4142C22.0391 20.7893 21.5304 21 21 21H3C2.46957 21 1.96086 20.7893 1.58579 20.4142C1.21071 20.0391 1 19.5304 1 19V8C1 7.46957 1.21071 6.96086 1.58579 6.58579C1.96086 6.21071 2.46957 6 3 6H7L9 3H15L17 6H21C21.5304 6 22.0391 6.21071 22.4142 6.58579C22.7893 6.96086 23 7.46957 23 8V19Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <circle cx="12" cy="13" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                            </div>
+                            <div class="upload-text">Upload profile picture of your pet</div>
+                            <span class="choose-photos-btn">Choose Photo</span>
+                        </label>
+                        {{ form.profile_picture }}
+                        {% if form.profile_picture.errors %}
+                            <div class="error-message">{{ form.profile_picture.errors }}</div>
+                        {% endif %}
                     </div>
-                    {% if form.is_playdate_available.errors %}
-                        <div class="error-message">{{ form.is_playdate_available.errors }}</div>
-                    {% endif %}
-                </div>
-            </div>
 
-            <!-- Privacy Settings -->
-            <div class="form-section">
-                <div class="form-group">
-                    <label for="{{ form.privacy_settings.id_for_label }}">Privacy Settings</label>
-                    {{ form.privacy_settings }}
-                    {% if form.privacy_settings.errors %}
-                        <div class="error-message">{{ form.privacy_settings.errors }}</div>
-                    {% endif %}
-                </div>
-            </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.name.id_for_label }}">Pet Name</label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                                <div class="error-message">{{ form.name.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.species.id_for_label }}">Pet Type</label>
+                            {{ form.species }}
+                            {% if form.species.errors %}
+                                <div class="error-message">{{ form.species.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
 
-            <!-- Submit Button -->
-            <button type="submit" class="submit-btn">{% if pet %}Update Pet Profile{% else %}Add Pet Profile{% endif %}</button>
-        </form>
-    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.breed.id_for_label }}">Breed</label>
+                            {{ form.breed }}
+                            {% if form.breed.errors %}
+                                <div class="error-message">{{ form.breed.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.age.id_for_label }}">Age</label>
+                            {{ form.age }}
+                            {% if form.age.errors %}
+                                <div class="error-message">{{ form.age.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.general_size.id_for_label }}">Size</label>
+                            {{ form.general_size }}
+                            {% if form.general_size.errors %}
+                                <div class="error-message">{{ form.general_size.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.energy_level.id_for_label }}">Energy Level</label>
+                            {{ form.energy_level }}
+                            {% if form.energy_level.errors %}
+                                <div class="error-message">{{ form.energy_level.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.weight.id_for_label }}">Weight (lbs)</label>
+                            {{ form.weight }}
+                            {% if form.weight.errors %}
+                                <div class="error-message">{{ form.weight.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="{{ form.color_markings.id_for_label }}">Color/Markings</label>
+                            {{ form.color_markings }}
+                            {% if form.color_markings.errors %}
+                                <div class="error-message">{{ form.color_markings.errors }}</div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.bio.id_for_label }}">Description</label>
+                        {{ form.bio }}
+                        {% if form.bio.errors %}
+                            <div class="error-message">{{ form.bio.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-section">
+                        <div class="section-title">Personality Traits</div>
+                        <div class="traits-grid">
+                            {% for choice in form.traits %}
+                                <div class="trait-checkbox">
+                                    {{ choice.tag }}
+                                    <label for="{{ choice.id_for_label }}">{{ choice.choice_label }}</label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        {% if form.traits.errors %}
+                            <div class="error-message">{{ form.traits.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <div class="trait-checkbox">
+                            {{ form.is_playdate_available }}
+                            <label for="{{ form.is_playdate_available.id_for_label }}">Available for Playdates</label>
+                        </div>
+                        {% if form.is_playdate_available.errors %}
+                            <div class="error-message">{{ form.is_playdate_available.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="{{ form.privacy_settings.id_for_label }}">Privacy Settings</label>
+                        {{ form.privacy_settings }}
+                        {% if form.privacy_settings.errors %}
+                            <div class="error-message">{{ form.privacy_settings.errors }}</div>
+                        {% endif %}
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-full btn-lg">
+                        {% if pet %}Update Pet Profile{% else %}Add Pet Profile{% endif %}
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <style>
+        /* Override Django form widget styles */
+        input[type="text"], input[type="number"], select, textarea {
+            width: 100%;
+            padding: var(--space-md);
+            font-size: 0.875rem;
+            font-family: inherit;
+            background-color: var(--bg-gray-light);
+            border: 1px solid transparent;
+            border-radius: var(--radius-sm);
+            color: var(--text-dark);
+            transition: all 0.2s ease;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+        input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
+            outline: none;
+            background-color: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(232, 118, 75, 0.1);
+        }
+        input[type="file"] {
+            display: none;
+        }
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+    </style>
 
     <script src="{% static 'pets/js/petprofile_form.js' %}"></script>
 </body>

@@ -1,3 +1,19 @@
+:root {
+    /* Figma Color Theme */
+    --bg-primary: #faf7f3;
+    --bg-secondary: #f5f1eb;
+    --bg-white: #ffffff;
+    --primary-orange: #ff5722;
+    --primary-orange-hover: #f4511e;
+    --text-dark: #2d2d2d;
+    --text-gray: #4a4a4a;
+    --text-light: #666666;
+    --border-light: #e0e0e0;
+    --input-bg: #f5f5f5;
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
 * {
     margin: 0;
     padding: 0;
@@ -6,8 +22,9 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    background-color: var(--bg-primary);
     min-height: 100vh;
+    color: var(--text-dark);
 }
 
 .container {
@@ -18,15 +35,42 @@ body {
 
 /* Header */
 .header {
-    background: white;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background: var(--bg-white);
+    box-shadow: var(--shadow-sm);
     padding: 1.5rem 0;
+    border-bottom: 1px solid var(--border-light);
 }
 
 .header-content {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.btn-post-adoption {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--primary-orange);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.btn-post-adoption:hover {
+    background-color: var(--primary-orange-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
 }
 
 .back-button {
@@ -97,16 +141,17 @@ body {
 }
 
 .pet-card {
-    background: white;
-    border-radius: 20px;
+    background: var(--bg-white);
+    border-radius: 16px;
     overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    box-shadow: var(--shadow-sm);
     transition: all 0.3s ease;
+    border: 1px solid var(--border-light);
 }
 
 .pet-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
 }
 
 .pet-image {
@@ -252,21 +297,22 @@ body {
     justify-content: center;
     gap: 0.5rem;
     padding: 1rem;
-    background: linear-gradient(135deg, #ff5722 0%, #e64a19 100%);
+    background-color: var(--primary-orange);
     color: white;
     text-decoration: none;
-    border-radius: 50px;
+    border-radius: 8px;
     font-weight: 600;
     font-size: 1rem;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(255, 87, 34, 0.3);
+    box-shadow: var(--shadow-sm);
     border: none;
     cursor: pointer;
 }
 
 .adopt-button:hover {
+    background-color: var(--primary-orange-hover);
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(255, 87, 34, 0.4);
+    box-shadow: var(--shadow-md);
 }
 
 .heart-filled {

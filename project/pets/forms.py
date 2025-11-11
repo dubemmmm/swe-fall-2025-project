@@ -1,4 +1,6 @@
 from django import forms
+from django.core.exceptions import ValidationError
+import re
 from .models import PetProfile, PetTrait
 
 class PetProfileForm(forms.ModelForm):
@@ -51,6 +53,21 @@ class PetProfileForm(forms.ModelForm):
         if self.instance and self.instance.pk:
             existing_traits = self.instance.traits.values_list('trait', flat=True)
             self.initial['traits'] = list(existing_traits)
+
+    def clean_age(self):
+        age = self.cleaned_data.get('age')
+        if age:
+            # Extract numbers from the age string
+            numbers = re.findall(r'\d+', age)
+            if numbers:
+                age_value = int(numbers[0])
+                if age_value < 0:
+                    raise ValidationError('Age cannot be negative.')
+                if age_value > 50:
+                    raise ValidationError('Please enter a realistic age.')
+            else:
+                raise ValidationError('Age must contain a number (e.g., "3 years", "6 months").')
+        return age
 
     def save(self, commit=True):
         instance = super().save(commit=commit)

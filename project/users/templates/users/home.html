@@ -1,22 +1,314 @@
-<!DOCTYPE html>
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - PetNextDoor</title>
-    <link rel="stylesheet" href="{% static 'users/css/home.css' %}">
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    <style>
+        .navbar {
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border-light);
+            padding: var(--space-lg) 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-2xl);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        .nav-logo svg {
+            color: var(--primary);
+        }
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2xl);
+        }
+        .nav-link {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary);
+        }
+        .welcome-section {
+            background: var(--bg-white);
+            padding: var(--space-4xl) 0;
+            margin-bottom: var(--space-3xl);
+        }
+        .welcome-content {
+            text-align: center;
+            margin-bottom: var(--space-2xl);
+        }
+        .welcome-content h1 {
+            margin-bottom: var(--space-sm);
+        }
+        .welcome-subtitle {
+            font-size: 1.125rem;
+            color: var(--text-secondary);
+        }
+        .welcome-actions {
+            text-align: center;
+        }
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-2xl);
+            margin-bottom: var(--space-4xl);
+        }
+        @media (max-width: 768px) {
+            .stats-section {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        .stat-card {
+            background: var(--bg-white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-2xl);
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            align-items: center;
+            gap: var(--space-lg);
+        }
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .stat-icon.pets { background: var(--primary); }
+        .stat-icon.playdates { background: var(--purple); }
+        .stat-icon.messages { background: var(--blue); }
+        .stat-icon.notifications { background: var(--green); }
+        .stat-info {
+            display: flex;
+            flex-direction: column;
+        }
+        .stat-value {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: var(--space-3xl);
+            margin-bottom: var(--space-4xl);
+        }
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: var(--space-2xl);
+        }
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: var(--space-2xl);
+        }
+        @media (max-width: 768px) {
+            .action-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .action-card {
+            background: var(--bg-white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-2xl);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            display: block;
+        }
+        .action-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+        .action-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: var(--space-lg);
+            background: var(--primary);
+            color: white;
+        }
+        .action-card h3 {
+            font-size: 1.125rem;
+            margin-bottom: var(--space-sm);
+        }
+        .action-card p {
+            font-size: 0.875rem;
+            margin: 0;
+        }
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-3xl);
+        }
+        .my-pets-preview, .activity-feed {
+            background: var(--bg-white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-2xl);
+            box-shadow: var(--shadow-sm);
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-2xl);
+        }
+        .view-all {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        .pet-preview-card {
+            display: flex;
+            align-items: center;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            transition: all 0.2s ease;
+            margin-bottom: var(--space-md);
+        }
+        .pet-preview-card:hover {
+            background: var(--bg-gray-light);
+        }
+        .pet-preview-image {
+            width: 48px;
+            height: 48px;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+        }
+        .pet-preview-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .pet-preview-info h4 {
+            font-size: 0.875rem;
+            margin: 0 0 var(--space-xs) 0;
+        }
+        .pet-preview-info p {
+            font-size: 0.75rem;
+            margin: 0;
+        }
+        .empty-pets {
+            text-align: center;
+            padding: var(--space-3xl) 0;
+        }
+        .empty-icon svg {
+            color: var(--text-tertiary);
+            margin-bottom: var(--space-md);
+        }
+        .empty-pets p {
+            margin-bottom: var(--space-lg);
+        }
+        .add-first-pet {
+            display: inline-block;
+            padding: var(--space-sm) var(--space-lg);
+            background: var(--primary);
+            color: white;
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-md);
+        }
+        .activity-item {
+            display: flex;
+            gap: var(--space-md);
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            background: var(--bg-gray-light);
+        }
+        .activity-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .activity-icon.welcome {
+            background: var(--green-light);
+            color: var(--green);
+        }
+        .activity-icon.info {
+            background: var(--blue-light);
+            color: var(--blue);
+        }
+        .activity-content p {
+            font-size: 0.875rem;
+            margin: 0 0 var(--space-xs) 0;
+        }
+        .activity-time {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+        .footer {
+            background: var(--bg-white);
+            border-top: 1px solid var(--border-light);
+            padding: var(--space-3xl) 0;
+            text-align: center;
+        }
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 var(--space-2xl);
+        }
+        .footer-logo {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            font-weight: 700;
+            margin-bottom: var(--space-md);
+        }
+        .footer p {
+            font-size: 0.875rem;
+            margin: 0;
+        }
+    </style>
 </head>
 <body>
-    <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="nav-container">
             <div class="nav-logo">
-                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M16 28C22.6274 28 28 22.6274 28 16C28 9.37258 22.6274 4 16 4C9.37258 4 4 9.37258 4 16C4 22.6274 9.37258 28 16 28Z" fill="#ff5722"/>
-                    <path d="M12 14C12.5523 14 13 13.5523 13 13C13 12.4477 12.5523 12 12 12C11.4477 12 11 12.4477 11 13C11 13.5523 11.4477 14 12 14Z" fill="white"/>
-                    <path d="M20 14C20.5523 14 21 13.5523 21 13C21 12.4477 20.5523 12 20 12C19.4477 12 19 12.4477 19 13C19 13.5523 19.4477 14 20 14Z" fill="white"/>
-                    <path d="M16 20C17.6569 20 19 18.6569 19 17H13C13 18.6569 14.3431 20 16 20Z" fill="white"/>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                 </svg>
                 <span>PetNextDoor</span>
             </div>
@@ -24,36 +316,36 @@
                 <a href="{% url 'users:home' %}" class="nav-link active">Home</a>
                 <a href="{% url 'pets:pet_list' %}" class="nav-link">My Pets</a>
                 <a href="{% url 'users:profile' %}" class="nav-link">Profile</a>
-                <a href="{% url 'users:logout' %}" class="nav-link logout">Logout</a>
+                <a href="{% url 'users:logout' %}" class="nav-link">Logout</a>
             </div>
         </div>
     </nav>
 
-    <div class="main-container">
-        <!-- Welcome Section -->
-        <section class="welcome-section">
+    <div class="welcome-section">
+        <div class="container">
             <div class="welcome-content">
-                <h1>Welcome back, {{ user.profile_name }}!</h1>
+                <h1>Welcome back, {{ user.profile_name|default:user.username }}!</h1>
                 <p class="welcome-subtitle">Ready to connect with your furry friends' community?</p>
             </div>
             <div class="welcome-actions">
-                <a href="{% url 'pets:pet_create' %}" class="btn-primary">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <a href="{% url 'pets:pet_create' %}" class="btn btn-primary btn-lg">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                         <path d="M10 4V16M4 10H16" stroke="white" stroke-width="2" stroke-linecap="round"/>
                     </svg>
                     Add New Pet
                 </a>
             </div>
-        </section>
+        </div>
+    </div>
 
-        <!-- Quick Stats -->
+    <div class="container">
         <section class="stats-section">
             <div class="stat-card">
                 <div class="stat-icon pets">
-                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M10 12C11.1046 12 12 11.1046 12 10C12 8.89543 11.1046 8 10 8C8.89543 8 8 8.89543 8 10C8 11.1046 8.89543 12 10 12Z" fill="currentColor"/>
-                        <path d="M22 12C23.1046 12 24 11.1046 24 10C24 8.89543 23.1046 8 22 8C20.8954 8 20 8.89543 20 10C20 11.1046 20.8954 12 22 12Z" fill="currentColor"/>
-                        <path d="M16 24C19.3137 24 22 21.3137 22 18H10C10 21.3137 12.6863 24 16 24Z" fill="currentColor"/>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M8 10C9.10457 10 10 9.10457 10 8C10 6.89543 9.10457 6 8 6C6.89543 6 6 6.89543 6 8C6 9.10457 6.89543 10 8 10Z"/>
+                        <path d="M16 10C17.1046 10 18 9.10457 18 8C18 6.89543 17.1046 6 16 6C14.8954 6 14 6.89543 14 8C14 9.10457 14.8954 10 16 10Z"/>
+                        <path d="M12 18C14.7614 18 17 15.7614 17 13H7C7 15.7614 9.23858 18 12 18Z"/>
                     </svg>
                 </div>
                 <div class="stat-info">
@@ -64,9 +356,9 @@
 
             <div class="stat-card">
                 <div class="stat-icon playdates">
-                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M26 6H6C4.89543 6 4 6.89543 4 8V26C4 27.1046 4.89543 28 6 28H26C27.1046 28 28 27.1046 28 26V8C28 6.89543 27.1046 6 26 6Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M22 4V8M10 4V8M4 12H28" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="4" width="18" height="18" rx="2"/>
+                        <path d="M16 2V6M8 2V6M3 10H21"/>
                     </svg>
                 </div>
                 <div class="stat-info">
@@ -77,8 +369,8 @@
 
             <div class="stat-card">
                 <div class="stat-icon messages">
-                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M28 16C28 22.6274 22.6274 28 16 28C13.5 28 11.2 27.2 9.3 25.9L4 28L6.1 22.7C4.8 20.8 4 18.5 4 16C4 9.37258 9.37258 4 16 4C22.6274 4 28 9.37258 28 16Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 11.5C21 16.75 16.75 21 11.5 21C10 21 8.6 20.6 7.4 20L3 21L4 16.6C3.4 15.4 3 14 3 11.5C3 6.25 7.25 2 12.5 2C17.75 2 21 6.25 21 11.5Z"/>
                     </svg>
                 </div>
                 <div class="stat-info">
@@ -89,9 +381,9 @@
 
             <div class="stat-card">
                 <div class="stat-icon notifications">
-                    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M20 11.3333C20 9.91087 19.4732 8.54656 18.5355 7.52728C17.5979 6.50801 16.3261 6 15 6C13.6739 6 12.4021 6.50801 11.4645 7.52728C10.5268 8.54656 10 9.91087 10 11.3333C10 20 6 22.6667 6 22.6667H24C24 22.6667 20 20 20 11.3333Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M17.1817 26C17.0105 26.3044 16.7596 26.5583 16.4537 26.7352C16.1478 26.912 15.7978 27.0052 15.4417 27.0052C15.0856 27.0052 14.7356 26.912 14.4297 26.7352C14.1238 26.5583 13.8729 26.3044 13.7017 26" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z"/>
+                        <path d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21"/>
                     </svg>
                 </div>
                 <div class="stat-info">
@@ -102,16 +394,14 @@
         </section>
 
         <div class="content-grid">
-            <!-- Quick Actions -->
             <section class="quick-actions">
                 <h2 class="section-title">Quick Actions</h2>
                 <div class="action-grid">
                     <a href="{% url 'pets:pet_list' %}" class="action-card">
-                        <div class="action-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M8 10C9.10457 10 10 9.10457 10 8C10 6.89543 9.10457 6 8 6C6.89543 6 6 6.89543 6 8C6 9.10457 6.89543 10 8 10Z" fill="white"/>
-                                <path d="M16 10C17.1046 10 18 9.10457 18 8C18 6.89543 17.1046 6 16 6C14.8954 6 14 6.89543 14 8C14 9.10457 14.8954 10 16 10Z" fill="white"/>
-                                <path d="M12 18C14.7614 18 17 15.7614 17 13H7C7 15.7614 9.23858 18 12 18Z" fill="white"/>
+                        <div class="action-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M8 10C9.10457 10 10 9.10457 10 8C10 6.89543 9.10457 6 8 6C6.89543 6 6 6.89543 6 8C6 9.10457 6.89543 10 8 10Z"/>
+                                <path d="M16 10C17.1046 10 18 9.10457 18 8C18 6.89543 17.1046 6 16 6C14.8954 6 14 6.89543 14 8C14 9.10457 14.8954 10 16 10Z"/>
                             </svg>
                         </div>
                         <h3>My Pets</h3>
@@ -119,87 +409,42 @@
                     </a>
 
                     <a href="{% url 'pets:pet_create' %}" class="action-card">
-                        <div class="action-icon" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M12 5V19M5 12H19" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                        <div class="action-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                <path d="M12 5V19M5 12H19"/>
                             </svg>
                         </div>
                         <h3>Add Pet</h3>
                         <p>Create a new pet profile</p>
                     </a>
 
-                    <a href="{% url 'playdates:playdate-list'%}" class="action-card">
-                        <div class="action-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <rect x="3" y="4" width="18" height="18" rx="2" stroke="white" stroke-width="2"/>
-                                <path d="M16 2V6M8 2V6M3 10H21" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                    <a href="{% url 'playdates:playdate-list' %}" class="action-card">
+                        <div class="action-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+                                <rect x="3" y="4" width="18" height="18" rx="2"/>
+                                <path d="M16 2V6M8 2V6M3 10H21"/>
                             </svg>
                         </div>
                         <h3>Playdates</h3>
                         <p>Schedule playdates with nearby pets</p>
                     </a>
 
-                    <a href="#messages" class="action-card">
-                        <div class="action-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M21 11.5C21 16.75 16.75 21 11.5 21C10 21 8.6 20.6 7.4 20L3 21L4 16.6C3.4 15.4 3 14 3 11.5C3 6.25 7.25 2 12.5 2C17.75 2 21 6.25 21 11.5Z" stroke="white" stroke-width="2"/>
-                            </svg>
-                        </div>
-                        <h3>Messages</h3>
-                        <p>Chat with other pet owners</p>
-                    </a>
-
                     <a href="{% url 'adoption:list' %}" class="action-card">
-                        <div class="action-icon" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M20.84 4.61C20.3292 4.099 19.7228 3.69364 19.0554 3.41708C18.3879 3.14052 17.6725 2.99817 16.95 2.99817C16.2275 2.99817 15.5121 3.14052 14.8446 3.41708C14.1772 3.69364 13.5708 4.099 13.06 4.61L12 5.67L10.94 4.61C9.9083 3.57831 8.50903 2.99871 7.05 2.99871C5.59096 2.99871 4.19169 3.57831 3.16 4.61C2.1283 5.64169 1.54871 7.04096 1.54871 8.5C1.54871 9.95903 2.1283 11.3583 3.16 12.39L4.22 13.45L12 21.23L19.78 13.45L20.84 12.39C21.351 11.8792 21.7564 11.2728 22.0329 10.6054C22.3095 9.93789 22.4518 9.22248 22.4518 8.5C22.4518 7.77752 22.3095 7.0621 22.0329 6.39464C21.7564 5.72718 21.351 5.12075 20.84 4.61Z" fill="white"/>
+                        <div class="action-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+                                <path d="M20.84 4.61C20.3292 4.099 19.7228 3.69364 19.0554 3.41708C18.3879 3.14052 17.6725 2.99817 16.95 2.99817C16.2275 2.99817 15.5121 3.14052 14.8446 3.41708C14.1772 3.69364 13.5708 4.099 13.06 4.61L12 5.67L10.94 4.61C9.9083 3.57831 8.50903 2.99871 7.05 2.99871C5.59096 2.99871 4.19169 3.57831 3.16 4.61C2.1283 5.64169 1.54871 7.04096 1.54871 8.5C1.54871 9.95903 2.1283 11.3583 3.16 12.39L4.22 13.45L12 21.23L19.78 13.45L20.84 12.39C21.351 11.8792 21.7564 11.2728 22.0329 10.6054C22.3095 9.93789 22.4518 9.22248 22.4518 8.5C22.4518 7.77752 22.3095 7.0621 22.0329 6.39464C21.7564 5.72718 21.351 5.12075 20.84 4.61Z"/>
                             </svg>
                         </div>
                         <h3>Adoption</h3>
                         <p>Browse pets looking for homes</p>
                     </a>
-
-                    <a href="{% url 'adoption:my_requests' %}" class="action-card">
-                        <div class="action-icon" style="background: linear-gradient(135deg, #ff9a56 0%, #ff6a88 100%);">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <circle cx="12" cy="7" r="4" stroke="white" stroke-width="2"/>
-                            </svg>
-                        </div>
-                        <h3>Adoption Requests</h3>
-                        <p>Manage requests for your pets</p>
-                    </a>
-
-                    <a href="{% url 'notifications:list' %}" class="action-card">
-                        <div class="action-icon" style="background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M18 8C18 6.4087 17.3679 4.88258 16.2426 3.75736C15.1174 2.63214 13.5913 2 12 2C10.4087 2 8.88258 2.63214 7.75736 3.75736C6.63214 4.88258 6 6.4087 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                <path d="M13.73 21C13.5542 21.3031 13.3019 21.5547 12.9982 21.7295C12.6946 21.9044 12.3504 21.9965 12 21.9965C11.6496 21.9965 11.3054 21.9044 11.0018 21.7295C10.6982 21.5547 10.4458 21.3031 10.27 21" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            </svg>
-                        </div>
-                        <h3>Notifications</h3>
-                        <p>View your activity and updates</p>
-                    </a>
-
-                    <a href="#discover" class="action-card">
-                        <div class="action-icon" style="background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="12" cy="10" r="3" stroke="white" stroke-width="2"/>
-                                <path d="M12 21C15.5 17 19 14 19 10C19 6.13401 15.866 3 12 3C8.13401 3 5 6.13401 5 10C5 14 8.5 17 12 21Z" stroke="white" stroke-width="2"/>
-                            </svg>
-                        </div>
-                        <h3>Discover</h3>
-                        <p>Find pets and owners nearby</p>
-                    </a>
                 </div>
             </section>
 
-            <!-- Recent Activity & My Pets -->
             <aside class="sidebar">
-                <!-- My Pets Preview -->
                 <section class="my-pets-preview">
                     <div class="section-header">
-                        <h2 class="section-title">My Pets</h2>
+                        <h2 class="section-title" style="margin: 0;">My Pets</h2>
                         <a href="{% url 'pets:pet_list' %}" class="view-all">View All</a>
                     </div>
 
@@ -211,11 +456,10 @@
                                     {% if pet.profile_picture %}
                                         <img src="{{ pet.profile_picture.url }}" alt="{{ pet.name }}">
                                     {% else %}
-                                        <div class="pet-placeholder">
-                                            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                <path d="M10 12C11.1046 12 12 11.1046 12 10C12 8.89543 11.1046 8 10 8C8.89543 8 8 8.89543 8 10C8 11.1046 8.89543 12 10 12Z" fill="#999"/>
-                                                <path d="M22 12C23.1046 12 24 11.1046 24 10C24 8.89543 23.1046 8 22 8C20.8954 8 20 8.89543 20 10C20 11.1046 20.8954 12 22 12Z" fill="#999"/>
-                                                <path d="M16 24C19.3137 24 22 21.3137 22 18H10C10 21.3137 12.6863 24 16 24Z" fill="#999"/>
+                                        <div style="width: 100%; height: 100%; background: var(--bg-gray-light); display: flex; align-items: center; justify-content: center;">
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--text-tertiary)">
+                                                <path d="M8 10C9.10457 10 10 9.10457 10 8C10 6.89543 9.10457 6 8 6C6.89543 6 6 6.89543 6 8C6 9.10457 6.89543 10 8 10Z"/>
+                                                <path d="M16 10C17.1046 10 18 9.10457 18 8C18 6.89543 17.1046 6 16 6C14.8954 6 14 6.89543 14 8C14 9.10457 14.8954 10 16 10Z"/>
                                             </svg>
                                         </div>
                                     {% endif %}
@@ -230,10 +474,9 @@
                     {% else %}
                         <div class="empty-pets">
                             <div class="empty-icon">
-                                <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M14 18C16.2091 18 18 16.2091 18 14C18 11.7909 16.2091 10 14 10C11.7909 10 10 11.7909 10 14C10 16.2091 11.7909 18 14 18Z" fill="#ddd"/>
-                                    <path d="M34 18C36.2091 18 38 16.2091 38 14C38 11.7909 36.2091 10 34 10C31.7909 10 30 11.7909 30 14C30 16.2091 31.7909 18 34 18Z" fill="#ddd"/>
-                                    <path d="M24 38C29.5228 38 34 33.5228 34 28H14C14 33.5228 18.4772 38 24 38Z" fill="#ddd"/>
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M8 10C9.10457 10 10 9.10457 10 8C10 6.89543 9.10457 6 8 6C6.89543 6 6 6.89543 6 8C6 9.10457 6.89543 10 8 10Z"/>
+                                    <path d="M16 10C17.1046 10 18 9.10457 18 8C18 6.89543 17.1046 6 16 6C14.8954 6 14 6.89543 14 8C14 9.10457 14.8954 10 16 10Z"/>
                                 </svg>
                             </div>
                             <p>No pets yet</p>
@@ -242,15 +485,14 @@
                     {% endif %}
                 </section>
 
-                <!-- Activity Feed -->
                 <section class="activity-feed">
                     <h2 class="section-title">Recent Activity</h2>
                     <div class="activity-list">
                         <div class="activity-item">
                             <div class="activity-icon welcome">
-                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <path d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18Z" stroke="currentColor" stroke-width="2"/>
-                                    <path d="M7 9L9 11L13 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M7 9L9 11L13 7"/>
+                                    <circle cx="10" cy="10" r="8"/>
                                 </svg>
                             </div>
                             <div class="activity-content">
@@ -261,9 +503,9 @@
 
                         <div class="activity-item">
                             <div class="activity-icon info">
-                                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="2"/>
-                                    <path d="M10 6V10M10 14H10.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                                <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="10" cy="10" r="8"/>
+                                    <path d="M10 6V10M10 14H10.01"/>
                                 </svg>
                             </div>
                             <div class="activity-content">
@@ -275,53 +517,21 @@
                 </section>
             </aside>
         </div>
-
-        <!-- Features Overview -->
-        <section class="features-overview">
-            <h2 class="section-title-center">Explore PetNextDoor</h2>
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">🐾</div>
-                    <h3>Pet Profiles</h3>
-                    <p>Create detailed profiles for your pets with photos, personality traits, and preferences.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎯</div>
-                    <h3>Smart Matching</h3>
-                    <p>Our algorithm finds the best playmates based on personality and compatibility.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📍</div>
-                    <h3>Nearby Discovery</h3>
-                    <p>Find pets and owners in your neighborhood using location-based search.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">💬</div>
-                    <h3>Community</h3>
-                    <p>Connect with local pet owners, share experiences, and build friendships.</p>
-                </div>
-            </div>
-        </section>
     </div>
 
-    <!-- Footer -->
     <footer class="footer">
         <div class="footer-content">
             <div class="footer-logo">
-                <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M16 28C22.6274 28 28 22.6274 28 16C28 9.37258 22.6274 4 16 4C9.37258 4 4 9.37258 4 16C4 22.6274 9.37258 28 16 28Z" fill="#ff5722"/>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--primary)">
+                    <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
                 </svg>
                 <span>PetNextDoor</span>
             </div>
-            <p>&copy; 2025 PetNextDoor. Connecting pets and their humans.</p>
+            <p>2025 PetNextDoor. Connecting pets and their humans.</p>
         </div>
     </footer>
 
-    <script src="{% static 'users/js/home.js' %}"></script>
-
-    <!-- Notification Count Update Script -->
     <script>
-        // Function to update notification count
         function updateNotificationCount() {
             fetch('{% url "notifications:unread_count" %}')
                 .then(response => response.json())
@@ -334,10 +544,7 @@
                 .catch(error => console.error('Error fetching notification count:', error));
         }
 
-        // Update count on page load
         updateNotificationCount();
-
-        // Update count every 30 seconds
         setInterval(updateNotificationCount, 30000);
     </script>
 </body>

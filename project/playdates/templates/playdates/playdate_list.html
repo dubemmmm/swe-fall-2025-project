@@ -4,107 +4,287 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Playdates</title>
-  <link rel="stylesheet" href="{% static "playdates/css/playdate_list.css" %}">
+  <title>Playdates - Pet Next Door</title>
+  <link rel="stylesheet" href="{% static 'css/global.css' %}">
+  <style>
+    body {
+      background-color: var(--bg-beige);
+    }
+
+    .page-header {
+      background: var(--bg-white);
+      padding: var(--space-3xl) 0;
+      margin-bottom: var(--space-4xl);
+      border-bottom: 1px solid var(--border-light);
+      box-shadow: var(--shadow-sm);
+    }
+    .header-actions {
+      display: flex;
+      gap: var(--space-md);
+      margin-bottom: var(--space-2xl);
+    }
+    .filters-card {
+      background: var(--bg-white);
+      border-radius: var(--radius-lg);
+      padding: var(--space-2xl);
+      margin-bottom: var(--space-3xl);
+      box-shadow: var(--shadow-sm);
+    }
+    .filters-card h3 {
+      font-size: 1.125rem;
+      margin-bottom: var(--space-lg);
+    }
+    .filter-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: var(--space-md);
+      align-items: end;
+    }
+    @media (max-width: 768px) {
+      .filter-row {
+        grid-template-columns: 1fr;
+      }
+    }
+    .playdate-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: var(--space-2xl);
+      margin-bottom: var(--space-3xl);
+    }
+    .playdate-card {
+      background: var(--bg-white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      transition: all 0.3s ease;
+    }
+    .playdate-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+    .playdate-header {
+      padding: var(--space-xl);
+      border-bottom: 1px solid var(--border-light);
+    }
+    .playdate-pet-info {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      margin-bottom: var(--space-md);
+    }
+    .pet-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: var(--radius-full);
+      object-fit: cover;
+    }
+    .playdate-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+    }
+    .playdate-title-row h3 {
+      font-size: 1.125rem;
+      margin: 0;
+    }
+    .playdate-body {
+      padding: var(--space-xl);
+    }
+    .info-row {
+      display: flex;
+      justify-content: space-between;
+      padding: var(--space-sm) 0;
+      font-size: 0.875rem;
+    }
+    .info-label {
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    .info-value {
+      color: var(--text-dark);
+      font-weight: 600;
+    }
+    .playdate-footer {
+      padding: var(--space-xl);
+      border-top: 1px solid var(--border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .empty-state {
+      text-align: center;
+      padding: var(--space-4xl);
+      background: var(--bg-white);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+    }
+    .empty-state h3 {
+      margin-bottom: var(--space-md);
+    }
+    .empty-state p {
+      margin-bottom: var(--space-2xl);
+    }
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: var(--space-lg);
+      padding: var(--space-2xl) 0;
+    }
+    .pagination a {
+      padding: var(--space-sm) var(--space-lg);
+      background: var(--bg-white);
+      border-radius: var(--radius-sm);
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+    }
+    .pagination a:hover {
+      background: var(--primary);
+      color: white;
+    }
+    .pagination span {
+      font-size: 0.875rem;
+      color: var(--text-secondary);
+    }
+    .status-pill {
+      display: inline-block;
+      padding: var(--space-xs) var(--space-md);
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <div class="topbar">
-        <div>
-          <a class="btn btn-light" href="{% url 'playdates:playdate-create' %}">+ Create New Playdate</a>
-          <a class="btn btn-primary" href="{% url 'playdates:my-playdates' %}">My Playdates</a>
-        </div>
+  <div class="page-header">
+    <div class="container">
+      <div class="header-actions">
+        <a class="btn btn-primary" href="{% url 'playdates:playdate-create' %}">Create New Playdate</a>
+        <a class="btn btn-secondary" href="{% url 'playdates:my-playdates' %}">My Playdates</a>
       </div>
       <h1>Discover Playdates</h1>
-      <p style="opacity:.95">Browse upcoming playdates or filter by status to find the perfect meetup for your pet.</p>
+      <p style="color: var(--text-secondary); margin-top: var(--space-sm);">Browse upcoming playdates or filter by status to find the perfect meetup for your pet.</p>
+    </div>
+  </div>
+
+  <div class="container">
+    {% if messages %}
+      <div class="mb-3">
+        {% for message in messages %}
+          <div style="padding: var(--space-md); background: var(--blue-light); color: var(--blue); border-radius: var(--radius-sm); margin-bottom: var(--space-md);">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <div class="filters-card">
+      <h3>Filters</h3>
+      <form method="get">
+        <div class="filter-row">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label class="form-label" for="status">Status</label>
+            <select name="status" id="status" class="form-select">
+              <option value="">All</option>
+              <option value="PENDING" {% if current_status == 'PENDING' %}selected{% endif %}>Pending</option>
+              <option value="CONFIRMED" {% if current_status == 'CONFIRMED' %}selected{% endif %}>Confirmed</option>
+              <option value="DECLINED" {% if current_status == 'DECLINED' %}selected{% endif %}>Declined</option>
+              <option value="CANCELLED" {% if current_status == 'CANCELLED' %}selected{% endif %}>Cancelled</option>
+              <option value="COMPLETED" {% if current_status == 'COMPLETED' %}selected{% endif %}>Completed</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-primary">Apply Filter</button>
+        </div>
+      </form>
     </div>
 
-    <div class="content">
-      {% if messages %}
-        <div class="messages">
-          {% for message in messages %}
-            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
-          {% endfor %}
-        </div>
-      {% endif %}
-
-      <form method="get" class="filters">
-        <h3>Filters</h3>
-        <label for="status" class="label">Status</label>
-        <select name="status" id="status">
-          <option value="">All</option>
-          <option value="PENDING" {% if current_status == 'PENDING' %}selected{% endif %}>Pending</option>
-          <option value="CONFIRMED" {% if current_status == 'CONFIRMED' %}selected{% endif %}>Confirmed</option>
-          <option value="DECLINED" {% if current_status == 'DECLINED' %}selected{% endif %}>Declined</option>
-          <option value="CANCELLED" {% if current_status == 'CANCELLED' %}selected{% endif %}>Cancelled</option>
-          <option value="COMPLETED" {% if current_status == 'COMPLETED' %}selected{% endif %}>Completed</option>
-        </select>
-        <button type="submit" class="btn btn-primary">Apply</button>
-      </form>
-
-      {% if playdates %}
-        <div class="grid">
-          {% for playdate in playdates %}
-          <div class="card">
-            <div class="card-head">
+    {% if playdates %}
+      <div class="playdate-grid">
+        {% for playdate in playdates %}
+        <div class="playdate-card">
+          <div class="playdate-header">
+            <div class="playdate-pet-info">
               {% if playdate.organizer_pet.photos.all %}
                 <img class="pet-avatar" src="{{ playdate.organizer_pet.photos.first.photo.url }}" alt="{{ playdate.organizer_pet.name }}" />
               {% else %}
-                <img class="pet-avatar" src="https://ui-avatars.com/api/?name={{ playdate.organizer_pet.name }}&size=64&background=F7931E&color=fff&bold=true" alt="{{ playdate.organizer_pet.name }}" />
+                <img class="pet-avatar" src="https://ui-avatars.com/api/?name={{ playdate.organizer_pet.name }}&size=64&background=E8764B&color=fff&bold=true" alt="{{ playdate.organizer_pet.name }}" />
               {% endif %}
-              <div class="title-line">
-                <h3>{{ playdate.organizer_pet.name }} • {{ playdate.location }}</h3>
-                {% with status=playdate.status|lower %}
-                  <span class="badge badge-{{ status }}">{{ playdate.get_status_display|default:playdate.status }}</span>
-                {% endwith %}
-              </div>
-            </div>
-            <div class="card-body">
-              <div class="row"><span class="label">Organizer</span><span>{{ playdate.organizer.profile_name }}</span></div>
-              <div class="row"><span class="label">Scheduled</span><span>{{ playdate.scheduled_time }}</span></div>
-              {% if playdate.description %}
-                <div class="row"><span class="label">About</span><span>{{ playdate.description|truncatechars:120 }}</span></div>
-              {% endif %}
-              <div class="row"><span class="label">Max Pets</span><span>{{ playdate.max_participants }}</span></div>
-            </div>
-            <div class="card-foot">
-              <a class="link" href="{% url 'playdates:playdate-detail' playdate.id %}">View Details →</a>
-              <div style="display: flex; gap: 8px; align-items: center;">
-                {% if user == playdate.organizer %}
-                  <a class="btn btn-light" href="{% url 'playdates:playdate-update' playdate.id %}">Edit</a>
-                {% else %}
-                  {% if playdate.is_public and playdate.status == 'OPEN' %}
-                    <span class="pill" style="background: #ECFDF5; color: #065F46; border-color: #A7F3D0;">Open</span>
-                  {% endif %}
-                {% endif %}
+              <div style="flex: 1;">
+                <div class="playdate-title-row">
+                  <h3>{{ playdate.organizer_pet.name }}</h3>
+                  {% with status=playdate.status|lower %}
+                    {% if status == 'pending' %}
+                      <span class="badge badge-orange">{{ playdate.get_status_display|default:playdate.status }}</span>
+                    {% elif status == 'confirmed' %}
+                      <span class="badge badge-green">{{ playdate.get_status_display|default:playdate.status }}</span>
+                    {% elif status == 'declined' or status == 'cancelled' %}
+                      <span class="badge badge-red">{{ playdate.get_status_display|default:playdate.status }}</span>
+                    {% else %}
+                      <span class="badge badge-blue">{{ playdate.get_status_display|default:playdate.status }}</span>
+                    {% endif %}
+                  {% endwith %}
+                </div>
+                <p style="font-size: 0.875rem; color: var(--text-secondary); margin: 0;">{{ playdate.location }}</p>
               </div>
             </div>
           </div>
-          {% endfor %}
-        </div>
 
-        {% if is_paginated %}
-          <div class="pagination">
-            {% if page_obj.has_previous %}
-              <a href="?page=1{% if current_status %}&status={{ current_status }}{% endif %}">First</a>
-              <a href="?page={{ page_obj.previous_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}">Previous</a>
+          <div class="playdate-body">
+            <div class="info-row">
+              <span class="info-label">Organizer</span>
+              <span class="info-value">{{ playdate.organizer.profile_name }}</span>
+            </div>
+            <div class="info-row">
+              <span class="info-label">Scheduled</span>
+              <span class="info-value">{{ playdate.scheduled_time|date:"M d, Y" }}</span>
+            </div>
+            {% if playdate.description %}
+              <div class="info-row">
+                <span class="info-label">About</span>
+                <span class="info-value" style="text-align: right;">{{ playdate.description|truncatechars:50 }}</span>
+              </div>
             {% endif %}
-            <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
-            {% if page_obj.has_next %}
-              <a href="?page={{ page_obj.next_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}">Next</a>
-              <a href="?page={{ page_obj.paginator.num_pages }}{% if current_status %}&status={{ current_status }}{% endif %}">Last</a>
+            <div class="info-row">
+              <span class="info-label">Max Pets</span>
+              <span class="info-value">{{ playdate.max_participants }}</span>
+            </div>
+          </div>
+
+          <div class="playdate-footer">
+            <a href="{% url 'playdates:playdate-detail' playdate.id %}" class="btn btn-secondary btn-sm">View Details</a>
+            {% if user == playdate.organizer %}
+              <a href="{% url 'playdates:playdate-update' playdate.id %}" class="btn btn-primary btn-sm">Edit</a>
+            {% else %}
+              {% if playdate.is_public and playdate.status == 'OPEN' %}
+                <span class="status-pill" style="background: var(--green-light); color: var(--green);">Open</span>
+              {% endif %}
             {% endif %}
           </div>
-        {% endif %}
-      {% else %}
-        <div class="empty">
-          <h3 style="margin-bottom:6px; color:#111827;">No playdates found</h3>
-          <p style="margin-bottom:14px;">Try a different filter or create the first playdate for others to join.</p>
-          <a class="btn btn-primary" href="{% url 'playdates:playdate-create' %}">Create a Playdate</a>
+        </div>
+        {% endfor %}
+      </div>
+
+      {% if is_paginated %}
+        <div class="pagination">
+          {% if page_obj.has_previous %}
+            <a href="?page=1{% if current_status %}&status={{ current_status }}{% endif %}">First</a>
+            <a href="?page={{ page_obj.previous_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}">Previous</a>
+          {% endif %}
+          <span>Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</span>
+          {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}{% if current_status %}&status={{ current_status }}{% endif %}">Next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}{% if current_status %}&status={{ current_status }}{% endif %}">Last</a>
+          {% endif %}
         </div>
       {% endif %}
-    </div>
+    {% else %}
+      <div class="empty-state">
+        <h3>No playdates found</h3>
+        <p>Try a different filter or create the first playdate for others to join.</p>
+        <a class="btn btn-primary" href="{% url 'playdates:playdate-create' %}">Create a Playdate</a>
+      </div>
+    {% endif %}
   </div>
 </body>
 </html>

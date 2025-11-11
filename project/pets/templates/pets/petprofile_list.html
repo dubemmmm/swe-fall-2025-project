@@ -1,38 +1,211 @@
-<!DOCTYPE html>
 {% load static %}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Pets</title>
-    <link rel="stylesheet" href="{% static 'pets/css/pet-list.css' %}">
+    <title>My Pets - Pet Next Door</title>
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    <style>
+        body {
+            background-color: var(--bg-beige);
+        }
+
+        .page-header {
+            background: var(--bg-white);
+            padding: var(--space-3xl) 0;
+            margin-bottom: var(--space-4xl);
+            border-bottom: 1px solid var(--border-light);
+            box-shadow: var(--shadow-sm);
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: var(--space-lg);
+        }
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        .back-link:hover {
+            color: var(--primary);
+        }
+        .pets-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: var(--space-2xl);
+            margin-bottom: var(--space-3xl);
+        }
+        .pet-card {
+            background: var(--bg-white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .pet-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-md);
+        }
+        .pet-image {
+            position: relative;
+            width: 100%;
+            height: 260px;
+            overflow: hidden;
+        }
+        .pet-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .pet-badge {
+            position: absolute;
+            top: var(--space-md);
+            right: var(--space-md);
+            padding: var(--space-xs) var(--space-md);
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: var(--primary);
+            color: white;
+            box-shadow: var(--shadow-sm);
+        }
+        .pet-badge.cat {
+            background: var(--purple);
+        }
+        .pet-badge.other {
+            background: var(--blue);
+        }
+        .pet-info {
+            padding: var(--space-xl);
+        }
+        .pet-name {
+            font-size: 1.25rem;
+            margin: 0 0 var(--space-xs) 0;
+        }
+        .pet-breed {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin: 0 0 var(--space-lg) 0;
+        }
+        .pet-details {
+            display: flex;
+            gap: var(--space-lg);
+            margin-bottom: var(--space-lg);
+        }
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        .detail-item svg {
+            color: var(--text-tertiary);
+        }
+        .pet-traits {
+            display: flex;
+            flex-wrap: wrap;
+            gap: var(--space-sm);
+            margin-bottom: var(--space-lg);
+        }
+        .trait-tag {
+            padding: var(--space-xs) var(--space-md);
+            background: var(--bg-gray-light);
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        .pet-description {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: var(--space-lg);
+        }
+        .pet-actions {
+            display: flex;
+            gap: var(--space-md);
+        }
+        .action-btn {
+            flex: 1;
+            padding: var(--space-sm) var(--space-lg);
+            border-radius: var(--radius-sm);
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.2s ease;
+        }
+        .edit-btn {
+            background: var(--bg-gray-light);
+            color: var(--text-dark);
+            border: 1px solid var(--border-medium);
+        }
+        .edit-btn:hover {
+            background: var(--bg-white);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .view-btn {
+            background: var(--primary);
+            color: white;
+        }
+        .view-btn:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+        .empty-state {
+            text-align: center;
+            padding: var(--space-4xl);
+            background: var(--bg-white);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+        }
+        .empty-icon svg {
+            width: 80px;
+            height: 80px;
+            color: var(--text-tertiary);
+            margin-bottom: var(--space-2xl);
+        }
+        .empty-state h2 {
+            margin-bottom: var(--space-md);
+        }
+        .empty-state p {
+            color: var(--text-secondary);
+            margin-bottom: var(--space-2xl);
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="header-top">
-                <a href="{% url 'users:home' %}" class="back-btn">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    </svg>
-                    Back to Home
-                </a>
-            </div>
-            <div class="header-main">
+    <div class="page-header">
+        <div class="container">
+            <a href="{% url 'users:home' %}" class="back-link">
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+                    <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Back to Home
+            </a>
+            <div class="header-content">
                 <h1>My Pets</h1>
-                <a href="{% url 'pets:pet_create' %}" class="add-pet-btn">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <a href="{% url 'pets:pet_create' %}" class="btn btn-primary">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
                         <path d="M10 4V16M4 10H16" stroke="white" stroke-width="2" stroke-linecap="round"/>
                     </svg>
                     Add New Pet
                 </a>
             </div>
         </div>
+    </div>
 
+    <div class="container">
         {% if petprofile_list %}
         <div class="pets-grid">
             {% for pet in petprofile_list %}
-            <!-- Pet Card for {{ pet.name }} -->
             <div class="pet-card">
                 <div class="pet-image">
                     {% if pet.profile_picture %}
@@ -40,14 +213,17 @@
                     {% else %}
                         <img src="https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=400&h=400&fit=crop" alt="{{ pet.name }}">
                     {% endif %}
-                    <div class="pet-badge {% if pet.species == 'CAT' %}cat{% elif pet.species == 'OTHER' %}other{% endif %}">{{ pet.get_species_display }}</div>
+                    <div class="pet-badge {% if pet.species == 'CAT' %}cat{% elif pet.species == 'OTHER' %}other{% endif %}">
+                        {{ pet.get_species_display }}
+                    </div>
                 </div>
                 <div class="pet-info">
                     <h2 class="pet-name">{{ pet.name }}</h2>
                     <p class="pet-breed">{% if pet.breed %}{{ pet.breed }}{% else %}{{ pet.get_species_display }}{% endif %}</p>
+
                     <div class="pet-details">
                         <span class="detail-item">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                                 <path d="M8 14C11.3137 14 14 11.3137 14 8C14 4.68629 11.3137 2 8 2C4.68629 2 2 4.68629 2 8C2 11.3137 4.68629 14 8 14Z" stroke="currentColor" stroke-width="1.5"/>
                                 <path d="M8 4V8L10.5 9.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
                             </svg>
@@ -55,13 +231,14 @@
                         </span>
                         {% if pet.weight %}
                         <span class="detail-item">
-                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                                 <path d="M8 2L9.5 6H13.5L10.5 8.5L11.5 12.5L8 10L4.5 12.5L5.5 8.5L2.5 6H6.5L8 2Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                             </svg>
                             {{ pet.weight }} lbs
                         </span>
                         {% endif %}
                     </div>
+
                     {% if pet.traits.exists %}
                     <div class="pet-traits">
                         {% for trait in pet.traits.all|slice:":3" %}
@@ -69,6 +246,7 @@
                         {% endfor %}
                     </div>
                     {% endif %}
+
                     <p class="pet-description">
                         {% if pet.bio %}
                             {{ pet.bio|truncatewords:20 }}
@@ -76,6 +254,7 @@
                             No description available yet.
                         {% endif %}
                     </p>
+
                     <div class="pet-actions">
                         <a href="{% url 'pets:pet_update' pet.pk %}" class="action-btn edit-btn">Edit</a>
                         <a href="{% url 'pets:pet_detail' pet.pk %}" class="action-btn view-btn">View Profile</a>
@@ -85,17 +264,18 @@
             {% endfor %}
         </div>
         {% else %}
-        <!-- Empty State -->
         <div class="empty-state">
             <div class="empty-icon">
-                <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M40 73.3333C58.4095 73.3333 73.3333 58.4095 73.3333 40C73.3333 21.5905 58.4095 6.66667 40 6.66667C21.5905 6.66667 6.66666 21.5905 6.66666 40C6.66666 58.4095 21.5905 73.3333 40 73.3333Z" stroke="#DDD" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M40 26.6667V40L50 45" stroke="#DDD" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                <svg viewBox="0 0 80 80" fill="none">
+                    <circle cx="40" cy="40" r="38" stroke="currentColor" stroke-width="3"/>
+                    <path d="M28 36C29.6569 36 31 34.6569 31 33C31 31.3431 29.6569 30 28 30C26.3431 30 25 31.3431 25 33C25 34.6569 26.3431 36 28 36Z" fill="currentColor"/>
+                    <path d="M52 36C53.6569 36 55 34.6569 55 33C55 31.3431 53.6569 30 52 30C50.3431 30 49 31.3431 49 33C49 34.6569 50.3431 36 52 36Z" fill="currentColor"/>
+                    <path d="M40 54C45.5228 54 50 49.5228 50 44H30C30 49.5228 34.4772 54 40 54Z" fill="currentColor"/>
                 </svg>
             </div>
             <h2>No pets yet</h2>
             <p>Start by adding your first pet profile</p>
-            <a href="{% url 'pets:pet_create' %}" class="add-pet-btn">Add Your First Pet</a>
+            <a href="{% url 'pets:pet_create' %}" class="btn btn-primary btn-lg">Add Your First Pet</a>
         </div>
         {% endif %}
     </div>
