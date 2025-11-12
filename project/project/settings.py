@@ -152,3 +152,6 @@ AUTH_USER_MODEL = 'users.User'
 
 # URL to redirect to when a user is not logged in
 LOGIN_URL = '/users/login/'
+
+# Email backend for development (console output)
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

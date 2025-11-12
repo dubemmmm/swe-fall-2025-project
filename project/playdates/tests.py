@@ -655,7 +655,7 @@ class CompleteWorkflowTestCase(TestCase):
             'is_public': True
         }
 
-        response = self.client.post(reverse('playdate-create'), data=playdate_data)
+        response = self.client.post(reverse('playdates:playdate-create'), data=playdate_data)
         self.assertEqual(response.status_code, 302)
 
         playdate = Playdate.objects.get(organizer_pet=self.pet1)
@@ -806,7 +806,7 @@ class PlaydatePetSelectionTests(TestCase):
             is_playdate_available=True
         )
 
-        self.playdate_create_url = reverse('playdate-create')
+        self.playdate_create_url = reverse('playdates:playdate-create')
 
     def test_playdate_create_shows_only_user_pets(self):
         """Test that pet dropdown only shows user's own pets"""
@@ -888,7 +888,7 @@ class PlaydatePetSelectionTests(TestCase):
         self.assertEqual(response.status_code, 200)
 
         # Navigate away (simulating cancel)
-        response = self.client.get(reverse('playdate-list'))
+        response = self.client.get(reverse('playdates:playdate-list'))
         self.assertEqual(response.status_code, 200)
         # Should not be stuck
 

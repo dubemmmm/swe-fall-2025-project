@@ -56,9 +56,10 @@ class NotificationTests(TestCase):
 
         # Create a notification
         notification = Notification.objects.create(
-            user=self.user,
+            recipient=self.user,
+            title='Test Notification',
             message='Test notification',
-            notification_type='INFO',
+            notification_type='adoption_approved',
             is_read=False
         )
 
@@ -82,21 +83,24 @@ class NotificationTests(TestCase):
 
         # Create notifications
         Notification.objects.create(
-            user=self.user,
+            recipient=self.user,
+            title='Test Notification',
             message='Unread 1',
-            notification_type='INFO',
+            notification_type='adoption_approved',
             is_read=False
         )
         Notification.objects.create(
-            user=self.user,
+            recipient=self.user,
+            title='Test Notification',
             message='Unread 2',
-            notification_type='INFO',
+            notification_type='adoption_approved',
             is_read=False
         )
         Notification.objects.create(
-            user=self.user,
+            recipient=self.user,
+            title='Test Notification',
             message='Read notification',
-            notification_type='INFO',
+            notification_type='adoption_approved',
             is_read=True
         )
 
@@ -124,22 +128,24 @@ class NotificationTests(TestCase):
         # Here we just verify notifications can be created
 
         notification = Notification.objects.create(
-            user=self.user,
+            recipient=self.user,
+            title='Test Notification',
             message='You were invited to a playdate',
-            notification_type='PLAYDATE_INVITE',
+            notification_type='playdate_approved',
             is_read=False
         )
 
         self.assertIsNotNone(notification)
-        self.assertEqual(notification.user, self.user)
+        self.assertEqual(notification.recipient, self.user)
         self.assertFalse(notification.is_read)
 
     def test_notification_created_on_adoption_request(self):
         """Test that notification is created on adoption request"""
         notification = Notification.objects.create(
-            user=self.user,
+            recipient=self.user,
+            title='Test Notification',
             message='Someone requested to adopt your pet',
-            notification_type='ADOPTION_REQUEST',
+            notification_type='new_adoption_request',
             is_read=False
         )
 
@@ -149,9 +155,10 @@ class NotificationTests(TestCase):
     def test_notification_created_on_alert(self):
         """Test that notification is created for community alerts"""
         notification = Notification.objects.create(
-            user=self.user,
+            recipient=self.user,
+            title='Test Notification',
             message='New community alert in your area',
-            notification_type='ALERT',
+            notification_type='adoption_approved',
             is_read=False
         )
 
@@ -163,9 +170,10 @@ class NotificationTests(TestCase):
         self.client.login(username='notifuser', password='password123')
 
         notification = Notification.objects.create(
-            user=self.user,
+            recipient=self.user,
+            title='Test Notification',
             message='Test navigation',
-            notification_type='INFO',
+            notification_type='adoption_approved',
             is_read=False,
             link='/test-link/'
         )
@@ -182,15 +190,17 @@ class NotificationTests(TestCase):
 
         # Create mix of read and unread
         Notification.objects.create(
-            user=self.user,
+            recipient=self.user,
+            title='Test Notification',
             message='Unread',
-            notification_type='INFO',
+            notification_type='adoption_approved',
             is_read=False
         )
         Notification.objects.create(
-            user=self.user,
+            recipient=self.user,
+            title='Test Notification',
             message='Read',
-            notification_type='INFO',
+            notification_type='adoption_approved',
             is_read=True
         )
 
