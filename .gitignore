@@ -15,7 +15,8 @@ ENV/
 db.sqlite3
 db.sqlite3-journal
 /staticfiles/
-/media/
+media/
+**/media/
 
 # Environment variables
 .env
@@ -43,6 +44,7 @@ other_test_cases.txt
 .claude/
 screenshots/
 capture_screenshots.py
+.local_notes/
 
 # Documentation files
 COMMIT_MESSAGE.txt
