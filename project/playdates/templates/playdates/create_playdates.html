@@ -166,6 +166,7 @@
                     <button type="submit" class="btn btn-primary" id="submitBtn" style="display: none;">
                         {% if form.instance.pk %}Update Playdate{% else %}Create Playdate{% endif %}
                     </button>
+                    <a href="{% url 'playdates:playdate-list' %}" class="btn btn-light">Cancel</a>
                 </div>
             </form>
         </div>

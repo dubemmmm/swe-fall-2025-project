@@ -1,6 +1,7 @@
+import os
+import re
 from django import forms
 from django.core.exceptions import ValidationError
-import re
 from .models import PetProfile, PetTrait
 
 class PetProfileForm(forms.ModelForm):
@@ -68,6 +69,25 @@ class PetProfileForm(forms.ModelForm):
             else:
                 raise ValidationError('Age must contain a number (e.g., "3 years", "6 months").')
         return age
+
+    def clean_profile_picture(self):
+        """Validate uploaded profile picture file type and size"""
+        picture = self.cleaned_data.get('profile_picture')
+
+        if picture:
+            # Validate file extension
+            valid_extensions = ['.jpg', '.jpeg', '.png', '.gif']
+            ext = os.path.splitext(picture.name)[1].lower()
+            if ext not in valid_extensions:
+                raise ValidationError(
+                    'Invalid file type. Please upload JPG, PNG, or GIF images only.'
+                )
+
+            # Validate file size (max 5MB)
+            if picture.size > 5 * 1024 * 1024:
+                raise ValidationError('File size must be under 5MB.')
+
+        return picture
 
     def save(self, commit=True):
         instance = super().save(commit=commit)

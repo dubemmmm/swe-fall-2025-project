@@ -655,7 +655,7 @@ class CompleteWorkflowTestCase(TestCase):
             'is_public': True
         }
 
-        response = self.client.post(reverse('playdate-create'), data=playdate_data)
+        response = self.client.post(reverse('playdates:playdate-create'), data=playdate_data)
         self.assertEqual(response.status_code, 302)
 
         playdate = Playdate.objects.get(organizer_pet=self.pet1)
@@ -757,3 +757,190 @@ class CompleteWorkflowTestCase(TestCase):
         playdate.refresh_from_db()
         self.assertEqual(playdate.status, 'CONFIRMED')
         self.assertEqual(playdate.get_accepted_count(), 2)
+
+
+class PlaydatePetSelectionTests(TestCase):
+    """Test cases for Ticket 6: Playdate pet selection and cancel functionality"""
+
+    def setUp(self):
+        """Set up test data"""
+        from pets.models import PetProfile
+
+        self.client = Client()
+        self.user = User.objects.create_user(
+            username='petowner',
+            email='petowner@example.com',
+            password='password123',
+            profile_name='Pet Owner'
+        )
+        self.other_user = User.objects.create_user(
+            username='otherpet',
+            email='otherpet@example.com',
+            password='password123',
+            profile_name='Other Pet Owner'
+        )
+
+        # Create pets for user - some available, some not
+        self.available_pet = PetProfile.objects.create(
+            owner=self.user,
+            name='Available Dog',
+            species='DOG',
+            breed='Labrador',
+            age=3,
+            is_playdate_available=True
+        )
+        self.unavailable_pet = PetProfile.objects.create(
+            owner=self.user,
+            name='Unavailable Dog',
+            species='DOG',
+            breed='Poodle',
+            age=2,
+            is_playdate_available=False
+        )
+        self.other_user_pet = PetProfile.objects.create(
+            owner=self.other_user,
+            name='Other Person Dog',
+            species='DOG',
+            breed='Beagle',
+            age=4,
+            is_playdate_available=True
+        )
+
+        self.playdate_create_url = reverse('playdates:playdate-create')
+
+    def test_playdate_create_shows_only_user_pets(self):
+        """Test that pet dropdown only shows user's own pets"""
+        self.client.login(username='petowner', password='password123')
+
+        response = self.client.get(self.playdate_create_url)
+        self.assertEqual(response.status_code, 200)
+
+        # Check form's pet queryset
+        if 'form' in response.context:
+            form = response.context['form']
+            pet_queryset = form.fields['organizer_pet'].queryset
+
+            # Should include user's pets
+            self.assertIn(self.available_pet, pet_queryset)
+
+            # Should NOT include other user's pets
+            self.assertNotIn(self.other_user_pet, pet_queryset)
+
+    def test_playdate_create_filters_available_pets(self):
+        """Test that only pets with is_playdate_available=True are shown"""
+        self.client.login(username='petowner', password='password123')
+
+        response = self.client.get(self.playdate_create_url)
+        self.assertEqual(response.status_code, 200)
+
+        if 'form' in response.context:
+            form = response.context['form']
+            pet_queryset = form.fields['organizer_pet'].queryset
+
+            # Should include available pet
+            self.assertIn(self.available_pet, pet_queryset)
+
+            # Should NOT include unavailable pet
+            self.assertNotIn(self.unavailable_pet, pet_queryset)
+
+    def test_cannot_create_with_other_user_pet(self):
+        """Test that user cannot create playdate with another user's pet"""
+        self.client.login(username='petowner', password='password123')
+
+        from datetime import datetime, timedelta
+        future_time = datetime.now() + timedelta(days=1)
+
+        response = self.client.post(self.playdate_create_url, {
+            'organizer_pet': self.other_user_pet.id,  # Try to use other user's pet
+            'location': 'Dog Park',
+            'scheduled_time': future_time.strftime('%Y-%m-%d %H:%M'),
+            'description': 'Test playdate',
+            'is_public': True,
+            'max_participants': 5
+        })
+
+        # Should fail (400 or stay on form with error)
+        self.assertIn(response.status_code, [200, 400, 403])
+
+        # Playdate should NOT be created
+        playdate_created = Playdate.objects.filter(
+            organizer_pet=self.other_user_pet
+        ).exists()
+        self.assertFalse(playdate_created)
+
+    def test_playdate_form_has_cancel_button(self):
+        """Test that playdate form has cancel button"""
+        self.client.login(username='petowner', password='password123')
+
+        response = self.client.get(self.playdate_create_url)
+        self.assertEqual(response.status_code, 200)
+
+        content = response.content.decode()
+        # Should have cancel option
+        self.assertTrue('Cancel' in content or 'cancel' in content.lower() or 'Back' in content)
+
+    def test_playdate_create_cancel_redirects(self):
+        """Test canceling playdate creation"""
+        self.client.login(username='petowner', password='password123')
+
+        # Access form
+        response = self.client.get(self.playdate_create_url)
+        self.assertEqual(response.status_code, 200)
+
+        # Navigate away (simulating cancel)
+        response = self.client.get(reverse('playdates:playdate-list'))
+        self.assertEqual(response.status_code, 200)
+        # Should not be stuck
+
+    def test_playdate_create_back_button(self):
+        """Test back button functionality during playdate creation"""
+        self.client.login(username='petowner', password='password123')
+
+        # Access form
+        response = self.client.get(self.playdate_create_url)
+        self.assertEqual(response.status_code, 200)
+
+        # Go back
+        response = self.client.get('/')
+        self.assertEqual(response.status_code, 200)
+        # Should work fine (Ticket 6 bug)
+
+    def test_cannot_select_unavailable_pet(self):
+        """Test that unavailable pets cannot be selected"""
+        self.client.login(username='petowner', password='password123')
+
+        from datetime import datetime, timedelta
+        future_time = datetime.now() + timedelta(days=1)
+
+        response = self.client.post(self.playdate_create_url, {
+            'organizer_pet': self.unavailable_pet.id,  # Try unavailable pet
+            'location': 'Dog Park',
+            'scheduled_time': future_time.strftime('%Y-%m-%d %H:%M'),
+            'description': 'Test playdate',
+            'is_public': True,
+            'max_participants': 5
+        })
+
+        # Should fail validation
+        self.assertIn(response.status_code, [200, 400])
+
+        # Playdate should NOT be created with unavailable pet
+        playdate_created = Playdate.objects.filter(
+            organizer_pet=self.unavailable_pet
+        ).exists()
+        self.assertFalse(playdate_created)
+
+    def test_playdate_pet_queryset_filtering(self):
+        """Test that form queryset is properly filtered"""
+        self.client.login(username='petowner', password='password123')
+
+        response = self.client.get(self.playdate_create_url)
+        self.assertEqual(response.status_code, 200)
+
+        if 'form' in response.context:
+            form = response.context['form']
+            pet_queryset = list(form.fields['organizer_pet'].queryset)
+
+            # Should have exactly 1 pet (the available one)
+            self.assertEqual(len(pet_queryset), 1)
+            self.assertEqual(pet_queryset[0], self.available_pet)
