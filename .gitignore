@@ -45,6 +45,7 @@ other_test_cases.txt
 screenshots/
 capture_screenshots.py
 .local_notes/
+.playwright-mcp/
 
 # Documentation files
 COMMIT_MESSAGE.txt
