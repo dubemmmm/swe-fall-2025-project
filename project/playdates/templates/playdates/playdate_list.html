@@ -162,6 +162,12 @@
       <div class="header-actions">
         <a class="btn btn-primary" href="{% url 'playdates:playdate-create' %}">Create New Playdate</a>
         <a class="btn btn-secondary" href="{% url 'playdates:my-playdates' %}">My Playdates</a>
+        <a class="btn btn-light" href="{% url 'users:home' %}">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12.5 15L7.5 10L12.5 5"/>
+          </svg>
+          Back to Dashboard
+        </a>
       </div>
       <h1>Discover Playdates</h1>
       <p style="color: var(--text-secondary); margin-top: var(--space-sm);">Browse upcoming playdates or filter by status to find the perfect meetup for your pet.</p>

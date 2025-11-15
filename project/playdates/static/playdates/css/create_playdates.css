@@ -92,7 +92,7 @@ body {
 }
 
 .form-content {
-    padding: 32px 28px;
+    padding: 36px 32px;
 }
 
 .error-messages {
@@ -191,6 +191,7 @@ body {
 
 .form-section.active {
     display: block;
+    padding-top: 8px;
 }
 
 .section-title {
@@ -209,6 +210,10 @@ body {
 /* Input Groups */
 .input-group {
     margin-bottom: 20px;
+}
+
+.form-section .input-group:first-of-type {
+    margin-top: 16px;
 }
 
 .input-label {
