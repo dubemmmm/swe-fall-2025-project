@@ -1,214 +1,278 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Post Pet for Adoption - Pet Next Door</title>
-    <link rel="stylesheet" href="adoption-form.css">
+    <title>Post Pet for Adoption</title>
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    <style>
+        body {
+            background-color: var(--bg-beige);
+            min-height: 100vh;
+        }
+
+        .navbar {
+            background: var(--bg-white);
+            padding: var(--space-xl) 0;
+            border-bottom: 1px solid var(--border-light);
+            box-shadow: var(--shadow-sm);
+            margin-bottom: var(--space-4xl);
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: var(--space-4xl);
+        }
+
+        .page-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: var(--space-sm);
+        }
+
+        .page-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+        }
+
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .form-card {
+            background: var(--bg-white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4xl);
+            box-shadow: var(--shadow-md);
+        }
+
+        .form-group {
+            margin-bottom: var(--space-3xl);
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.9375rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: var(--space-md);
+        }
+
+        .form-help {
+            display: block;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            margin-top: var(--space-xs);
+        }
+
+        select,
+        textarea {
+            width: 100%;
+            padding: var(--space-lg);
+            font-size: 1rem;
+            font-family: inherit;
+            background-color: var(--bg-gray-light);
+            border: 2px solid transparent;
+            border-radius: var(--radius-md);
+            color: var(--text-dark);
+            transition: all 0.2s ease;
+        }
+
+        select:focus,
+        textarea:focus {
+            outline: none;
+            background-color: white;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(232, 118, 75, 0.1);
+        }
+
+        select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%236B7280' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right var(--space-lg) center;
+            padding-right: var(--space-4xl);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 140px;
+            line-height: 1.6;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: var(--space-md);
+            margin-top: var(--space-4xl);
+            padding-top: var(--space-3xl);
+            border-top: 1px solid var(--border-light);
+        }
+
+        .btn-cancel {
+            background: white;
+            color: var(--text-secondary);
+            border: 2px solid var(--border-medium);
+            flex: 1;
+        }
+
+        .btn-cancel:hover {
+            background: var(--bg-gray-light);
+            color: var(--text-dark);
+            border-color: var(--text-secondary);
+            transform: none;
+        }
+
+        .btn-submit {
+            flex: 2;
+        }
+
+        .message {
+            padding: var(--space-lg);
+            border-radius: var(--radius-md);
+            margin-bottom: var(--space-2xl);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .message.error {
+            background: var(--red-light);
+            color: var(--red);
+            border: 2px solid var(--red);
+        }
+
+        .message.success {
+            background: var(--green-light);
+            color: var(--green);
+            border: 2px solid var(--green);
+        }
+
+        .form-error {
+            display: block;
+            color: var(--red);
+            font-size: 0.875rem;
+            margin-top: var(--space-sm);
+            font-weight: 500;
+        }
+
+        .info-box {
+            background: var(--blue-light);
+            border: 2px solid var(--blue);
+            border-radius: var(--radius-md);
+            padding: var(--space-lg);
+            margin-bottom: var(--space-3xl);
+        }
+
+        .info-box-title {
+            font-weight: 600;
+            color: var(--blue);
+            margin-bottom: var(--space-xs);
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+        }
+
+        .info-box-text {
+            color: var(--blue);
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+    </style>
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="container-header">
-            <button class="back-button">
-                <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <nav class="navbar">
+        <div class="container">
+            <a href="{% url 'adoption:list' %}" class="back-link">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M19 12H5M12 19l-7-7 7-7"/>
                 </svg>
-                <span>Back to Dashboard</span>
-            </button>
+                Back to Adoptions
+            </a>
         </div>
-    </header>
+    </nav>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <div class="container-form">
-            <!-- Title Section -->
-            <div class="title-section">
-                <h1>Post Your Pet for Adoption</h1>
-                <p>Fill out the details below to help your pet find their forever home.</p>
-            </div>
-
-            <!-- Form Card -->
-            <div class="form-card">
-                <form id="petAdoptionForm">
-                    <!-- Pet Name -->
-                    <div class="form-group">
-                        <label for="petName" class="form-label">Pet Name</label>
-                        <input 
-                            type="text" 
-                            id="petName" 
-                            name="petName" 
-                            class="form-input" 
-                            placeholder="Enter your pet's name"
-                            required
-                        >
-                        <span class="error-message" id="petNameError"></span>
-                    </div>
-
-                    <!-- Animal Type -->
-                    <div class="form-group">
-                        <label for="animalType" class="form-label">Animal Type</label>
-                        <select 
-                            id="animalType" 
-                            name="animalType" 
-                            class="form-select"
-                            required
-                        >
-                            <option value="">Select animal type</option>
-                            <option value="dog">Dog</option>
-                            <option value="cat">Cat</option>
-                            <option value="rabbit">Rabbit</option>
-                            <option value="bird">Bird</option>
-                            <option value="hamster">Hamster</option>
-                            <option value="other">Other</option>
-                        </select>
-                        <span class="error-message" id="animalTypeError"></span>
-                    </div>
-
-                    <!-- Age and Gender Row -->
-                    <div class="form-row">
-                        <!-- Age -->
-                        <div class="form-group">
-                            <label for="age" class="form-label">Age</label>
-                            <input 
-                                type="number" 
-                                id="age" 
-                                name="age" 
-                                class="form-input" 
-                                placeholder="Age in years"
-                                min="0"
-                                required
-                            >
-                            <span class="error-message" id="ageError"></span>
-                        </div>
-
-                        <!-- Gender -->
-                        <div class="form-group">
-                            <label for="gender" class="form-label">Gender</label>
-                            <select 
-                                id="gender" 
-                                name="gender" 
-                                class="form-select"
-                                required
-                            >
-                                <option value="">Select gender</option>
-                                <option value="male">Male</option>
-                                <option value="female">Female</option>
-                            </select>
-                            <span class="error-message" id="genderError"></span>
-                        </div>
-                    </div>
-
-                    <!-- Description -->
-                    <div class="form-group">
-                        <label for="description" class="form-label">Description</label>
-                        <textarea 
-                            id="description" 
-                            name="description" 
-                            class="form-textarea" 
-                            placeholder="Tell us about your pet's personality, habits, and any special needs..."
-                            rows="5"
-                            required
-                        ></textarea>
-                        <span class="error-message" id="descriptionError"></span>
-                    </div>
-
-                    <!-- Upload Photo -->
-                    <div class="form-group">
-                        <label class="form-label">Upload Photo</label>
-                        <div class="upload-area" id="uploadArea">
-                            <div class="upload-prompt" id="uploadPrompt">
-                                <div class="upload-icon">
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                                        <polyline points="17 8 12 3 7 8"/>
-                                        <line x1="12" y1="3" x2="12" y2="15"/>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p class="upload-text">Click to upload or drag and drop</p>
-                                    <p class="upload-subtext">PNG, JPG or JPEG (max. 5MB)</p>
-                                </div>
-                            </div>
-                            <div class="image-preview" id="imagePreview" style="display: none;">
-                                <img id="previewImage" src="" alt="Preview">
-                                <button type="button" class="remove-image-btn" id="removeImageBtn">
-                                    Remove Image
-                                </button>
-                            </div>
-                            <input 
-                                type="file" 
-                                id="photoUpload" 
-                                name="photo" 
-                                accept="image/*"
-                                style="display: none;"
-                            >
-                        </div>
-                        <span class="error-message" id="photoError"></span>
-                    </div>
-
-                    <!-- Checkboxes -->
-                    <div class="form-group">
-                        <label class="form-label">Additional Information</label>
-                        <div class="checkbox-group">
-                            <div class="checkbox-item">
-                                <input 
-                                    type="checkbox" 
-                                    id="vaccinated" 
-                                    name="vaccinated"
-                                    class="checkbox-input"
-                                >
-                                <label for="vaccinated" class="checkbox-label">Vaccinated</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input 
-                                    type="checkbox" 
-                                    id="goodWithKids" 
-                                    name="goodWithKids"
-                                    class="checkbox-input"
-                                >
-                                <label for="goodWithKids" class="checkbox-label">Good with Kids</label>
-                            </div>
-                            <div class="checkbox-item">
-                                <input 
-                                    type="checkbox" 
-                                    id="spayedNeutered" 
-                                    name="spayedNeutered"
-                                    class="checkbox-input"
-                                >
-                                <label for="spayedNeutered" class="checkbox-label">Spayed/Neutered</label>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Submit Button -->
-                    <div class="submit-section">
-                        <button type="submit" class="submit-btn" id="submitBtn">
-                            <span id="submitText">Post for Adoption</span>
-                            <span id="submitLoader" class="loader" style="display: none;">
-                                <svg class="spinner" viewBox="0 0 24 24">
-                                    <circle class="spinner-circle" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4" fill="none"/>
-                                </svg>
-                                Posting...
-                            </span>
-                        </button>
-                    </div>
-                </form>
-            </div>
+    <div class="container">
+        <div class="page-header">
+            <h1 class="page-title">Post Your Pet for Adoption</h1>
+            <p class="page-subtitle">Help your pet find a loving forever home</p>
         </div>
-    </main>
 
-    <!-- Toast Notification -->
-    <div class="toast" id="toast">
-        <div class="toast-content">
-            <div class="toast-icon" id="toastIcon"></div>
-            <div class="toast-text">
-                <p class="toast-title" id="toastTitle"></p>
-                <p class="toast-description" id="toastDescription"></p>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="form-container">
+                    <div class="message {{ message.tags }}">
+                        {{ message }}
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="form-container">
+            <div class="info-box">
+                <div class="info-box-title">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                    </svg>
+                    Before you start
+                </div>
+                <p class="info-box-text">
+                    Make sure your pet has a complete profile with photos and details before posting for adoption.
+                </p>
             </div>
+
+            <form method="post" class="form-card">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label class="form-label" for="id_pet">Select Pet *</label>
+                    {{ form.pet }}
+                    <span class="form-help">Choose which of your pets you'd like to post for adoption</span>
+                    {% if form.pet.errors %}
+                        <span class="form-error">{{ form.pet.errors }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="id_requirements">Adoption Requirements *</label>
+                    {{ form.requirements }}
+                    <span class="form-help">What are you looking for in a new home? (e.g., fenced yard, experience with this breed, no other pets, etc.)</span>
+                    {% if form.requirements.errors %}
+                        <span class="form-error">{{ form.requirements.errors }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="id_additional_info">Additional Information</label>
+                    {{ form.additional_info }}
+                    <span class="form-help">Any other details potential adopters should know</span>
+                    {% if form.additional_info.errors %}
+                        <span class="form-error">{{ form.additional_info.errors }}</span>
+                    {% endif %}
+                </div>
+
+                <div class="form-actions">
+                    <a href="{% url 'adoption:list' %}" class="btn btn-cancel btn-lg">Cancel</a>
+                    <button type="submit" class="btn btn-primary btn-lg btn-submit">Post for Adoption</button>
+                </div>
+            </form>
         </div>
     </div>
-
-    <script src="adoption-form.js"></script>
 </body>
 </html>

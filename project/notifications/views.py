@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
+from django.contrib import messages
 from .models import Notification
 
 
@@ -38,12 +39,22 @@ class NotificationListView(LoginRequiredMixin, ListView):
     paginate_by = 20
 
     def get_queryset(self):
-        return Notification.objects.filter(recipient=self.request.user)
+        try:
+            return Notification.objects.filter(
+                recipient=self.request.user
+            ).order_by('-created_at')
+        except Exception as e:
+            messages.error(self.request, 'Unable to load notifications. Please try again.')
+            return Notification.objects.none()
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['unread_count'] = Notification.objects.filter(
-            recipient=self.request.user,
-            is_read=False
-        ).count()
+        try:
+            context['unread_count'] = Notification.objects.filter(
+                recipient=self.request.user,
+                is_read=False
+            ).count()
+        except Exception:
+            context['unread_count'] = 0
+            messages.warning(self.request, 'Some notification data could not be loaded.')
         return context

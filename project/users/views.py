@@ -97,7 +97,7 @@ def register(request):
             # Log the user in
             login(request, user)
             messages.success(request, f'Welcome to Pet Next Door, {profile_name}!')
-            return redirect('home')
+            return redirect('users:home')
 
         except Exception as e:
             messages.error(request, f'Error creating account: {str(e)}')

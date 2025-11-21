@@ -1,6 +1,236 @@
-<h1>Delete Adoption Post</h1>
-<p>Are you sure you want to delete {{ object.pet.name }}?</p>
-<form method="post">
-  {% csrf_token %}
-  <button type="submit">Confirm</button>
-</form>
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Adoption Post</title>
+    <link rel="stylesheet" href="{% static 'css/global.css' %}">
+    <style>
+        body {
+            background: var(--bg-beige);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: var(--space-2xl);
+        }
+
+        .container {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        .delete-card {
+            background: var(--bg-white);
+            border-radius: var(--radius-lg);
+            padding: var(--space-4xl);
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+        }
+
+        .warning-icon {
+            margin-bottom: var(--space-2xl);
+        }
+
+        .delete-header h1 {
+            font-size: 1.75rem;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: var(--space-sm);
+        }
+
+        .delete-header .subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-bottom: var(--space-3xl);
+        }
+
+        .pet-info-card {
+            background: var(--bg-gray-light);
+            border-radius: var(--radius-md);
+            padding: var(--space-2xl);
+            margin-bottom: var(--space-3xl);
+            display: flex;
+            gap: var(--space-xl);
+            align-items: center;
+            text-align: left;
+        }
+
+        .pet-image {
+            width: 80px;
+            height: 80px;
+            border-radius: var(--radius-md);
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .pet-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .pet-details h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: var(--space-xs);
+        }
+
+        .pet-details p {
+            color: var(--text-secondary);
+            font-size: 0.9375rem;
+        }
+
+        .warning-message {
+            background: rgba(255, 152, 0, 0.1);
+            border: 2px solid #ff9800;
+            border-radius: var(--radius-md);
+            padding: var(--space-xl);
+            margin-bottom: var(--space-3xl);
+            display: flex;
+            gap: var(--space-lg);
+            text-align: left;
+        }
+
+        .warning-text {
+            flex: 1;
+        }
+
+        .warning-text strong {
+            color: #ff9800;
+            display: block;
+            margin-bottom: var(--space-sm);
+        }
+
+        .warning-text ul {
+            margin-top: var(--space-sm);
+            padding-left: var(--space-xl);
+            color: var(--text-secondary);
+        }
+
+        .warning-text ul li {
+            margin-bottom: var(--space-xs);
+        }
+
+        .form-actions {
+            display: flex;
+            gap: var(--space-lg);
+            justify-content: center;
+        }
+
+        .cancel-btn,
+        .delete-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: var(--space-lg) var(--space-2xl);
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .cancel-btn {
+            background: var(--bg-gray-light);
+            color: var(--text-secondary);
+        }
+
+        .cancel-btn:hover {
+            background: var(--border-medium);
+            transform: translateY(-1px);
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #c82333;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="delete-card">
+            <!-- Warning Icon -->
+            <div class="warning-icon">
+                <svg width="80" height="80" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="40" cy="40" r="38" stroke="#dc3545" stroke-width="4"/>
+                    <path d="M40 25V45" stroke="#dc3545" stroke-width="4" stroke-linecap="round"/>
+                    <circle cx="40" cy="55" r="3" fill="#dc3545"/>
+                </svg>
+            </div>
+
+            <!-- Header -->
+            <div class="delete-header">
+                <h1>Delete Adoption Post?</h1>
+                <p class="subtitle">This action cannot be undone</p>
+            </div>
+
+            <!-- Pet Info -->
+            <div class="pet-info-card">
+                <div class="pet-image">
+                    {% if object.pet.profile_picture %}
+                        <img src="{{ object.pet.profile_picture.url }}" alt="{{ object.pet.name }}">
+                    {% else %}
+                        <svg width="80" height="80" viewBox="0 0 24 24" fill="var(--text-tertiary)">
+                            <path d="M8 10C9.10457 10 10 9.10457 10 8C10 6.89543 9.10457 6 8 6C6.89543 6 6 6.89543 6 8C6 9.10457 6.89543 10 8 10Z"/>
+                            <path d="M16 10C17.1046 10 18 9.10457 18 8C18 6.89543 17.1046 6 16 6C14.8954 6 14 6.89543 14 8C14 9.10457 14.8954 10 16 10Z"/>
+                        </svg>
+                    {% endif %}
+                </div>
+                <div class="pet-details">
+                    <h2>{{ object.pet.name }}</h2>
+                    <p>{{ object.pet.breed|default:object.pet.get_species_display }} • {{ object.pet.age }}</p>
+                </div>
+            </div>
+
+            <!-- Warning Message -->
+            <div class="warning-message">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="10" cy="10" r="9" stroke="#ff9800" stroke-width="2"/>
+                    <path d="M10 6V11" stroke="#ff9800" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="10" cy="14" r="1" fill="#ff9800"/>
+                </svg>
+                <div class="warning-text">
+                    <strong>Warning:</strong> Deleting this adoption post will permanently remove:
+                    <ul>
+                        <li>The adoption listing for {{ object.pet.name }}</li>
+                        <li>All adoption requests from interested adopters</li>
+                        <li>Communication history related to this post</li>
+                        <li>This cannot be recovered</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Confirmation Form -->
+            <form method="post" class="delete-form">
+                {% csrf_token %}
+                <div class="form-actions">
+                    <a href="{% url 'users:home' %}" class="cancel-btn">
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M13.5 4.5L4.5 13.5M4.5 4.5L13.5 13.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Cancel & Go Home
+                    </a>
+                    <button type="submit" class="delete-btn">
+                        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M2.25 4.5H3.75H15.75" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M6 4.5V3C6 2.60218 6.15804 2.22064 6.43934 1.93934C6.72064 1.65804 7.10218 1.5 7.5 1.5H10.5C10.8978 1.5 11.2794 1.65804 11.5607 1.93934C11.842 2.22064 12 2.60218 12 3V4.5M14.25 4.5V15C14.25 15.3978 14.092 15.7794 13.8107 16.0607C13.5294 16.342 13.1478 16.5 12.75 16.5H5.25C4.85218 16.5 4.47064 16.342 4.18934 16.0607C3.90804 15.7794 3.75 15.3978 3.75 15V4.5H14.25Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Yes, Delete Post
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
