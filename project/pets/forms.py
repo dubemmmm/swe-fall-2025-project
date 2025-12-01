@@ -31,7 +31,7 @@ class PetProfileForm(forms.ModelForm):
     class Meta:
         model = PetProfile
         fields = [
-            'name', 'species', 'breed', 'age', 'general_size', 'energy_level',
+            'name', 'species', 'gender', 'breed', 'age', 'general_size', 'energy_level',
             'weight', 'color_markings', 'bio', 'profile_picture',
             'is_playdate_available', 'privacy_settings'
         ]

@@ -7,15 +7,20 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
 from .models import AdoptionPost, AdoptionRequest
-from .forms import AdoptionRequestForm
+from .forms import AdoptionRequestForm, AdoptionPostForm
 
 
 # Create an adoption post
 class AdoptionCreateView(LoginRequiredMixin, CreateView):
     model = AdoptionPost
-    fields = ['pet', 'requirements', 'additional_info']
+    form_class = AdoptionPostForm
     template_name = 'adoption/adoption_form.html'
     success_url = reverse_lazy('adoption:user_adoptions')
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def form_valid(self, form):
         # Only allow the pet owner to list for adoption

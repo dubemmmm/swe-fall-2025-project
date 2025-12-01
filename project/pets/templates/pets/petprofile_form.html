@@ -197,27 +197,27 @@
 
                     <div class="form-row">
                         <div class="form-group">
+                            <label class="form-label" for="{{ form.gender.id_for_label }}">Gender</label>
+                            {{ form.gender }}
+                            {% if form.gender.errors %}
+                                <div class="error-message">{{ form.gender.errors }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="form-group">
                             <label class="form-label" for="{{ form.breed.id_for_label }}">Breed</label>
                             {{ form.breed }}
                             {% if form.breed.errors %}
                                 <div class="error-message">{{ form.breed.errors }}</div>
                             {% endif %}
                         </div>
+                    </div>
+
+                    <div class="form-row">
                         <div class="form-group">
                             <label class="form-label" for="{{ form.age.id_for_label }}">Age</label>
                             {{ form.age }}
                             {% if form.age.errors %}
                                 <div class="error-message">{{ form.age.errors }}</div>
-                            {% endif %}
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label class="form-label" for="{{ form.general_size.id_for_label }}">Size</label>
-                            {{ form.general_size }}
-                            {% if form.general_size.errors %}
-                                <div class="error-message">{{ form.general_size.errors }}</div>
                             {% endif %}
                         </div>
                         <div class="form-group">

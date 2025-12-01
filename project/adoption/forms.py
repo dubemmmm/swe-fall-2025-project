@@ -1,5 +1,6 @@
 from django import forms
-from .models import AdoptionRequest
+from .models import AdoptionRequest, AdoptionPost
+from pets.models import PetProfile
 
 
 class AdoptionRequestForm(forms.ModelForm):
@@ -99,3 +100,30 @@ class AdoptionRequestForm(forms.ModelForm):
                 self.fields['full_name'].initial = user.profile_name or user.username
                 self.fields['email'].initial = user.email
                 self.fields['phone_number'].initial = user.phone_number or ''
+
+
+class AdoptionPostForm(forms.ModelForm):
+    class Meta:
+        model = AdoptionPost
+        fields = ['pet', 'requirements', 'additional_info']
+        widgets = {
+            'requirements': forms.Textarea(attrs={
+                'placeholder': 'Describe any specific requirements for potential adopters...',
+                'rows': 4,
+                'class': 'form-control'
+            }),
+            'additional_info': forms.Textarea(attrs={
+                'placeholder': 'Any additional information about the adoption...',
+                'rows': 4,
+                'class': 'form-control'
+            }),
+        }
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+
+        # Filter pets to show only those owned by the current user
+        if user:
+            self.fields['pet'].queryset = PetProfile.objects.filter(owner=user)
+            self.fields['pet'].empty_label = "Select one of your pets"

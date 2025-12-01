@@ -3,13 +3,15 @@ from users.models import User
 
 class PetProfile(models.Model):
     SPECIES_CHOICES = [('DOG', 'Dog'), ('CAT', 'Cat'), ('OTHER', 'Other')]
+    GENDER_CHOICES = [('MALE', 'Male'), ('FEMALE', 'Female'), ('UNKNOWN', 'Unknown')]
     SIZE_CHOICES = [('SMALL', 'Small'), ('MEDIUM', 'Medium'), ('LARGE', 'Large')]
     ENERGY_CHOICES = [('LOW', 'Low'), ('MEDIUM', 'Medium'), ('HIGH', 'High')]
     PRIVACY_CHOICES = [('PUBLIC', 'Public'), ('FRIENDS', 'Friends Only'), ('PRIVATE', 'Private')]
-    
+
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     species = models.CharField(max_length=20, choices=SPECIES_CHOICES)
+    gender = models.CharField(max_length=20, choices=GENDER_CHOICES, default='UNKNOWN')
     breed = models.CharField(max_length=100, blank=True)
     age = models.CharField(max_length=50)
     profile_picture = models.ImageField(upload_to='pet_profiles/', null=True, blank=True)
